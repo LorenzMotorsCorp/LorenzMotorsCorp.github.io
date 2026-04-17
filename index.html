@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Lorenz Aerospace — The Operating System of the Sky</title>
+<meta name="description" content="Lorenz Aerospace is building LAPP, a market-based airspace coordination protocol for eVTOL operations. Patent pending.">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #08090c;
+    --bg-alt: #0e1016;
+    --ink: #e4e2dd;
+    --ink-dim: #6b7080;
+    --ink-mid: #9ca0ad;
+    --rule: #1a1d28;
+    --accent: #e04a3a;
+    --accent-soft: rgba(224, 74, 58, 0.12);
+    --gold: #d4a54a;
+    --blue: #5b8fd4;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'DM Mono', monospace;
+    font-size: 15px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* --- NAV --- */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    background: rgba(8, 9, 12, 0.9);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--rule);
+    padding: 0 clamp(24px, 4vw, 80px);
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .nav-logo {
+    font-family: 'Instrument Serif', serif;
+    font-size: 22px;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .nav-logo em { color: var(--accent); font-style: italic; }
+  .nav-links { display: flex; gap: 32px; }
+  .nav-links a {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--ink-dim);
+    transition: color 0.2s ease;
+  }
+  .nav-links a:hover { color: var(--ink); }
+  .nav-links .patent {
+    color: var(--gold);
+    font-weight: 500;
+  }
+
+  @media (max-width: 700px) {
+    .nav-links { gap: 16px; }
+    .nav-links a { font-size: 9px; letter-spacing: 0.1em; }
+  }
+
+  /* --- SECTIONS --- */
+  section {
+    padding: clamp(80px, 12vw, 160px) clamp(24px, 6vw, 120px);
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+    display: block;
+  }
+  .section-rule {
+    width: 100%;
+    border: none;
+    border-top: 1px solid var(--rule);
+    margin: 0;
+  }
+
+  /* --- HERO --- */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-top: 100px;
+    position: relative;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: -10%;
+    width: 60%;
+    height: 70%;
+    background: radial-gradient(ellipse, rgba(224, 74, 58, 0.04) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .hero h1 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(42px, 7vw, 88px);
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 28px;
+    max-width: 900px;
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+  .hero-sub {
+    font-size: clamp(14px, 1.6vw, 17px);
+    color: var(--ink-mid);
+    max-width: 620px;
+    margin-bottom: 40px;
+    line-height: 1.8;
+  }
+  .hero-meta {
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+  .hero-meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .hero-meta-item .label {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+  }
+  .hero-meta-item .value {
+    font-family: 'Instrument Serif', serif;
+    font-size: 20px;
+    color: var(--ink);
+  }
+  .hero-meta-item .value.accent { color: var(--gold); }
+
+  /* --- PROBLEM --- */
+  .problem-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    margin-top: 40px;
+  }
+  @media (max-width: 800px) { .problem-grid { grid-template-columns: 1fr; gap: 32px; } }
+  .problem-grid h2 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 400;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+  }
+  .problem-grid h2 em { font-style: italic; color: var(--accent); }
+  .problem-text {
+    color: var(--ink-mid);
+    font-size: 14px;
+    line-height: 1.9;
+  }
+  .problem-text p { margin-bottom: 16px; }
+
+  /* --- PROTOCOL --- */
+  .protocol-header {
+    margin-bottom: 48px;
+  }
+  .protocol-header h2 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 400;
+    line-height: 1.15;
+    margin-bottom: 16px;
+  }
+  .protocol-header h2 em { font-style: italic; color: var(--accent); }
+  .protocol-header p {
+    color: var(--ink-mid);
+    font-size: 14px;
+    max-width: 700px;
+    line-height: 1.9;
+  }
+  .protocol-features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin-top: 32px;
+  }
+  @media (max-width: 800px) { .protocol-features { grid-template-columns: 1fr; } }
+  .feature {
+    background: var(--bg-alt);
+    padding: 32px 28px;
+    border: 1px solid var(--rule);
+    transition: border-color 0.2s ease;
+  }
+  .feature:hover { border-color: rgba(224, 74, 58, 0.3); }
+  .feature-num {
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    margin-bottom: 14px;
+    display: block;
+  }
+  .feature h3 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 20px;
+    font-weight: 400;
+    margin-bottom: 10px;
+    line-height: 1.3;
+  }
+  .feature p {
+    font-size: 12px;
+    color: var(--ink-dim);
+    line-height: 1.7;
+  }
+
+  /* --- SIMULATOR --- */
+  .sim-section {
+    background: var(--bg-alt);
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    padding: clamp(60px, 8vw, 100px) clamp(24px, 6vw, 120px);
+    max-width: none;
+  }
+  .sim-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .sim-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .sim-header h2 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(24px, 3.5vw, 36px);
+    font-weight: 400;
+  }
+  .sim-header h2 em { font-style: italic; color: var(--accent); }
+  .sim-cta {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+  }
+  .sim-embed {
+    width: 100%;
+    border: 1px solid var(--rule);
+    background: #070a0f;
+    aspect-ratio: 16 / 10;
+    min-height: 500px;
+  }
+  .sim-footer {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .sim-footer span {
+    font-size: 11px;
+    color: var(--ink-dim);
+    letter-spacing: 0.05em;
+  }
+  .sim-footer a {
+    font-size: 11px;
+    color: var(--accent);
+    text-decoration: none;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border-bottom: 1px dotted var(--accent);
+    transition: opacity 0.15s ease;
+  }
+  .sim-footer a:hover { opacity: 0.7; }
+
+  /* --- VEHICLE --- */
+  .vehicle-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+    margin-top: 40px;
+  }
+  @media (max-width: 800px) { .vehicle-grid { grid-template-columns: 1fr; } }
+  .vehicle-text h2 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 400;
+    line-height: 1.15;
+    margin-bottom: 20px;
+  }
+  .vehicle-text h2 em { font-style: italic; color: var(--accent); }
+  .vehicle-text p {
+    color: var(--ink-mid);
+    font-size: 14px;
+    line-height: 1.9;
+    margin-bottom: 16px;
+  }
+  .vehicle-img {
+    width: 100%;
+    border: 1px solid var(--rule);
+    display: block;
+  }
+  .vehicle-specs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 28px;
+  }
+  .spec-item {
+    padding: 16px;
+    background: var(--bg-alt);
+    border: 1px solid var(--rule);
+  }
+  .spec-item .label {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    margin-bottom: 4px;
+    display: block;
+  }
+  .spec-item .value {
+    font-family: 'Instrument Serif', serif;
+    font-size: 18px;
+    color: var(--ink);
+  }
+
+  /* --- CREDENTIALS --- */
+  .cred-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+    margin-top: 40px;
+  }
+  @media (max-width: 800px) { .cred-row { grid-template-columns: 1fr 1fr; } }
+  .cred {
+    background: var(--bg-alt);
+    border: 1px solid var(--rule);
+    padding: 28px 24px;
+    text-align: center;
+  }
+  .cred .num {
+    font-family: 'Instrument Serif', serif;
+    font-size: 32px;
+    color: var(--ink);
+    display: block;
+    margin-bottom: 6px;
+  }
+  .cred .desc {
+    font-size: 10px;
+    color: var(--ink-dim);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    line-height: 1.5;
+  }
+
+  /* --- CTA / CONTACT --- */
+  .cta-section {
+    text-align: center;
+  }
+  .cta-section h2 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 400;
+    line-height: 1.15;
+    margin-bottom: 16px;
+  }
+  .cta-section h2 em { font-style: italic; color: var(--accent); }
+  .cta-section p {
+    color: var(--ink-mid);
+    font-size: 14px;
+    max-width: 600px;
+    margin: 0 auto 32px;
+    line-height: 1.9;
+  }
+  .cta-links {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .cta-link {
+    display: inline-block;
+    padding: 14px 28px;
+    font-family: inherit;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: 1px solid var(--rule);
+    color: var(--ink);
+    transition: all 0.2s ease;
+  }
+  .cta-link:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--bg);
+  }
+  .cta-link.primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--bg);
+  }
+  .cta-link.primary:hover {
+    background: transparent;
+    color: var(--accent);
+  }
+
+  /* --- FOOTER --- */
+  footer {
+    border-top: 1px solid var(--rule);
+    padding: 40px clamp(24px, 6vw, 120px);
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+  .footer-left {
+    font-size: 11px;
+    color: var(--ink-dim);
+    line-height: 1.8;
+  }
+  .footer-left strong { color: var(--ink); font-weight: 500; }
+  .footer-right {
+    display: flex;
+    gap: 20px;
+  }
+  .footer-right a {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+  .footer-right a:hover { color: var(--ink); }
+
+  /* --- ANIMATIONS --- */
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="#">Lorenz<em>Aero</em></a>
+  <div class="nav-links">
+    <a href="#protocol">Protocol</a>
+    <a href="#simulator">Simulator</a>
+    <a href="#vehicle">Vehicle</a>
+    <a href="#contact">Contact</a>
+    <a href="#" class="patent">Patent Pending</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <span class="section-label reveal">Lorenz Aerospace</span>
+  <h1 class="reveal" style="animation-delay: 0.1s">The operating system<br>of the <em>sky</em></h1>
+  <p class="hero-sub reveal" style="animation-delay: 0.2s">
+    Lorenz is building LAPP — the Lorenz Airspace Protocol — an open coordination
+    framework that uses heading-based altitude stratification and market-priced slot
+    auctions to manage dense eVTOL traffic safely and efficiently.
+  </p>
+  <div class="hero-meta reveal" style="animation-delay: 0.3s">
+    <div class="hero-meta-item">
+      <span class="label">Status</span>
+      <span class="value accent">Patent Pending</span>
+    </div>
+    <div class="hero-meta-item">
+      <span class="label">Application</span>
+      <span class="value">64/041,519</span>
+    </div>
+    <div class="hero-meta-item">
+      <span class="label">Filed</span>
+      <span class="value">April 16, 2026</span>
+    </div>
+    <div class="hero-meta-item">
+      <span class="label">Entity</span>
+      <span class="value">Lorenz Motors Corp</span>
+    </div>
+  </div>
+</section>
+
+<hr class="section-rule">
+
+<!-- PROBLEM -->
+<section id="problem">
+  <span class="section-label reveal">The Problem</span>
+  <div class="problem-grid">
+    <h2 class="reveal">Everyone is building the <em>aircraft</em>. Nobody is building the <em>sky</em>.</h2>
+    <div class="problem-text reveal">
+      <p>
+        Joby, Archer, Lilium, and dozens of other companies are racing to certify eVTOL
+        aircraft for urban air mobility. But every one of them assumes someone else will
+        solve the airspace coordination problem — the question of how hundreds of
+        vehicles share the same low-altitude sky safely, efficiently, and at scale.
+      </p>
+      <p>
+        Today, that altitude band (500–2,000 feet above ground) is essentially
+        unstructured. No protocol defines how aircraft select altitudes, resolve
+        route conflicts, or allocate scarce airspace during congestion. The FAA's
+        UTM framework provides architecture but not the protocol. EASA's U-space
+        defines service levels but not allocation logic.
+      </p>
+      <p>
+        Lorenz is filling that gap.
+      </p>
+    </div>
+  </div>
+</section>
+
+<hr class="section-rule">
+
+<!-- PROTOCOL -->
+<section id="protocol">
+  <div class="protocol-header reveal">
+    <span class="section-label">The Protocol</span>
+    <h2>LAPP: Lorenz <em>Airspace</em> Protocol</h2>
+    <p>
+      LAPP is an open coordination protocol — analogous to TCP/IP for internet traffic —
+      that defines how eVTOL vehicles share low-altitude airspace. Any aircraft implementing
+      the LAPP stack can operate in LAPP-managed airspace, regardless of manufacturer.
+    </p>
+  </div>
+  <div class="protocol-features reveal">
+    <div class="feature">
+      <span class="feature-num">01</span>
+      <h3>Altitude by Heading</h3>
+      <p>Eight altitude layers, each assigned to a compass octant. Aircraft select cruise altitude from their direction of travel. Head-on conflicts eliminated by convention, not computation.</p>
+    </div>
+    <div class="feature">
+      <span class="feature-num">02</span>
+      <h3>Market-Priced Slots</h3>
+      <p>Turn-point contention resolved by sealed-bid second-price (Vickrey) auctions. Scarce airspace goes to the aircraft that values it most. Revenue funds the infrastructure.</p>
+    </div>
+    <div class="feature">
+      <span class="feature-num">03</span>
+      <h3>Emergency Reserves</h3>
+      <p>Emergency and public-safety aircraft receive absolute priority at zero cost. Commercial auction revenues fund this capacity. The market is real, but safety isn't for sale.</p>
+    </div>
+    <div class="feature">
+      <span class="feature-num">04</span>
+      <h3>Open Standard</h3>
+      <p>LAPP is proposed as an open protocol. Lorenz operates the reference implementation and ledger infrastructure — the exchange, not the traders.</p>
+    </div>
+    <div class="feature">
+      <span class="feature-num">05</span>
+      <h3>Empirical Foundations</h3>
+      <p>Protocol parameters derived from agent-based simulation. Optimal lane tolerance identified at 5–7°. Auction vs. FCFS tradeoffs quantified. Results published in the whitepaper.</p>
+    </div>
+    <div class="feature">
+      <span class="feature-num">06</span>
+      <h3>Revenue Model</h3>
+      <p>40% protocol operator. 30% infrastructure fund. 20% regulatory compliance. 10% access subsidy. Airspace coordination that funds itself.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="section-rule">
+
+<!-- SIMULATOR -->
+<section class="sim-section" id="simulator">
+  <div class="sim-inner">
+    <div class="sim-header reveal">
+      <h2>Try the <em>Reference Simulator</em></h2>
+      <span class="sim-cta">Interactive · runs in your browser</span>
+    </div>
+    <!-- IFRAME: host the sim HTML on GitHub Pages or similar, replace src below -->
+    <iframe class="sim-embed reveal" src="lapp-reference-simulator.html" frameborder="0" allow="fullscreen" loading="lazy"></iframe>
+    <div class="sim-footer reveal">
+      <span>LAPP Reference Simulator v0.5 · Lorenz Aerospace</span>
+      <a href="LAPP-v0.1-Whitepaper-Lorenz-Aerospace.pdf" download>Download Whitepaper (PDF) →</a>
+    </div>
+  </div>
+</section>
+
+<!-- VEHICLE -->
+<section id="vehicle">
+  <span class="section-label reveal">The Reference Vehicle</span>
+  <div class="vehicle-grid">
+    <div class="vehicle-text reveal">
+      <h2>Lorenz <em>Aeroboticar</em></h2>
+      <p>
+        The Aeroboticar is the first aircraft designed from the ground up around
+        the LAPP protocol — engineered to meet the climb rates, energy profiles,
+        and communication requirements that the airspace standard demands.
+      </p>
+      <p>
+        It is the Pixel to LAPP's Android: reference hardware that proves the
+        protocol works in physical flight. Currently in 1:5 scale prototype,
+        with full-scale development underway.
+      </p>
+      <div class="vehicle-specs">
+        <div class="spec-item">
+          <span class="label">Architecture</span>
+          <span class="value">Ducted Fan Tri-foil</span>
+        </div>
+        <div class="spec-item">
+          <span class="label">Status</span>
+          <span class="value">1:5 Prototype</span>
+        </div>
+        <div class="spec-item">
+          <span class="label">Propulsion</span>
+          <span class="value">Electric VTOL</span>
+        </div>
+        <div class="spec-item">
+          <span class="label">LAPP Native</span>
+          <span class="value">Yes</span>
+        </div>
+      </div>
+    </div>
+    <img class="vehicle-img reveal" src="https://static.wixstatic.com/media/509cc2_11c3317da7a14e25a0d0af31bd301094~mv2.png/v1/fill/w_979,h_548,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/Screenshot%202026-03-16%20131501.png" alt="Lorenz Aeroboticar render" />
+  </div>
+</section>
+
+<hr class="section-rule">
+
+<!-- CREDENTIALS -->
+<section id="credentials">
+  <span class="section-label reveal">Track Record</span>
+  <div class="cred-row reveal">
+    <div class="cred">
+      <span class="num">2</span>
+      <span class="desc">U.S. Patents<br>(issued + pending)</span>
+    </div>
+    <div class="cred">
+      <span class="num">8</span>
+      <span class="desc">Years in<br>development</span>
+    </div>
+    <div class="cred">
+      <span class="num">1:5</span>
+      <span class="desc">Scale prototype<br>completed</span>
+    </div>
+    <div class="cred">
+      <span class="num">v0.5</span>
+      <span class="desc">Simulator<br>iterations</span>
+    </div>
+  </div>
+</section>
+
+<hr class="section-rule">
+
+<!-- CONTACT -->
+<section class="cta-section" id="contact">
+  <span class="section-label reveal">Collaborate</span>
+  <h2 class="reveal">Seeking collaborators in aerospace,<br><em>regulation</em>, and <em>research</em></h2>
+  <p class="reveal">
+    Lorenz is looking for aerospace engineers, air traffic management researchers,
+    aviation regulators, and eVTOL operators interested in contributing to the
+    development of an open airspace coordination standard.
+  </p>
+  <div class="cta-links reveal">
+    <a class="cta-link primary" href="mailto:peter@lorenzmotors.com">Contact Lorenz</a>
+    <a class="cta-link" href="LAPP-v0.1-Whitepaper-Lorenz-Aerospace.pdf" download>Read the Whitepaper</a>
+    <a class="cta-link" href="#simulator">Try the Simulator</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">
+    <strong>Lorenz Motors Corp</strong><br>
+    Patent Pending · U.S. Application No. 64/041,519<br>
+    Design Patent US-D1078585-S<br>
+    Woodbridge, New Jersey
+  </div>
+  <div class="footer-right">
+    <a href="https://www.linkedin.com/in/peter--roman/">LinkedIn</a>
+    <a href="https://www.youtube.com/channel/UCSqoZYtYOm6KCniw96xjAoA">YouTube</a>
+    <a href="https://www.instagram.com/lorenzaero">Instagram</a>
+  </div>
+</footer>
+
+<script>
+// Reveal on scroll
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.12 });
+reveals.forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LAPP Reference Simulator — Lorenz Aerospace</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600&family=Fraunces:opsz,wght@9..144,300;9..144,600;9..144,900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e14;
+    --bg-panel: #0f1419;
+    --ink: #e8e6e3;
+    --ink-dim: #7a8290;
+    --rule: #1c2430;
+    --accent: #ff4d3d;
+    --warn: #ffb84d;
+    --ok: #5eead4;
+    --gold: #fbbf24;
+    --energy: #a78bfa;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    min-height: 100vh;
+  }
+  body {
+    background-image:
+      radial-gradient(circle at 20% 10%, rgba(255, 77, 61, 0.06), transparent 40%),
+      radial-gradient(circle at 80% 90%, rgba(96, 165, 250, 0.05), transparent 40%);
+  }
+  .wrap { max-width: 1440px; margin: 0 auto; padding: 24px 24px 48px; }
+
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 16px;
+    margin-bottom: 18px;
+  }
+  .title {
+    font-family: 'Fraunces', serif;
+    font-weight: 900;
+    font-size: 40px;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+  }
+  .title em { font-style: italic; font-weight: 300; color: var(--accent); }
+  .subtitle {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    margin-top: 6px;
+  }
+  .meta {
+    text-align: right;
+    font-size: 10px;
+    color: var(--ink-dim);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    line-height: 1.8;
+  }
+  .meta strong { color: var(--ink); }
+  .meta a {
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px dotted var(--accent);
+    transition: opacity 0.15s ease;
+  }
+  .meta a:hover { opacity: 0.7; }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 18px;
+  }
+  @media (max-width: 960px) { .layout { grid-template-columns: 1fr; } }
+
+  .left-stack { display: flex; flex-direction: column; gap: 4px; position: relative; }
+
+  .canvas-shell {
+    background: var(--bg-panel);
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    overflow: hidden;
+    position: relative;
+  }
+  .canvas-label {
+    position: absolute;
+    top: 10px;
+    left: 12px;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    z-index: 2;
+    pointer-events: none;
+  }
+  .canvas-label span { color: var(--accent); }
+  canvas { display: block; width: 100%; height: auto; background: #070a0f; }
+
+  /* Intro overlay */
+  .intro-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(10, 14, 20, 0.92);
+    backdrop-filter: blur(4px);
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    transition: opacity 0.3s ease;
+  }
+  .intro-overlay.hidden { opacity: 0; pointer-events: none; }
+  .intro-content {
+    max-width: 560px;
+    border: 1px solid var(--rule);
+    padding: 28px 30px 26px;
+    background: var(--bg-panel);
+  }
+  .intro-content h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    letter-spacing: -0.01em;
+  }
+  .intro-content .intro-sub {
+    font-size: 10px;
+    color: var(--ink-dim);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .intro-content p {
+    font-size: 12px;
+    line-height: 1.7;
+    color: var(--ink-dim);
+    margin-bottom: 10px;
+  }
+  .intro-content p strong { color: var(--ink); font-weight: 600; }
+  .intro-content ul {
+    font-size: 11px;
+    line-height: 1.7;
+    color: var(--ink-dim);
+    margin: 8px 0 16px 4px;
+    list-style: none;
+  }
+  .intro-content ul li { padding: 2px 0 2px 14px; position: relative; }
+  .intro-content ul li::before {
+    content: '§';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+  }
+  .intro-content .intro-btn {
+    margin-top: 16px;
+    background: var(--accent);
+    color: #0a0e14;
+    border: none;
+    padding: 12px 22px;
+    font-family: inherit;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .intro-content .intro-btn:hover { opacity: 0.85; }
+
+  .side-bar {
+    background: var(--bg-panel);
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    position: relative;
+  }
+  .side-label {
+    position: absolute;
+    top: 10px;
+    left: 12px;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    z-index: 2;
+    pointer-events: none;
+  }
+  .side-label span { color: var(--energy); }
+
+  .panel { display: flex; flex-direction: column; gap: 12px; }
+  .card {
+    background: var(--bg-panel);
+    border: 1px solid var(--rule);
+    padding: 14px;
+    border-radius: 2px;
+  }
+  .card h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 10px;
+    letter-spacing: -0.01em;
+  }
+  .card h3 .hash { color: var(--accent); margin-right: 6px; }
+
+  .stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 4px 0;
+    border-bottom: 1px dashed var(--rule);
+  }
+  .stat-row:last-child { border-bottom: none; }
+  .stat-label {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-dim);
+  }
+  .stat-val {
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .stat-val.warn { color: var(--warn); }
+  .stat-val.danger { color: var(--accent); }
+  .stat-val.ok { color: var(--ok); }
+  .stat-val.gold { color: var(--gold); }
+  .stat-val.energy { color: var(--energy); }
+
+  /* Revenue with sparkline */
+  .revenue-row {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 6px 0 2px;
+    border-top: 1px solid var(--rule);
+    margin-top: 4px;
+  }
+  .revenue-row .stat-label { color: var(--gold); }
+  .revenue-row .stat-val { font-size: 22px; }
+  .sparkline { width: 100%; height: 24px; display: block; }
+
+  .controls { display: flex; flex-direction: column; gap: 9px; }
+  .ctrl { display: flex; flex-direction: column; gap: 3px; }
+  .ctrl label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-dim);
+  }
+  .ctrl label strong { color: var(--ink); font-weight: 600; }
+  input[type="range"] { width: 100%; -webkit-appearance: none; background: transparent; }
+  input[type="range"]::-webkit-slider-runnable-track { height: 2px; background: var(--rule); }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 12px; height: 12px;
+    background: var(--accent);
+    border-radius: 50%;
+    margin-top: -5px;
+    cursor: pointer;
+  }
+  input[type="range"]::-moz-range-track { height: 2px; background: var(--rule); }
+  input[type="range"]::-moz-range-thumb {
+    width: 12px; height: 12px;
+    background: var(--accent);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+
+  .btn-row { display: flex; gap: 6px; }
+  button {
+    flex: 1;
+    background: transparent;
+    color: var(--ink);
+    border: 1px solid var(--rule);
+    padding: 8px 6px;
+    font-family: inherit;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  button:hover { background: var(--accent); border-color: var(--accent); color: #0a0e14; }
+  .mode-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
+  .mode-row button.active {
+    background: var(--accent);
+    color: #0a0e14;
+    border-color: var(--accent);
+  }
+
+  .presets {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5px;
+  }
+  .presets button {
+    text-align: left;
+    padding: 9px 10px;
+    font-size: 9px;
+  }
+  .presets button .preset-name {
+    display: block;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+  }
+  .presets button .preset-desc {
+    display: block;
+    color: var(--ink-dim);
+    font-size: 8px;
+    margin-top: 2px;
+    text-transform: none;
+    letter-spacing: 0.02em;
+    line-height: 1.4;
+  }
+  .presets button:hover .preset-desc { color: #0a0e14; opacity: 0.8; }
+
+  .legend {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px 10px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 9px;
+    color: var(--ink-dim);
+  }
+  .swatch { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+  .log {
+    max-height: 110px;
+    overflow-y: auto;
+    font-size: 9px;
+    line-height: 1.5;
+    color: var(--ink-dim);
+  }
+  .log div { padding: 2px 0; border-bottom: 1px dashed var(--rule); }
+  .log div:last-child { border-bottom: none; }
+  .log .entry-won { color: var(--ok); }
+  .log .entry-lost { color: var(--warn); }
+  .log .entry-emerg { color: var(--accent); font-weight: 600; }
+  .log .entry-trans { color: var(--energy); }
+  .log::-webkit-scrollbar { width: 3px; }
+  .log::-webkit-scrollbar-track { background: var(--rule); }
+  .log::-webkit-scrollbar-thumb { background: var(--ink-dim); }
+
+  footer {
+    margin-top: 28px;
+    padding-top: 18px;
+    border-top: 1px solid var(--rule);
+    font-size: 10px;
+    color: var(--ink-dim);
+    letter-spacing: 0.08em;
+    line-height: 1.8;
+  }
+  footer em { color: var(--ink); font-style: italic; }
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1 class="title">LAPP <em>Reference</em></h1>
+      <div class="subtitle">Lorenz Airspace Protocol · Interactive Simulator</div>
+    </div>
+    <div class="meta">
+      v0.5 · 8-sector · Vickrey clearing<br>
+      Altitude Band: 1000–1800 ft AGL<br>
+      <strong>Status:</strong> <a href="#">Read the whitepaper →</a>
+    </div>
+  </header>
+
+  <div class="layout">
+    <div class="left-stack">
+      <div class="canvas-shell">
+        <div class="canvas-label">TOP-DOWN · SECTOR <span>ALPHA</span></div>
+        <canvas id="sim" width="1040" height="580"></canvas>
+
+        <div class="intro-overlay" id="intro">
+          <div class="intro-content">
+            <h2>LAPP Reference Simulator</h2>
+            <div class="intro-sub">Market-based low-altitude airspace coordination</div>
+            <p>
+              You are watching a live simulation of the <strong>Lorenz Airspace Protocol</strong> — a proposed
+              coordination framework for dense eVTOL traffic at 1,000 to 1,800 feet above ground.
+              Each dot is an aircraft. Each color is an altitude layer assigned by heading.
+            </p>
+            <p>What to watch for:</p>
+            <ul>
+              <li>Aircraft pick altitude from their direction of travel (the hemispheric rule)</li>
+              <li>Small gold squares are turn points — contested slots sold by auction</li>
+              <li>Red dashed rings mark emergency aircraft that pay nothing and always win</li>
+              <li>The revenue counter shows Lorenz's cut from market-priced slots</li>
+            </ul>
+            <p>
+              Try the scenario presets to jump to different operational conditions, or toggle
+              between <strong>None</strong>, <strong>FCFS</strong>, and <strong>Auction</strong>
+              allocation modes to see how market clearing compares to conventional approaches.
+            </p>
+            <button class="intro-btn" id="intro-start">Begin Simulation</button>
+          </div>
+        </div>
+      </div>
+      <div class="side-bar">
+        <div class="side-label">SIDE VIEW · <span>ALTITUDE</span></div>
+        <canvas id="side" width="1040" height="150"></canvas>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="card">
+        <h3><span class="hash">§</span>Scenario</h3>
+        <div class="presets">
+          <button data-preset="morning">
+            <span class="preset-name">Early Morning</span>
+            <span class="preset-desc">Low density, relaxed operations</span>
+          </button>
+          <button data-preset="rush">
+            <span class="preset-name">Rush Hour</span>
+            <span class="preset-desc">High density, contested slots</span>
+          </button>
+          <button data-preset="emergency">
+            <span class="preset-name">Emergency Surge</span>
+            <span class="preset-desc">20% emergency traffic</span>
+          </button>
+          <button data-preset="stress">
+            <span class="preset-name">Stress Test</span>
+            <span class="preset-desc">Maximum density, tight lanes</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="hash">§</span>Allocation Mode</h3>
+        <div class="mode-row">
+          <button data-mode="none">None</button>
+          <button data-mode="fcfs">FCFS</button>
+          <button data-mode="auction" class="active">Auction</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="hash">§</span>Telemetry</h3>
+        <div class="stat-row">
+          <span class="stat-label">In Flight</span>
+          <span class="stat-val" id="stat-count">0</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Active Conflicts</span>
+          <span class="stat-val" id="stat-conflicts">0</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Conflicts / min</span>
+          <span class="stat-val" id="stat-rate">0.0</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Avg Energy Used</span>
+          <span class="stat-val energy" id="stat-energy">—</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Clearing Price (avg)</span>
+          <span class="stat-val gold" id="stat-price">—</span>
+        </div>
+
+        <div class="revenue-row">
+          <div class="stat-row" style="border:none; padding-bottom:0;">
+            <span class="stat-label">Cumulative Revenue</span>
+            <span class="stat-val gold" id="stat-revenue">$0</span>
+          </div>
+          <canvas class="sparkline" id="spark" width="280" height="24"></canvas>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="hash">§</span>Parameters</h3>
+        <div class="controls">
+          <div class="ctrl">
+            <label>Traffic <strong id="lbl-n">30</strong></label>
+            <input type="range" id="in-n" min="4" max="120" value="30">
+          </div>
+          <div class="ctrl">
+            <label>Lane Tolerance <strong id="lbl-tol">±6°</strong></label>
+            <input type="range" id="in-tol" min="1" max="22" value="6">
+          </div>
+          <div class="ctrl">
+            <label>Emergency % <strong id="lbl-em">5</strong></label>
+            <input type="range" id="in-em" min="0" max="30" value="5">
+          </div>
+          <div class="ctrl">
+            <label>Sim Speed <strong id="lbl-speed">1.0×</strong></label>
+            <input type="range" id="in-speed" min="1" max="40" value="10">
+          </div>
+          <div class="btn-row">
+            <button id="btn-reset">Reset Sim</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="hash">§</span>Feed</h3>
+        <div class="log" id="log"></div>
+      </div>
+
+      <div class="card">
+        <h3><span class="hash">§</span>Layers</h3>
+        <div class="legend" id="legend"></div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    Reference implementation of the <em>Lorenz Airspace Protocol</em>. This simulator illustrates protocol
+    mechanics under simplified assumptions — it is not a high-fidelity flight model. For a full discussion
+    of the protocol, simulation methodology, empirical findings, and open questions, see the LAPP v0.1
+    whitepaper. &nbsp;<a href="#">Whitepaper →</a> &nbsp;·&nbsp; <a href="#">Lorenz Aerospace</a>
+  </footer>
+</div>
+
+<script>
+(() => {
+  const canvas = document.getElementById('sim');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+
+  const sideCanvas = document.getElementById('side');
+  const sctx = sideCanvas.getContext('2d');
+  const SW = sideCanvas.width, SH = sideCanvas.height;
+
+  const sparkCanvas = document.getElementById('spark');
+  const spctx = sparkCanvas.getContext('2d');
+  const SPW = sparkCanvas.width, SPH = sparkCanvas.height;
+
+  const LAYERS = [
+    { name: 'L1', alt: 1000, dir: 'N',  compass:   0, color: '#ff4d3d' },
+    { name: 'L2', alt: 1100, dir: 'NE', compass:  45, color: '#ff8a3d' },
+    { name: 'L3', alt: 1200, dir: 'E',  compass:  90, color: '#ffc93d' },
+    { name: 'L4', alt: 1300, dir: 'SE', compass: 135, color: '#a3e635' },
+    { name: 'L5', alt: 1400, dir: 'S',  compass: 180, color: '#5eead4' },
+    { name: 'L6', alt: 1500, dir: 'SW', compass: 225, color: '#60a5fa' },
+    { name: 'L7', alt: 1600, dir: 'W',  compass: 270, color: '#a78bfa' },
+    { name: 'L8', alt: 1700, dir: 'NW', compass: 315, color: '#f472b6' },
+  ];
+
+  const legendEl = document.getElementById('legend');
+  LAYERS.forEach(l => {
+    const row = document.createElement('div');
+    row.className = 'legend-item';
+    row.innerHTML = `<span class="swatch" style="background:${l.color}"></span>${l.name} ${l.alt}ft ${l.dir}`;
+    legendEl.appendChild(row);
+  });
+
+  function canvasAngleToCompass(theta) {
+    let deg = Math.atan2(Math.cos(theta), -Math.sin(theta)) * 180 / Math.PI;
+    if (deg < 0) deg += 360;
+    return deg;
+  }
+  function compassToCanvasAngle(deg) {
+    const rad = deg * Math.PI / 180;
+    return Math.atan2(-Math.cos(rad), Math.sin(rad));
+  }
+  function angleDiff(a, b) { return ((a - b + 540) % 360) - 180; }
+  function layerWithinTolerance(bearing, tol) {
+    let best = null;
+    for (let i = 0; i < LAYERS.length; i++) {
+      const d = Math.abs(angleDiff(bearing, LAYERS[i].compass));
+      if (d <= tol && (best === null || d < best.diff)) best = { layer: i, diff: d };
+    }
+    return best;
+  }
+  function headingVec(compassDeg) {
+    const a = compassToCanvasAngle(compassDeg);
+    return { x: Math.cos(a), y: Math.sin(a) };
+  }
+
+  const CELL = 60;
+  const SLOT_WINDOW = 2.5;
+  let ledger = new Map();
+  function cellKey(x, y) { return `${Math.floor(x / CELL)},${Math.floor(y / CELL)}`; }
+  function getReservations(x, y, t) {
+    const arr = ledger.get(cellKey(x, y)) || [];
+    return arr.filter(e => !(e.endT < t - SLOT_WINDOW/2 || e.startT > t + SLOT_WINDOW/2));
+  }
+  function addReservation(x, y, t, ownerId, price, bid, isEmerg) {
+    const key = cellKey(x, y);
+    if (!ledger.has(key)) ledger.set(key, []);
+    ledger.get(key).push({ ownerId, startT: t - SLOT_WINDOW/2, endT: t + SLOT_WINDOW/2, price, _bid: bid, wasEmergency: isEmerg });
+  }
+  function removeReservations(ownerId) {
+    for (const [k, arr] of ledger) {
+      const f = arr.filter(e => e.ownerId !== ownerId);
+      if (f.length === 0) ledger.delete(k); else ledger.set(k, f);
+    }
+  }
+  function gcLedger(now) {
+    for (const [k, arr] of ledger) {
+      const f = arr.filter(e => e.endT > now - 5);
+      if (f.length === 0) ledger.delete(k); else ledger.set(k, f);
+    }
+  }
+
+  function auctionForSlot(x, y, t, bid, ownerId, isEmerg, mode) {
+    const existing = getReservations(x, y, t).filter(e => e.ownerId !== ownerId);
+    if (isEmerg) {
+      const displaced = existing.filter(e => !e.wasEmergency).map(e => e.ownerId);
+      const key = cellKey(x, y);
+      const arr = ledger.get(key) || [];
+      ledger.set(key, arr.filter(e => !(displaced.includes(e.ownerId) && !e.wasEmergency)));
+      return { granted: true, price: 0, displaced };
+    }
+    if (existing.length === 0) return { granted: true, price: 0, displaced: [] };
+    if (mode === 'fcfs') return { granted: false, price: 0, displaced: [] };
+    if (mode === 'auction') {
+      const maxComp = Math.max(...existing.map(e => e._bid ?? 0));
+      if (bid > maxComp) return { granted: true, price: maxComp, displaced: existing.map(e => e.ownerId) };
+      return { granted: false, price: 0, displaced: [] };
+    }
+    return { granted: true, price: 0, displaced: [] };
+  }
+
+  function planRoute(ox, oy, dx, dy, tol, speed, startTime) {
+    const directBearing = canvasAngleToCompass(Math.atan2(dy - oy, dx - ox));
+    const direct = layerWithinTolerance(directBearing, tol);
+    const straightDist = Math.hypot(dx - ox, dy - oy);
+    if (direct) {
+      return {
+        waypoints: [{ x: ox, y: oy, layer: direct.layer }, { x: dx, y: dy, layer: direct.layer }],
+        pathLen: straightDist, detourRatio: 1.0, candidates: null,
+      };
+    }
+    const candidates = [];
+    for (let i = 0; i < LAYERS.length; i++) {
+      const v1 = headingVec(LAYERS[i].compass);
+      for (let j = 0; j < LAYERS.length; j++) {
+        if (i === j) continue;
+        const v2 = headingVec(LAYERS[j].compass);
+        const rhsX = dx - ox, rhsY = dy - oy;
+        const det = v1.x * v2.y - v1.y * v2.x;
+        if (Math.abs(det) < 1e-6) continue;
+        const t1 = (rhsX * v2.y - rhsY * v2.x) / det;
+        const t2 = (v1.x * rhsY - v1.y * rhsX) / det;
+        if (t1 <= 10 || t2 <= 10) continue;
+        const tx = ox + t1 * v1.x, ty = oy + t1 * v1.y;
+        if (tx < -50 || tx > W + 50 || ty < -50 || ty > H + 50) continue;
+        candidates.push({ total: t1 + t2, tx, ty, l1: i, l2: j, eta1: startTime + t1 / speed });
+      }
+    }
+    candidates.sort((a, b) => a.total - b.total);
+    return { waypoints: null, candidates, straightDist };
+  }
+
+  // Aircraft
+  let aircraft = [];
+  let params = { n: 30, tol: 6, climbRate: 300, emergencyPct: 5, speedMul: 1.0, mode: 'auction' };
+  let simTime = 0;
+  let conflictEvents = [];
+  let holdTimes = [];
+  let clearingPrices = [];
+  let energySamples = [];
+  let totalRevenue = 0;
+  let revenueHistory = []; // {t, total} points for sparkline
+  let logEntries = [];
+  let paused = true;
+
+  function pushLog(msg, cls) {
+    logEntries.unshift({ msg, cls, t: simTime });
+    if (logEntries.length > 30) logEntries.pop();
+  }
+
+  function samplePriority() {
+    const u = Math.random();
+    return Math.max(1, Math.round(10 + 90 * Math.pow(1 - u, -0.7) - 90));
+  }
+
+  const CRUISE_RATE = 1.0;
+  const CLIMB_RATE_ENERGY = 3.0;
+  const DESCEND_RATE_ENERGY = 1.5;
+  const BATTERY_MARGIN = 5.0;
+
+  function spawnOne() {
+    const margin = 20;
+    const edge = Math.floor(Math.random() * 4);
+    let x, y;
+    if (edge === 0) { x = Math.random() * W; y = margin; }
+    if (edge === 1) { x = W - margin; y = Math.random() * H; }
+    if (edge === 2) { x = Math.random() * W; y = H - margin; }
+    if (edge === 3) { x = margin; y = Math.random() * H; }
+    const tx = Math.random() * (W - 2*margin) + margin;
+    const ty = Math.random() * (H - 2*margin) + margin;
+    const id = Math.random();
+    const speed = 35 + Math.random() * 15;
+    const isEmergency = Math.random() < (params.emergencyPct / 100);
+    const priority = isEmergency ? 9999 : samplePriority();
+    const straightDist = Math.hypot(tx - x, ty - y);
+    const maxEnergy = (straightDist / speed) * CRUISE_RATE * BATTERY_MARGIN;
+
+    const a = {
+      id, x, y, tx, ty, speed, priority, isEmergency,
+      alive: true, spawnTime: simTime, holdUntil: simTime,
+      route: null, segIdx: 0,
+      altitude: 0, targetAlt: 0,
+      transitioning: false, fromLayer: 0, toLayer: 0,
+      energy: maxEnergy, maxEnergy: maxEnergy, energyEmergency: false,
+      _c: new Set(), active: false, replanAttempts: 0,
+    };
+    tryPlanAndBid(a);
+    return a;
+  }
+
+  function tryPlanAndBid(a) {
+    removeReservations(a.id);
+    const plan = planRoute(a.x, a.y, a.tx, a.ty, params.tol, a.speed, simTime);
+    if (plan.waypoints) {
+      a.route = { waypoints: plan.waypoints, pathLen: plan.pathLen, detourRatio: plan.detourRatio };
+      a.altitude = LAYERS[plan.waypoints[0].layer].alt;
+      a.targetAlt = a.altitude;
+      a.transitioning = false;
+      a.active = true;
+      a.segIdx = 0;
+      return;
+    }
+    const cands = plan.candidates;
+    if (!cands || cands.length === 0) {
+      a.route = {
+        waypoints: [{ x: a.x, y: a.y, layer: 0 }, { x: a.tx, y: a.ty, layer: 0 }],
+        pathLen: Math.hypot(a.tx - a.x, a.ty - a.y), detourRatio: 1.0,
+      };
+      a.altitude = LAYERS[0].alt; a.targetAlt = a.altitude; a.active = true;
+      return;
+    }
+    for (const c of cands.slice(0, 5)) {
+      const res = auctionForSlot(c.tx, c.ty, c.eta1, a.priority, a.id, a.isEmergency, params.mode);
+      if (res.granted) {
+        for (const dispId of res.displaced) {
+          const disp = aircraft.find(ac => ac.id === dispId);
+          if (disp) {
+            disp.active = false;
+            disp.replanAttempts++;
+            disp.holdUntil = simTime + 1.5;
+          }
+        }
+        addReservation(c.tx, c.ty, c.eta1, a.id, res.price, a.priority, a.isEmergency);
+        a.route = {
+          waypoints: [
+            { x: a.x, y: a.y, layer: c.l1 },
+            { x: c.tx, y: c.ty, layer: c.l2 },
+            { x: a.tx, y: a.ty, layer: c.l2 },
+          ],
+          pathLen: c.total, detourRatio: c.total / plan.straightDist,
+        };
+        a.altitude = LAYERS[c.l1].alt; a.targetAlt = a.altitude;
+        a.transitioning = false; a.segIdx = 0; a.active = true;
+        if (res.price > 0) {
+          totalRevenue += res.price;
+          clearingPrices.push(res.price);
+          if (clearingPrices.length > 100) clearingPrices.shift();
+          pushLog(`#${a.id.toString().slice(2,5)} slot @ $${res.price}`, 'entry-won');
+        }
+        if (a.isEmergency) pushLog(`#${a.id.toString().slice(2,5)} EMERG priority`, 'entry-emerg');
+        return;
+      }
+    }
+    a.active = false;
+    a.holdUntil = simTime + 1 + Math.random() * 2;
+    a.replanAttempts++;
+    if (a.replanAttempts >= 5) {
+      a.route = {
+        waypoints: [{ x: a.x, y: a.y, layer: 0 }, { x: a.tx, y: a.ty, layer: 0 }],
+        pathLen: Math.hypot(a.tx - a.x, a.ty - a.y), detourRatio: 1.0,
+      };
+      a.altitude = LAYERS[0].alt; a.targetAlt = a.altitude; a.active = true;
+    } else {
+      pushLog(`#${a.id.toString().slice(2,5)} hold ${(a.holdUntil - simTime).toFixed(1)}s`, 'entry-lost');
+    }
+  }
+
+  function effectiveLayer(a) {
+    if (!a.route) return [0];
+    if (a.transitioning) return [a.fromLayer, a.toLayer];
+    return [a.route.waypoints[a.segIdx].layer];
+  }
+
+  function reset() {
+    aircraft = [];
+    ledger.clear();
+    simTime = 0;
+    conflictEvents = [];
+    holdTimes = [];
+    clearingPrices = [];
+    energySamples = [];
+    totalRevenue = 0;
+    revenueHistory = [];
+    logEntries = [];
+    for (let i = 0; i < params.n; i++) aircraft.push(spawnOne());
+  }
+
+  function step(dt) {
+    simTime += dt;
+    if (Math.floor(simTime * 2) !== Math.floor((simTime - dt) * 2)) gcLedger(simTime);
+    while (aircraft.length < params.n) aircraft.push(spawnOne());
+
+    let transCount = 0;
+
+    for (const a of aircraft) {
+      if (!a.active) {
+        if (simTime >= a.holdUntil) {
+          tryPlanAndBid(a);
+          if (a.active) { holdTimes.push(simTime - a.spawnTime); if (holdTimes.length > 100) holdTimes.shift(); }
+        }
+        continue;
+      }
+
+      const wps = a.route.waypoints;
+      const tgt = wps[a.segIdx + 1];
+      if (!tgt) { a.alive = false; continue; }
+
+      const dx = tgt.x - a.x, dy = tgt.y - a.y;
+      const dist = Math.hypot(dx, dy);
+      const nx = dx / dist, ny = dy / dist;
+      a.x += nx * a.speed * dt;
+      a.y += ny * a.speed * dt;
+
+      const currentSegLayer = wps[a.segIdx].layer;
+      const nextSegLayer = tgt.layer;
+      const currentTargetAlt = LAYERS[nextSegLayer].alt;
+      const altDelta = Math.abs(currentTargetAlt - a.altitude);
+      const climbPerSec = params.climbRate / 60;
+      const timeToClimb = climbPerSec > 0 ? altDelta / climbPerSec : 0;
+      const leadDist = timeToClimb * a.speed;
+
+      if (currentSegLayer !== nextSegLayer && !a.transitioning && altDelta > 0.1 && dist <= leadDist + 5) {
+        a.transitioning = true;
+        a.fromLayer = currentSegLayer;
+        a.toLayer = nextSegLayer;
+        a.targetAlt = currentTargetAlt;
+      }
+
+      if (a.transitioning) {
+        transCount++;
+        const diffNow = a.targetAlt - a.altitude;
+        const stepAlt = climbPerSec * dt;
+        if (Math.abs(diffNow) <= stepAlt) {
+          a.altitude = a.targetAlt;
+          a.transitioning = false;
+        } else {
+          a.altitude += Math.sign(diffNow) * stepAlt;
+        }
+        const isClimbing = diffNow > 0;
+        a.energy -= dt * (isClimbing ? CLIMB_RATE_ENERGY : DESCEND_RATE_ENERGY);
+      } else {
+        if (Math.abs(a.altitude - LAYERS[currentSegLayer].alt) < 1) {
+          a.altitude = LAYERS[currentSegLayer].alt;
+        }
+        a.energy -= dt * CRUISE_RATE;
+      }
+
+      if (Math.hypot(tgt.x - a.x, tgt.y - a.y) < 6) {
+        a.segIdx++;
+        if (a.segIdx >= wps.length - 1) {
+          removeReservations(a.id);
+          energySamples.push(1 - a.energy / a.maxEnergy);
+          if (energySamples.length > 100) energySamples.shift();
+          a.alive = false;
+          continue;
+        }
+      }
+
+      if (a.energy <= 0 && !a.energyEmergency) {
+        a.energyEmergency = true;
+        a.isEmergency = true;
+        pushLog(`#${a.id.toString().slice(2,5)} ENERGY EMERGENCY`, 'entry-emerg');
+      }
+
+      if (a.x < -40 || a.x > W + 40 || a.y < -40 || a.y > H + 40) {
+        removeReservations(a.id);
+        a.alive = false;
+      }
+    }
+    aircraft = aircraft.filter(a => a.alive);
+
+    // Conflicts
+    let activeConflicts = 0;
+    const conflictSet = new Set();
+    const sep = 55;
+    const vertSep = 50;
+    const activeAc = aircraft.filter(a => a.active);
+    for (let i = 0; i < activeAc.length; i++) {
+      for (let j = i+1; j < activeAc.length; j++) {
+        const a = activeAc[i], b = activeAc[j];
+        const hDist = Math.hypot(a.x - b.x, a.y - b.y);
+        if (hDist >= sep) continue;
+        const vDist = Math.abs(a.altitude - b.altitude);
+        let isConflict;
+        if (params.mode === 'none') {
+          isConflict = vDist < vertSep;
+        } else {
+          const aLayers = effectiveLayer(a);
+          const bLayers = effectiveLayer(b);
+          const shared = aLayers.some(l => bLayers.includes(l));
+          isConflict = shared && vDist < vertSep;
+        }
+        if (isConflict) {
+          activeConflicts++;
+          conflictSet.add(a.id);
+          conflictSet.add(b.id);
+          const key = `${Math.min(a.id,b.id)}_${Math.max(a.id,b.id)}`;
+          if (!a._c.has(key)) { a._c.add(key); conflictEvents.push(simTime); }
+        }
+      }
+    }
+    conflictEvents = conflictEvents.filter(t => t > simTime - 60);
+
+    // Revenue history for sparkline
+    if (Math.floor(simTime) !== Math.floor(simTime - dt)) {
+      revenueHistory.push({ t: simTime, total: totalRevenue });
+      if (revenueHistory.length > 120) revenueHistory.shift();
+    }
+
+    return { activeConflicts, conflictSet, transCount };
+  }
+
+  function draw(activeConflicts, conflictSet, transCount) {
+    ctx.fillStyle = '#070a0f';
+    ctx.fillRect(0, 0, W, H);
+    ctx.strokeStyle = 'rgba(28, 36, 48, 0.8)';
+    ctx.lineWidth = 1;
+    for (let x = 0; x < W; x += 60) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+    for (let y = 0; y < H; y += 60) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+
+    for (const [key, arr] of ledger) {
+      const active = arr.filter(e => e.endT > simTime && e.startT < simTime + 10);
+      if (active.length === 0) continue;
+      const [cx, cy] = key.split(',').map(Number);
+      const intensity = Math.min(1, active.length / 3);
+      ctx.fillStyle = `rgba(251, 191, 36, ${0.03 + intensity * 0.1})`;
+      ctx.fillRect(cx * CELL, cy * CELL, CELL, CELL);
+    }
+
+    ctx.save();
+    ctx.translate(W - 50, 50);
+    ctx.strokeStyle = 'rgba(122, 130, 144, 0.35)';
+    ctx.fillStyle = 'rgba(122, 130, 144, 0.6)';
+    ctx.font = '9px JetBrains Mono';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.beginPath(); ctx.arc(0, 0, 30, 0, Math.PI*2); ctx.stroke();
+    ['N','E','S','W'].forEach((c, i) => {
+      const a = i * Math.PI/2 - Math.PI/2;
+      ctx.fillText(c, Math.cos(a)*40, Math.sin(a)*40);
+    });
+    ctx.restore();
+
+    for (const a of aircraft) {
+      if (!a.route) continue;
+      const wps = a.route.waypoints;
+      for (let i = 0; i < wps.length - 1; i++) {
+        ctx.strokeStyle = LAYERS[wps[i].layer].color + (a.active ? '30' : '12');
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(wps[i].x, wps[i].y);
+        ctx.lineTo(wps[i+1].x, wps[i+1].y);
+        ctx.stroke();
+      }
+      for (let i = 1; i < wps.length - 1; i++) {
+        ctx.fillStyle = 'rgba(251, 191, 36, 0.6)';
+        ctx.fillRect(wps[i].x - 2.5, wps[i].y - 2.5, 5, 5);
+      }
+    }
+
+    for (const a of aircraft) {
+      if (!a.active) {
+        ctx.fillStyle = 'rgba(255, 184, 77, 0.4)';
+        ctx.fillRect(a.x - 3, a.y - 3, 6, 6);
+        continue;
+      }
+      const layers = effectiveLayer(a);
+      const primaryLayer = layers[layers.length - 1];
+      const color = LAYERS[primaryLayer].color;
+      const inConflict = conflictSet.has(a.id);
+      const wps = a.route.waypoints;
+      const tgt = wps[a.segIdx + 1];
+      if (!tgt) continue;
+      const theta = Math.atan2(tgt.y - a.y, tgt.x - a.x);
+
+      if (inConflict) {
+        ctx.strokeStyle = '#ff4d3d';
+        ctx.lineWidth = 1.8;
+        ctx.beginPath();
+        ctx.arc(a.x, a.y, 22, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+
+      if (a.transitioning) {
+        ctx.strokeStyle = 'rgba(167, 139, 250, 0.7)';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath();
+        ctx.arc(a.x, a.y, 10, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+
+      // Emergency: double-ring look distinct from conflict halo
+      if (a.isEmergency) {
+        ctx.strokeStyle = 'rgba(255, 77, 61, 0.85)';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([2, 2]);
+        ctx.beginPath();
+        ctx.arc(a.x, a.y, 13, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(a.x, a.y, 16, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+
+      const altNorm = (a.altitude - 900) / 900;
+      const r = 3 + altNorm * 2.5;
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.arc(a.x, a.y, r, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(a.x, a.y);
+      ctx.lineTo(a.x + Math.cos(theta) * (r + 5), a.y + Math.sin(theta) * (r + 5));
+      ctx.stroke();
+    }
+
+    // Side view
+    sctx.fillStyle = '#070a0f';
+    sctx.fillRect(0, 0, SW, SH);
+    const altMin = 950, altMax = 1750;
+    const mapAlt = alt => SH - 10 - ((alt - altMin) / (altMax - altMin)) * (SH - 20);
+    const mapX = x => (x / W) * SW;
+
+    for (const l of LAYERS) {
+      const y = mapAlt(l.alt);
+      sctx.strokeStyle = l.color + '30';
+      sctx.lineWidth = 1;
+      sctx.beginPath();
+      sctx.moveTo(0, y);
+      sctx.lineTo(SW, y);
+      sctx.stroke();
+      sctx.fillStyle = l.color + '70';
+      sctx.font = '8px JetBrains Mono';
+      sctx.textBaseline = 'middle';
+      sctx.fillText(`${l.alt}`, 4, y);
+    }
+
+    for (const a of aircraft) {
+      if (!a.active) continue;
+      const layers = effectiveLayer(a);
+      const primaryLayer = layers[layers.length - 1];
+      const color = LAYERS[primaryLayer].color;
+      const sx = mapX(a.x);
+      const sy = mapAlt(a.altitude);
+      const inConflict = conflictSet.has(a.id);
+
+      if (a.transitioning) {
+        const fromY = mapAlt(LAYERS[a.fromLayer].alt);
+        const toY = mapAlt(LAYERS[a.toLayer].alt);
+        sctx.strokeStyle = 'rgba(167, 139, 250, 0.4)';
+        sctx.lineWidth = 1;
+        sctx.beginPath();
+        sctx.moveTo(sx, fromY);
+        sctx.lineTo(sx, toY);
+        sctx.stroke();
+      }
+
+      if (inConflict) {
+        sctx.fillStyle = 'rgba(255, 77, 61, 0.4)';
+        sctx.beginPath();
+        sctx.arc(sx, sy, 6, 0, Math.PI * 2);
+        sctx.fill();
+      }
+
+      sctx.fillStyle = color;
+      sctx.beginPath();
+      sctx.arc(sx, sy, 2.5, 0, Math.PI * 2);
+      sctx.fill();
+    }
+
+    // Sparkline
+    spctx.clearRect(0, 0, SPW, SPH);
+    if (revenueHistory.length > 1) {
+      const maxRev = Math.max(1, totalRevenue);
+      spctx.strokeStyle = '#fbbf24';
+      spctx.lineWidth = 1.5;
+      spctx.beginPath();
+      for (let i = 0; i < revenueHistory.length; i++) {
+        const x = (i / (revenueHistory.length - 1)) * SPW;
+        const y = SPH - 2 - (revenueHistory[i].total / maxRev) * (SPH - 4);
+        if (i === 0) spctx.moveTo(x, y);
+        else spctx.lineTo(x, y);
+      }
+      spctx.stroke();
+      // Fill underneath
+      spctx.lineTo(SPW, SPH);
+      spctx.lineTo(0, SPH);
+      spctx.closePath();
+      spctx.fillStyle = 'rgba(251, 191, 36, 0.12)';
+      spctx.fill();
+    }
+
+    // HUD
+    document.getElementById('stat-count').textContent = aircraft.filter(a => a.active).length;
+    const confEl = document.getElementById('stat-conflicts');
+    confEl.textContent = activeConflicts;
+    confEl.className = 'stat-val' + (activeConflicts > 0 ? (activeConflicts > 3 ? ' danger' : ' warn') : ' ok');
+    const rate = (conflictEvents.length / Math.min(60, Math.max(1, simTime))) * 60;
+    document.getElementById('stat-rate').textContent = rate.toFixed(1);
+    const avgEnergy = energySamples.length ? (energySamples.reduce((s,v)=>s+v,0) / energySamples.length * 100).toFixed(0) + '%' : '—';
+    document.getElementById('stat-energy').textContent = avgEnergy;
+    const avgPrice = clearingPrices.length ? clearingPrices.reduce((s,v)=>s+v,0) / clearingPrices.length : 0;
+    document.getElementById('stat-price').textContent = params.mode === 'auction' && clearingPrices.length ? '$' + avgPrice.toFixed(0) : '—';
+    document.getElementById('stat-revenue').textContent = '$' + Math.floor(totalRevenue).toLocaleString();
+
+    const logEl = document.getElementById('log');
+    logEl.innerHTML = logEntries.slice(0, 10).map(e => `<div class="${e.cls}">[${e.t.toFixed(0)}s] ${e.msg}</div>`).join('');
+  }
+
+  let last = performance.now();
+  function loop(now) {
+    const dt = paused ? 0 : Math.min(0.1, (now - last) / 1000) * params.speedMul;
+    last = now;
+    const { activeConflicts, conflictSet, transCount } = step(dt);
+    draw(activeConflicts, conflictSet, transCount);
+    requestAnimationFrame(loop);
+  }
+
+  // Presets
+  const PRESETS = {
+    morning:   { n: 15, tol: 8, emergencyPct: 2,  mode: 'auction' },
+    rush:      { n: 50, tol: 6, emergencyPct: 5,  mode: 'auction' },
+    emergency: { n: 35, tol: 6, emergencyPct: 20, mode: 'auction' },
+    stress:    { n: 90, tol: 4, emergencyPct: 5,  mode: 'auction' },
+  };
+  function applyPreset(name) {
+    const p = PRESETS[name];
+    if (!p) return;
+    params.n = p.n;
+    params.tol = p.tol;
+    params.emergencyPct = p.emergencyPct;
+    params.mode = p.mode;
+    document.getElementById('in-n').value = p.n;
+    document.getElementById('lbl-n').textContent = p.n;
+    document.getElementById('in-tol').value = p.tol;
+    document.getElementById('lbl-tol').textContent = '±' + p.tol + '°';
+    document.getElementById('in-em').value = p.emergencyPct;
+    document.getElementById('lbl-em').textContent = p.emergencyPct;
+    document.querySelectorAll('.mode-row button').forEach(b => {
+      b.classList.toggle('active', b.dataset.mode === p.mode);
+    });
+    reset();
+  }
+
+  // Controls
+  document.getElementById('in-n').addEventListener('input', e => {
+    params.n = +e.target.value;
+    document.getElementById('lbl-n').textContent = params.n;
+  });
+  document.getElementById('in-tol').addEventListener('input', e => {
+    params.tol = +e.target.value;
+    document.getElementById('lbl-tol').textContent = '±' + params.tol + '°';
+  });
+  document.getElementById('in-em').addEventListener('input', e => {
+    params.emergencyPct = +e.target.value;
+    document.getElementById('lbl-em').textContent = params.emergencyPct;
+  });
+  document.getElementById('in-speed').addEventListener('input', e => {
+    params.speedMul = +e.target.value / 10;
+    document.getElementById('lbl-speed').textContent = params.speedMul.toFixed(1) + '×';
+  });
+  document.querySelectorAll('.mode-row button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.mode-row button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      params.mode = btn.dataset.mode;
+      reset();
+    });
+  });
+  document.querySelectorAll('.presets button').forEach(btn => {
+    btn.addEventListener('click', () => applyPreset(btn.dataset.preset));
+  });
+  document.getElementById('btn-reset').addEventListener('click', reset);
+
+  // Intro overlay
+  document.getElementById('intro-start').addEventListener('click', () => {
+    document.getElementById('intro').classList.add('hidden');
+    paused = false;
+  });
+
+  reset();
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

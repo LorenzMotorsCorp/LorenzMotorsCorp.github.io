@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Apply — Lorenz Aerospace</title>
+<meta name="description" content="Apply to contribute to Lorenz Aerospace. We're building the airspace protocol and reference eVTOL vehicle that will coordinate the sky.">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #08090c;
+    --bg-alt: #0e1016;
+    --ink: #e4e2dd;
+    --ink-dim: #6b7080;
+    --ink-mid: #9ca0ad;
+    --rule: #1a1d28;
+    --accent: #e04a3a;
+    --accent-soft: rgba(224, 74, 58, 0.12);
+    --gold: #d4a54a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'DM Mono', monospace;
+    font-size: 15px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+    background: rgba(8, 9, 12, 0.9);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--rule);
+    padding: 0 clamp(24px, 4vw, 80px);
+    height: 60px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-logo {
+    font-family: 'Instrument Serif', serif;
+    font-size: 22px; letter-spacing: 0.04em;
+    color: var(--ink); text-decoration: none;
+  }
+  .nav-logo em { color: var(--accent); font-style: italic; }
+  .nav-links { display: flex; gap: 32px; }
+  .nav-links a {
+    font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase;
+    text-decoration: none; color: var(--ink-dim);
+    transition: color 0.2s ease;
+  }
+  .nav-links a:hover, .nav-links a.active { color: var(--ink); }
+  .nav-links a.active { color: var(--accent); }
+  @media (max-width: 700px) {
+    .nav-links { gap: 16px; }
+    .nav-links a { font-size: 9px; letter-spacing: 0.1em; }
+  }
+
+  section {
+    padding: clamp(80px, 12vw, 140px) clamp(24px, 6vw, 120px);
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .section-label {
+    font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 20px; display: block;
+  }
+
+  .hero {
+    padding-top: 100px;
+    min-height: 60vh;
+    display: flex; flex-direction: column; justify-content: center;
+    position: relative;
+  }
+  .hero::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 30% 40%, rgba(224, 74, 58, 0.06) 0%, transparent 50%);
+    pointer-events: none;
+  }
+  .hero h1 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(42px, 7vw, 80px);
+    font-weight: 400; line-height: 1.0;
+    letter-spacing: -0.02em;
+    margin-bottom: 24px;
+  }
+  .hero h1 em { font-style: italic; color: var(--accent); }
+  .hero-sub {
+    font-size: clamp(14px, 1.4vw, 16px);
+    color: var(--ink-mid);
+    max-width: 640px;
+    line-height: 1.85;
+    margin-bottom: 16px;
+  }
+
+  .section-rule { width: 100%; border: none; border-top: 1px solid var(--rule); margin: 0; max-width: 900px; margin: 0 auto; }
+
+  /* Honest section */
+  .honest {
+    padding: clamp(40px, 8vw, 80px) clamp(24px, 6vw, 120px);
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .honest h2 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(26px, 3.5vw, 36px);
+    font-weight: 400;
+    margin-bottom: 20px;
+    line-height: 1.2;
+  }
+  .honest h2 em { font-style: italic; color: var(--accent); }
+  .honest-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    margin-top: 24px;
+  }
+  @media (max-width: 700px) { .honest-grid { grid-template-columns: 1fr; } }
+  .honest-card {
+    background: var(--bg-alt);
+    border: 1px solid var(--rule);
+    padding: 24px 22px;
+  }
+  .honest-card h3 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 18px; font-weight: 400;
+    color: var(--ink); margin-bottom: 8px;
+  }
+  .honest-card h3 em { font-style: italic; color: var(--accent); font-size: 14px; margin-left: 6px; }
+  .honest-card p {
+    font-size: 12.5px;
+    color: var(--ink-mid);
+    line-height: 1.75;
+  }
+
+  /* Form */
+  .form-section {
+    padding: clamp(40px, 8vw, 80px) clamp(24px, 6vw, 120px);
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  .form-section h2 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(28px, 4vw, 40px);
+    font-weight: 400;
+    margin-bottom: 12px;
+    line-height: 1.15;
+  }
+  .form-section h2 em { font-style: italic; color: var(--accent); }
+  .form-section .form-lede {
+    color: var(--ink-mid);
+    margin-bottom: 36px;
+    font-size: 13.5px;
+    line-height: 1.8;
+  }
+
+  form { display: flex; flex-direction: column; gap: 24px; }
+  .field { display: flex; flex-direction: column; gap: 8px; }
+  .field label {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+  }
+  .field label .req { color: var(--accent); margin-left: 4px; }
+  .field label .opt { color: var(--ink-dim); font-size: 9px; margin-left: 6px; text-transform: none; letter-spacing: 0.1em; }
+  .field input, .field textarea, .field select {
+    background: var(--bg-alt);
+    border: 1px solid var(--rule);
+    color: var(--ink);
+    padding: 14px 18px;
+    font-family: inherit;
+    font-size: 13.5px;
+    outline: none;
+    transition: border-color 0.15s ease;
+    width: 100%;
+  }
+  .field input:focus, .field textarea:focus, .field select:focus { border-color: var(--accent); }
+  .field textarea { resize: vertical; min-height: 140px; line-height: 1.7; }
+  .field .hint {
+    font-size: 11px;
+    color: var(--ink-dim);
+    letter-spacing: 0.02em;
+    line-height: 1.5;
+  }
+
+  .radio-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  @media (max-width: 600px) { .radio-group { grid-template-columns: 1fr; } }
+  .radio-option {
+    border: 1px solid var(--rule);
+    background: var(--bg-alt);
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .radio-option:hover { border-color: rgba(224, 74, 58, 0.5); }
+  .radio-option input { display: none; }
+  .radio-option .opt-name {
+    font-family: 'Instrument Serif', serif;
+    font-size: 16px;
+    color: var(--ink);
+  }
+  .radio-option .opt-desc {
+    font-size: 11px;
+    color: var(--ink-dim);
+    letter-spacing: 0.03em;
+    line-height: 1.5;
+  }
+  .radio-option input:checked ~ .opt-name { color: var(--accent); }
+  .radio-option:has(input:checked) {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+
+  .submit-btn {
+    background: var(--accent);
+    color: var(--bg);
+    border: 1px solid var(--accent);
+    padding: 16px 28px;
+    font-family: inherit;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    margin-top: 12px;
+  }
+  .submit-btn:hover { background: transparent; color: var(--accent); }
+
+  .after-note {
+    font-size: 11px;
+    color: var(--ink-dim);
+    line-height: 1.7;
+    margin-top: 16px;
+    text-align: center;
+  }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--rule);
+    padding: 40px clamp(24px, 6vw, 120px);
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+  .footer-left { font-size: 11px; color: var(--ink-dim); line-height: 1.8; }
+  .footer-left strong { color: var(--ink); font-weight: 500; }
+  .footer-right { display: flex; gap: 20px; }
+  .footer-right a {
+    font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--ink-dim); text-decoration: none;
+    transition: color 0.15s ease;
+  }
+  .footer-right a:hover { color: var(--ink); }
+
+  .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/">Lorenz<em>Aero</em></a>
+  <div class="nav-links">
+    <a href="/#protocol">Protocol</a>
+    <a href="/#simulator">Simulator</a>
+    <a href="aeroboticar.html">Vehicle</a>
+    <a href="apply.html" class="active">Apply</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <span class="section-label reveal">Join Lorenz</span>
+  <h1 class="reveal">Help us <em>build</em> the sky.</h1>
+  <p class="hero-sub reveal">
+    Lorenz Aerospace is a small, patent-pending independent aerospace company building
+    an open airspace protocol and a reference eVTOL vehicle. We're looking for people
+    who want to contribute to something real — engineers, designers, software builders,
+    and technical communicators who can ship work.
+  </p>
+  <p class="hero-sub reveal">
+    This is an application, not a job offer. Lorenz is early-stage and independently funded.
+    Successful applicants are invited to complete a paid or equity-compensated trial project
+    before any ongoing role is discussed.
+  </p>
+</section>
+
+<hr class="section-rule">
+
+<section class="honest">
+  <span class="section-label reveal">Be Clear-Eyed</span>
+  <h2 class="reveal">What this is — and <em>isn't</em>.</h2>
+
+  <div class="honest-grid">
+    <div class="honest-card reveal">
+      <h3>It <em>is</em></h3>
+      <p>An independently funded aerospace startup with a filed utility patent, a published whitepaper, a working simulator, and a 1:5 prototype. We ship real work and we document it publicly.</p>
+    </div>
+    <div class="honest-card reveal">
+      <h3>It <em>isn't</em></h3>
+      <p>A funded startup with salaries, benefits, or guaranteed outcomes. Contributors today work for equity, trial compensation, or portfolio credit. Be honest with yourself about whether that works for your life.</p>
+    </div>
+    <div class="honest-card reveal">
+      <h3>We <em>value</em></h3>
+      <p>People who can ship. Clear written communication. Engineering precision. Transparency about what you know and what you don't. Portfolio work we can evaluate.</p>
+    </div>
+    <div class="honest-card reveal">
+      <h3>We <em>don't</em></h3>
+      <p>Hire based on enthusiasm alone. We don't take contributions without an NDA and IP assignment. We don't promise outcomes we can't deliver.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="section-rule">
+
+<section class="form-section">
+  <h2 class="reveal">The <em>Application</em></h2>
+  <p class="form-lede reveal">
+    Takes about 10 minutes. All submissions reviewed personally by Peter Roman, founder.
+    You'll hear back within 7 days — whether it's a yes, a not-yet, or a no.
+  </p>
+
+  <form class="reveal" action="https://formspree.io/f/xkokbwgg" method="POST">
+    <input type="hidden" name="_subject" value="New Lorenz Application" />
+
+    <div class="field">
+      <label for="name">Full Name <span class="req">*</span></label>
+      <input type="text" id="name" name="name" required />
+    </div>
+
+    <div class="field">
+      <label for="email">Email <span class="req">*</span></label>
+      <input type="email" id="email" name="email" required />
+    </div>
+
+    <div class="field">
+      <label for="location">Location <span class="opt">(city, country)</span></label>
+      <input type="text" id="location" name="location" placeholder="e.g. Brooklyn, NY" />
+    </div>
+
+    <div class="field">
+      <label>Area of Interest <span class="req">*</span></label>
+      <div class="radio-group">
+        <label class="radio-option">
+          <input type="radio" name="area" value="airspace-protocol" required>
+          <span class="opt-name">Airspace Protocol</span>
+          <span class="opt-desc">LAPP, simulation, auction mechanics, systems design</span>
+        </label>
+        <label class="radio-option">
+          <input type="radio" name="area" value="flight-controls">
+          <span class="opt-name">Flight Controls</span>
+          <span class="opt-desc">Avionics, control systems, drive-in-the-sky UX</span>
+        </label>
+        <label class="radio-option">
+          <input type="radio" name="area" value="vehicle-design">
+          <span class="opt-name">Vehicle Design</span>
+          <span class="opt-desc">Airframe, aerodynamics, propulsion, CAD, prototyping</span>
+        </label>
+        <label class="radio-option">
+          <input type="radio" name="area" value="software">
+          <span class="opt-name">Software</span>
+          <span class="opt-desc">Simulation code, web infrastructure, tooling, data</span>
+        </label>
+        <label class="radio-option">
+          <input type="radio" name="area" value="community">
+          <span class="opt-name">Community & Content</span>
+          <span class="opt-desc">Video, writing, documentation, supporter relations</span>
+        </label>
+        <label class="radio-option">
+          <input type="radio" name="area" value="other">
+          <span class="opt-name">Other</span>
+          <span class="opt-desc">Something we haven't thought of — tell us below</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="background">Background <span class="req">*</span></label>
+      <textarea id="background" name="background" required placeholder="Briefly: what have you done that's relevant? Education, work, projects, self-taught skills — anything you'd want us to know."></textarea>
+      <span class="hint">2-4 sentences is fine. We're not looking for a resume — we're looking for a sense of who you are.</span>
+    </div>
+
+    <div class="field">
+      <label for="writing">Why Lorenz? <span class="req">*</span></label>
+      <textarea id="writing" name="writing" required minlength="200" placeholder="What drew you to Lorenz specifically? What do you want to contribute, and what do you hope to take away? Write 300-500 words."></textarea>
+      <span class="hint">This is the part that matters most. Write it yourself — clear, specific, and honest.</span>
+    </div>
+
+    <div class="field">
+      <label for="portfolio">Portfolio or Work Sample <span class="opt">(link — GitHub, website, video, PDF, anything)</span></label>
+      <input type="url" id="portfolio" name="portfolio" placeholder="https://..." />
+      <span class="hint">If you've built something we can look at — please share it. If you haven't yet, that's fine; explain what you'd like to build.</span>
+    </div>
+
+    <div class="field">
+      <label for="availability">Realistic Availability <span class="req">*</span></label>
+      <select id="availability" name="availability" required>
+        <option value="">— Select —</option>
+        <option value="full-time">Full-time (open to this being primary work)</option>
+        <option value="part-time">Part-time (5-15 hours / week alongside other commitments)</option>
+        <option value="project">Project-based (one-off contribution, then reassess)</option>
+        <option value="light">Light involvement (occasional, as time allows)</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="comp">Compensation Expectations <span class="req">*</span></label>
+      <select id="comp" name="comp" required>
+        <option value="">— Select —</option>
+        <option value="equity-only">Open to equity-only for trial project</option>
+        <option value="cash-equity">Mix of cash and equity once proven</option>
+        <option value="cash-only">Cash only (paid contractor)</option>
+        <option value="portfolio">Portfolio credit / reference / learning only</option>
+      </select>
+      <span class="hint">Honesty helps both of us. There's no wrong answer.</span>
+    </div>
+
+    <button type="submit" class="submit-btn">Submit Application →</button>
+    <p class="after-note">By submitting, you acknowledge that Lorenz Motors Corp may contact you about this application. Your information will not be shared with third parties.</p>
+  </form>
+</section>
+
+<footer>
+  <div class="footer-left">
+    <strong>Lorenz Motors Corp</strong><br>
+    Design Patent US-D1078585-S · Utility Patent Pending US 64/041,519<br>
+    Woodbridge, New Jersey<br>
+    peter@lorenzaero.com
+  </div>
+  <div class="footer-right">
+    <a href="https://www.linkedin.com/in/peter--roman/">LinkedIn</a>
+    <a href="https://www.youtube.com/channel/UCSqoZYtYOm6KCniw96xjAoA">YouTube</a>
+    <a href="https://www.instagram.com/lorenzaero">Instagram</a>
+  </div>
+</footer>
+
+<script>
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) entry.target.classList.add('visible');
+  });
+}, { threshold: 0.12 });
+reveals.forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>

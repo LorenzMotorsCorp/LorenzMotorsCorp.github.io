@@ -103,6 +103,130 @@
   .canvas-label span { color: var(--accent); }
   canvas { display: block; width: 100%; height: auto; background: #070a0f; }
 
+  /* View mode tabs */
+  .view-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 12px;
+    border: 1px solid var(--rule);
+    background: var(--bg-alt);
+  }
+  .view-tab {
+    flex: 1;
+    background: transparent;
+    border: none;
+    border-right: 1px solid var(--rule);
+    color: var(--ink-dim);
+    padding: 10px 14px;
+    font-family: inherit;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .view-tab:last-child { border-right: none; }
+  .view-tab:hover { color: var(--ink); background: rgba(255,255,255,0.02); }
+  .view-tab.active {
+    color: var(--accent);
+    background: rgba(224, 74, 58, 0.08);
+    border-bottom: 1px solid var(--accent);
+  }
+  .view-tab .new-badge {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 2px 5px;
+    font-size: 8px;
+    background: var(--accent);
+    color: var(--bg);
+    letter-spacing: 0.1em;
+    border-radius: 1px;
+  }
+
+  /* 2D vs 3D containers */
+  .view-2d, .view-3d { display: none; }
+  .view-2d.active, .view-3d.active { display: block; }
+
+  /* 3D shell */
+  .three-shell {
+    position: relative;
+    background: #070a0f;
+    border: 1px solid var(--rule);
+    overflow: hidden;
+  }
+  .three-shell canvas {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+  }
+  #three-canvas-container {
+    width: 100%;
+    aspect-ratio: 1040 / 730;
+    position: relative;
+  }
+  .camera-presets {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .camera-presets button {
+    background: rgba(8, 9, 12, 0.75);
+    backdrop-filter: blur(6px);
+    border: 1px solid var(--rule);
+    color: var(--ink-dim);
+    padding: 8px 14px;
+    font-family: inherit;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-align: left;
+    min-width: 110px;
+  }
+  .camera-presets button:hover {
+    color: var(--ink);
+    border-color: rgba(255,255,255,0.12);
+  }
+  .camera-presets button.active {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: rgba(224, 74, 58, 0.12);
+  }
+  .three-label {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    z-index: 5;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    color: var(--ink-dim);
+    text-transform: uppercase;
+    background: rgba(8, 9, 12, 0.75);
+    backdrop-filter: blur(6px);
+    padding: 6px 10px;
+    border: 1px solid var(--rule);
+  }
+  .three-label span { color: var(--accent); }
+  .three-help {
+    position: absolute;
+    bottom: 14px;
+    left: 14px;
+    z-index: 5;
+    font-size: 9px;
+    letter-spacing: 0.05em;
+    color: var(--ink-dim);
+    background: rgba(8, 9, 12, 0.75);
+    backdrop-filter: blur(6px);
+    padding: 6px 10px;
+    border: 1px solid var(--rule);
+    line-height: 1.6;
+  }
+
   /* Intro overlay */
   .intro-overlay {
     position: fixed;
@@ -374,6 +498,8 @@
   footer a { color: var(--accent); text-decoration: none; }
   footer a:hover { text-decoration: underline; }
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 </head>
 <body>
 <div class="wrap">
@@ -383,7 +509,7 @@
       <div class="subtitle">Lorenz Airspace Protocol · Interactive Simulator</div>
     </div>
     <div class="meta">
-      v0.5 · 8-sector · Vickrey clearing<br>
+      v0.6 · 8-sector · Weather-aware dynamic pricing<br>
       Altitude Band: 1000–1800 ft AGL<br>
       <strong>Status:</strong> <a href="https://lorenzaero.com">Read the whitepaper →</a>
     </div>
@@ -391,13 +517,33 @@
 
   <div class="layout">
     <div class="left-stack">
-      <div class="canvas-shell">
-        <div class="canvas-label">TOP-DOWN · SECTOR <span>ALPHA</span></div>
-        <canvas id="sim" width="1040" height="580"></canvas>
+      <div class="view-tabs">
+        <button class="view-tab active" data-view="3d">3D Perspective<span class="new-badge">NEW</span></button>
+        <button class="view-tab" data-view="2d">2.5D · Top + Side</button>
       </div>
-      <div class="side-bar">
-        <div class="side-label">SIDE VIEW · <span>ALTITUDE</span></div>
-        <canvas id="side" width="1040" height="150"></canvas>
+
+      <div class="view-3d active">
+        <div class="three-shell">
+          <div id="three-canvas-container"></div>
+          <div class="three-label">3D · SECTOR <span>ALPHA</span></div>
+          <div class="camera-presets">
+            <button data-cam="perspective" class="active">Perspective</button>
+            <button data-cam="topdown">Top Down</button>
+            <button data-cam="side">Side View</button>
+          </div>
+          <div class="three-help">Drag to orbit · scroll to zoom · right-click to pan</div>
+        </div>
+      </div>
+
+      <div class="view-2d">
+        <div class="canvas-shell">
+          <div class="canvas-label">TOP-DOWN · SECTOR <span>ALPHA</span></div>
+          <canvas id="sim" width="1040" height="580"></canvas>
+        </div>
+        <div class="side-bar">
+          <div class="side-label">SIDE VIEW · <span>ALTITUDE</span></div>
+          <canvas id="side" width="1040" height="150"></canvas>
+        </div>
       </div>
     </div>
 
@@ -420,6 +566,10 @@
           <button data-preset="stress">
             <span class="preset-name">Stress Test</span>
             <span class="preset-desc">Maximum density, tight lanes</span>
+          </button>
+          <button data-preset="storm">
+            <span class="preset-name">Storm Front</span>
+            <span class="preset-desc">Heavy weather · dynamic pricing</span>
           </button>
         </div>
       </div>
@@ -504,6 +654,30 @@
           </div>
           <div class="btn-row">
             <button id="btn-reset">Reset Sim</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="hash">§</span>Weather <span style="font-size:10px; color:var(--accent); font-weight:400; margin-left:6px;">NEW · v0.6</span></h3>
+        <div class="controls">
+          <div class="mode-row" style="margin-bottom: 12px;">
+            <button data-wx="on" class="active" id="wx-on">On</button>
+            <button data-wx="off" id="wx-off">Off</button>
+          </div>
+          <div class="ctrl">
+            <label>Weather Intensity <strong id="lbl-wx">60%</strong></label>
+            <input type="range" id="in-wx" min="0" max="100" value="60">
+          </div>
+          <div style="margin-top:10px; padding-top:10px; border-top:1px solid var(--rule); font-size:10px; color:var(--ink-dim); letter-spacing:0.06em; line-height:1.7;">
+            <div style="display:flex; justify-content:space-between;">
+              <span>Active cells</span>
+              <span style="color:var(--ink);" id="stat-wx-cells">0</span>
+            </div>
+            <div style="display:flex; justify-content:space-between;">
+              <span>Weather-premium revenue</span>
+              <span style="color:var(--accent); font-weight:600;" id="stat-wx-premium">$0</span>
+            </div>
           </div>
         </div>
       </div>
@@ -662,7 +836,11 @@
 
   // Aircraft
   let aircraft = [];
-  let params = { n: 30, tol: 6, climbRate: 300, emergencyPct: 5, speedMul: 1.0, mode: 'auction' };
+  let params = { n: 30, tol: 6, climbRate: 300, emergencyPct: 5, speedMul: 1.0, mode: 'auction', weather: true, weatherIntensity: 0.6 };
+
+  let weatherCells = [];
+  let weatherPremiumTotal = 0;
+  let nextWeatherSpawn = 0;
   let simTime = 0;
   let conflictEvents = [];
   let holdTimes = [];
@@ -761,11 +939,23 @@
         };
         a.altitude = LAYERS[c.l1].alt; a.targetAlt = a.altitude;
         a.transitioning = false; a.segIdx = 0; a.active = true;
-        if (res.price > 0) {
-          totalRevenue += res.price;
-          clearingPrices.push(res.price);
+        const wxAtSlot = weatherAt(c.tx, c.ty);
+        let finalPrice = res.price;
+        let weatherPremium = 0;
+        if (wxAtSlot > 0.1 && !a.isEmergency) {
+          weatherPremium = Math.round((res.price + 20) * wxAtSlot * 1.2);
+          finalPrice += weatherPremium;
+          weatherPremiumTotal += weatherPremium;
+        }
+        if (finalPrice > 0) {
+          totalRevenue += finalPrice;
+          clearingPrices.push(finalPrice);
           if (clearingPrices.length > 100) clearingPrices.shift();
-          pushLog(`#${a.id.toString().slice(2,5)} slot @ $${res.price}`, 'entry-won');
+          if (weatherPremium > 0) {
+            pushLog(`#${a.id.toString().slice(2,5)} slot $${res.price} +$${weatherPremium} WX`, 'entry-won');
+          } else {
+            pushLog(`#${a.id.toString().slice(2,5)} slot @ $${res.price}`, 'entry-won');
+          }
         }
         if (a.isEmergency) pushLog(`#${a.id.toString().slice(2,5)} EMERG priority`, 'entry-emerg');
         return;
@@ -791,6 +981,60 @@
     return [a.route.waypoints[a.segIdx].layer];
   }
 
+  // --- WEATHER SYSTEM ---
+  function spawnWeatherCell() {
+    const side = Math.floor(Math.random() * 4);
+    let x, y, vx, vy;
+    const speed = 8 + Math.random() * 12;
+    if (side === 0) { x = -60; y = Math.random() * H; vx = speed; vy = (Math.random() - 0.5) * 4; }
+    if (side === 1) { x = W + 60; y = Math.random() * H; vx = -speed; vy = (Math.random() - 0.5) * 4; }
+    if (side === 2) { x = Math.random() * W; y = -60; vx = (Math.random() - 0.5) * 4; vy = speed; }
+    if (side === 3) { x = Math.random() * W; y = H + 60; vx = (Math.random() - 0.5) * 4; vy = -speed; }
+    const radius = 60 + Math.random() * 80;
+    const intensity = 0.4 + Math.random() * 0.6;
+    return {
+      id: Math.random(),
+      x, y, vx, vy, radius, intensity,
+      age: 0, maxAge: 60 + Math.random() * 90,
+    };
+  }
+
+  function updateWeather(dt) {
+    if (!params.weather) { weatherCells = []; return; }
+    nextWeatherSpawn -= dt;
+    const targetCount = Math.round(1 + params.weatherIntensity * 3);
+    if (weatherCells.length < targetCount && nextWeatherSpawn <= 0) {
+      weatherCells.push(spawnWeatherCell());
+      nextWeatherSpawn = 8 + Math.random() * 12;
+    }
+    for (const w of weatherCells) {
+      w.x += w.vx * dt;
+      w.y += w.vy * dt;
+      w.age += dt;
+    }
+    weatherCells = weatherCells.filter(w =>
+      w.age < w.maxAge &&
+      w.x > -150 && w.x < W + 150 && w.y > -150 && w.y < H + 150
+    );
+  }
+
+  // Returns weather intensity at point (0-1), summing contributions from all cells
+  function weatherAt(x, y) {
+    if (!params.weather) return 0;
+    let total = 0;
+    for (const w of weatherCells) {
+      const d = Math.hypot(x - w.x, y - w.y);
+      if (d < w.radius) {
+        const fadeIn = Math.min(1, w.age / 4);
+        const fadeOut = Math.min(1, (w.maxAge - w.age) / 6);
+        const envelope = Math.min(fadeIn, fadeOut);
+        const falloff = 1 - (d / w.radius);
+        total += w.intensity * falloff * envelope;
+      }
+    }
+    return Math.min(1, total);
+  }
+
   function reset() {
     aircraft = [];
     ledger.clear();
@@ -802,12 +1046,16 @@
     totalRevenue = 0;
     revenueHistory = [];
     logEntries = [];
+    weatherCells = [];
+    weatherPremiumTotal = 0;
+    nextWeatherSpawn = 3;
     for (let i = 0; i < params.n; i++) aircraft.push(spawnOne());
   }
 
   function step(dt) {
     simTime += dt;
     if (Math.floor(simTime * 2) !== Math.floor((simTime - dt) * 2)) gcLedger(simTime);
+    updateWeather(dt);
     while (aircraft.length < params.n) aircraft.push(spawnOne());
 
     let transCount = 0;
@@ -828,8 +1076,10 @@
       const dx = tgt.x - a.x, dy = tgt.y - a.y;
       const dist = Math.hypot(dx, dy);
       const nx = dx / dist, ny = dy / dist;
-      a.x += nx * a.speed * dt;
-      a.y += ny * a.speed * dt;
+      const wx = weatherAt(a.x, a.y);
+      const speedFactor = 1 - 0.4 * wx; // heavy weather slows aircraft up to 40%
+      a.x += nx * a.speed * speedFactor * dt;
+      a.y += ny * a.speed * speedFactor * dt;
 
       const currentSegLayer = wps[a.segIdx].layer;
       const nextSegLayer = tgt.layer;
@@ -857,12 +1107,12 @@
           a.altitude += Math.sign(diffNow) * stepAlt;
         }
         const isClimbing = diffNow > 0;
-        a.energy -= dt * (isClimbing ? CLIMB_RATE_ENERGY : DESCEND_RATE_ENERGY);
+        a.energy -= dt * (isClimbing ? CLIMB_RATE_ENERGY : DESCEND_RATE_ENERGY) * (1 + 0.8 * wx);
       } else {
         if (Math.abs(a.altitude - LAYERS[currentSegLayer].alt) < 1) {
           a.altitude = LAYERS[currentSegLayer].alt;
         }
-        a.energy -= dt * CRUISE_RATE;
+        a.energy -= dt * CRUISE_RATE * (1 + 1.2 * wx);
       }
 
       if (Math.hypot(tgt.x - a.x, tgt.y - a.y) < 6) {
@@ -937,6 +1187,58 @@
     ctx.lineWidth = 1;
     for (let x = 0; x < W; x += 60) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
     for (let y = 0; y < H; y += 60) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+
+    // WEATHER CELLS
+    for (const w of weatherCells) {
+      const fadeIn = Math.min(1, w.age / 4);
+      const fadeOut = Math.min(1, (w.maxAge - w.age) / 6);
+      const envelope = Math.min(fadeIn, fadeOut);
+      const alpha = w.intensity * envelope;
+
+      const grad = ctx.createRadialGradient(w.x, w.y, 0, w.x, w.y, w.radius);
+      grad.addColorStop(0, `rgba(255, 94, 58, ${0.32 * alpha})`);
+      grad.addColorStop(0.45, `rgba(220, 70, 50, ${0.22 * alpha})`);
+      grad.addColorStop(0.8, `rgba(140, 40, 30, ${0.1 * alpha})`);
+      grad.addColorStop(1, `rgba(140, 40, 30, 0)`);
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(w.x, w.y, w.radius, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Dashed boundary ring
+      ctx.strokeStyle = `rgba(255, 120, 90, ${0.55 * alpha})`;
+      ctx.lineWidth = 1.2;
+      ctx.setLineDash([4, 5]);
+      ctx.beginPath();
+      ctx.arc(w.x, w.y, w.radius * 0.7, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Drift arrow in the center
+      const driftMag = Math.hypot(w.vx, w.vy);
+      if (driftMag > 0.5) {
+        const arrowLen = 18;
+        const ax = w.vx / driftMag, ay = w.vy / driftMag;
+        const tipX = w.x + ax * arrowLen, tipY = w.y + ay * arrowLen;
+        const backX = w.x - ax * arrowLen * 0.4, backY = w.y - ay * arrowLen * 0.4;
+        ctx.strokeStyle = `rgba(255, 180, 150, ${0.75 * alpha})`;
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(backX, backY);
+        ctx.lineTo(tipX, tipY);
+        ctx.stroke();
+        // arrowhead
+        const hx = ax * 6, hy = ay * 6;
+        const px = -ay * 3, py = ax * 3;
+        ctx.beginPath();
+        ctx.moveTo(tipX, tipY);
+        ctx.lineTo(tipX - hx + px, tipY - hy + py);
+        ctx.lineTo(tipX - hx - px, tipY - hy - py);
+        ctx.closePath();
+        ctx.fillStyle = `rgba(255, 180, 150, ${0.75 * alpha})`;
+        ctx.fill();
+      }
+    }
 
     for (const [key, arr] of ledger) {
       const active = arr.filter(e => e.endT > simTime && e.startT < simTime + 10);
@@ -1131,26 +1433,350 @@
     document.getElementById('rev-infra').textContent = '$' + Math.floor(totalRevenue * 0.30).toLocaleString();
     document.getElementById('rev-reg').textContent = '$' + Math.floor(totalRevenue * 0.20).toLocaleString();
     document.getElementById('rev-subsidy').textContent = '$' + Math.floor(totalRevenue * 0.10).toLocaleString();
+    document.getElementById('stat-wx-cells').textContent = weatherCells.length;
+    document.getElementById('stat-wx-premium').textContent = '$' + Math.floor(weatherPremiumTotal).toLocaleString();
 
     const logEl = document.getElementById('log');
     logEl.innerHTML = logEntries.slice(0, 10).map(e => `<div class="${e.cls}">[${e.t.toFixed(0)}s] ${e.msg}</div>`).join('');
   }
 
   let last = performance.now();
+  // ============================================================
+  // THREE.JS 3D SCENE
+  // ============================================================
+  const Three3D = (function() {
+    let scene, camera, renderer, controls;
+    let aircraftMeshes = new Map(); // id -> { body, ring }
+    let slotMeshes = new Map(); // ledger key -> mesh
+    let layerPlanes = [];
+    let initialized = false;
+    let containerEl = null;
+    let currentView = 'perspective';
+    let autoOrbit = false;
+
+    // World scaling
+    const WORLD_W = 1040, WORLD_H = 580;
+    const ALT_MIN = 1000, ALT_MAX = 1700;
+    const ALT_SCALE = 0.5; // 700 ft range -> 350 world units of vertical
+
+    function altToY(alt) {
+      return (alt - ALT_MIN) * ALT_SCALE;
+    }
+
+    function init() {
+      containerEl = document.getElementById('three-canvas-container');
+      if (!containerEl) return;
+
+      const w = containerEl.clientWidth || 1040;
+      const h = containerEl.clientHeight || 730;
+
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x070a0f);
+      scene.fog = new THREE.Fog(0x070a0f, 1500, 3000);
+
+      camera = new THREE.PerspectiveCamera(45, w / h, 1, 5000);
+      camera.position.set(WORLD_W / 2, 700, WORLD_H + 700);
+      camera.lookAt(WORLD_W / 2, 200, WORLD_H / 2);
+
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+      renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.setSize(w, h);
+      containerEl.appendChild(renderer.domElement);
+
+      // Lighting
+      const ambient = new THREE.AmbientLight(0x4a5060, 0.7);
+      scene.add(ambient);
+      const dirLight = new THREE.DirectionalLight(0xffffff, 0.6);
+      dirLight.position.set(WORLD_W * 0.7, 1500, WORLD_H * 0.3);
+      scene.add(dirLight);
+      const rimLight = new THREE.DirectionalLight(0xff6a4a, 0.25);
+      rimLight.position.set(-200, 400, -200);
+      scene.add(rimLight);
+
+      // Ground grid
+      const gridHelper = new THREE.GridHelper(Math.max(WORLD_W, WORLD_H) * 1.2, 30, 0x1c2430, 0x1c2430);
+      gridHelper.position.set(WORLD_W / 2, -2, WORLD_H / 2);
+      scene.add(gridHelper);
+
+      // Ground plane (subtle)
+      const groundGeo = new THREE.PlaneGeometry(WORLD_W * 1.4, WORLD_H * 1.4);
+      const groundMat = new THREE.MeshBasicMaterial({ color: 0x0a0d14, transparent: true, opacity: 0.6 });
+      const ground = new THREE.Mesh(groundGeo, groundMat);
+      ground.rotation.x = -Math.PI / 2;
+      ground.position.set(WORLD_W / 2, -3, WORLD_H / 2);
+      scene.add(ground);
+
+      // Sector boundary box (so the airspace feels like a real volume)
+      const boundaryGeo = new THREE.BoxGeometry(WORLD_W, altToY(ALT_MAX) - altToY(ALT_MIN) + 80, WORLD_H);
+      const boundaryEdges = new THREE.EdgesGeometry(boundaryGeo);
+      const boundaryMat = new THREE.LineBasicMaterial({ color: 0x1c2430, transparent: true, opacity: 0.5 });
+      const boundary = new THREE.LineSegments(boundaryEdges, boundaryMat);
+      boundary.position.set(WORLD_W / 2, (altToY(ALT_MAX) + altToY(ALT_MIN)) / 2, WORLD_H / 2);
+      scene.add(boundary);
+
+      // 8 altitude layer planes
+      for (let i = 0; i < LAYERS.length; i++) {
+        const layer = LAYERS[i];
+        const planeGeo = new THREE.PlaneGeometry(WORLD_W, WORLD_H);
+        const planeMat = new THREE.MeshBasicMaterial({
+          color: new THREE.Color(layer.color),
+          transparent: true,
+          opacity: 0.04,
+          side: THREE.DoubleSide,
+        });
+        const plane = new THREE.Mesh(planeGeo, planeMat);
+        plane.rotation.x = -Math.PI / 2;
+        plane.position.set(WORLD_W / 2, altToY(layer.alt), WORLD_H / 2);
+        scene.add(plane);
+
+        // Layer outline
+        const edgeGeo = new THREE.EdgesGeometry(planeGeo);
+        const edgeMat = new THREE.LineBasicMaterial({
+          color: new THREE.Color(layer.color),
+          transparent: true,
+          opacity: 0.18,
+        });
+        const edge = new THREE.LineSegments(edgeGeo, edgeMat);
+        edge.rotation.x = -Math.PI / 2;
+        edge.position.set(WORLD_W / 2, altToY(layer.alt), WORLD_H / 2);
+        scene.add(edge);
+
+        // Layer label as small sphere indicator at one corner
+        const indicatorGeo = new THREE.SphereGeometry(4, 8, 8);
+        const indicatorMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(layer.color) });
+        const indicator = new THREE.Mesh(indicatorGeo, indicatorMat);
+        indicator.position.set(20, altToY(layer.alt), 20);
+        scene.add(indicator);
+
+        layerPlanes.push({ plane, edge, indicator });
+      }
+
+      // OrbitControls
+      if (typeof THREE.OrbitControls !== 'undefined') {
+        controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.target.set(WORLD_W / 2, 200, WORLD_H / 2);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.08;
+        controls.minDistance = 100;
+        controls.maxDistance = 3000;
+        controls.maxPolarAngle = Math.PI / 2 + 0.1;
+        controls.update();
+      }
+
+      // Resize handling
+      const resizeObserver = new ResizeObserver(() => {
+        const newW = containerEl.clientWidth, newH = containerEl.clientHeight;
+        if (newW > 0 && newH > 0) {
+          camera.aspect = newW / newH;
+          camera.updateProjectionMatrix();
+          renderer.setSize(newW, newH);
+        }
+      });
+      resizeObserver.observe(containerEl);
+
+      initialized = true;
+    }
+
+    function getOrCreateAircraftMesh(a) {
+      let m = aircraftMeshes.get(a.id);
+      if (!m) {
+        const layerColor = LAYERS[Math.round((a.altitude - ALT_MIN) / 100) % LAYERS.length].color;
+        const bodyGeo = new THREE.SphereGeometry(5, 12, 10);
+        const bodyMat = new THREE.MeshStandardMaterial({
+          color: new THREE.Color(layerColor),
+          emissive: new THREE.Color(layerColor),
+          emissiveIntensity: 0.4,
+          roughness: 0.6,
+          metalness: 0.2,
+        });
+        const body = new THREE.Mesh(bodyGeo, bodyMat);
+        scene.add(body);
+
+        // Emergency ring (hidden by default)
+        const ringGeo = new THREE.RingGeometry(9, 12, 24);
+        const ringMat = new THREE.MeshBasicMaterial({
+          color: 0xff3030,
+          transparent: true,
+          opacity: 0.0,
+          side: THREE.DoubleSide,
+        });
+        const ring = new THREE.Mesh(ringGeo, ringMat);
+        ring.rotation.x = -Math.PI / 2;
+        scene.add(ring);
+
+        // Trail (vertical drop line to ground)
+        const trailMat = new THREE.LineBasicMaterial({
+          color: new THREE.Color(layerColor),
+          transparent: true,
+          opacity: 0.18,
+        });
+        const trailGeo = new THREE.BufferGeometry().setFromPoints([
+          new THREE.Vector3(0, 0, 0),
+          new THREE.Vector3(0, 0, 0),
+        ]);
+        const trail = new THREE.Line(trailGeo, trailMat);
+        scene.add(trail);
+
+        m = { body, ring, trail, bodyMat, ringMat, trailMat };
+        aircraftMeshes.set(a.id, m);
+      }
+      return m;
+    }
+
+    function getOrCreateSlotMesh(key, x, z) {
+      let m = slotMeshes.get(key);
+      if (!m) {
+        const geo = new THREE.BoxGeometry(8, 8, 8);
+        const mat = new THREE.MeshStandardMaterial({
+          color: 0xd4a54a,
+          emissive: 0xd4a54a,
+          emissiveIntensity: 0.5,
+          transparent: true,
+          opacity: 0.8,
+        });
+        const cube = new THREE.Mesh(geo, mat);
+        scene.add(cube);
+        m = { cube, mat, lastSeen: 0 };
+        slotMeshes.set(key, m);
+      }
+      return m;
+    }
+
+    function update(aircraft, ledger, simTime) {
+      if (!initialized) return;
+
+      // Update aircraft
+      const seenIds = new Set();
+      for (const a of aircraft) {
+        seenIds.add(a.id);
+        const m = getOrCreateAircraftMesh(a);
+        const y = altToY(a.altitude);
+        m.body.position.set(a.x, y, a.y);
+        m.ring.position.set(a.x, y - 0.5, a.y);
+
+        // Update trail line
+        const positions = m.trail.geometry.attributes.position.array;
+        positions[0] = a.x; positions[1] = y; positions[2] = a.y;
+        positions[3] = a.x; positions[4] = 0; positions[5] = a.y;
+        m.trail.geometry.attributes.position.needsUpdate = true;
+
+        // Color by current layer
+        const layerIdx = Math.max(0, Math.min(LAYERS.length - 1, Math.round((a.altitude - ALT_MIN) / 100)));
+        const c = new THREE.Color(LAYERS[layerIdx].color);
+        m.bodyMat.color.copy(c);
+        m.bodyMat.emissive.copy(c);
+        m.trailMat.color.copy(c);
+
+        // Emergency styling
+        if (a.isEmergency) {
+          m.ringMat.opacity = 0.6 + 0.3 * Math.sin(simTime * 6);
+          m.bodyMat.emissiveIntensity = 0.9;
+          // Pulse scale
+          const s = 1.0 + 0.2 * Math.sin(simTime * 6);
+          m.body.scale.set(s, s, s);
+        } else {
+          m.ringMat.opacity = 0;
+          m.bodyMat.emissiveIntensity = a.active ? 0.45 : 0.15;
+          m.body.scale.set(1, 1, 1);
+        }
+      }
+
+      // Remove stale aircraft meshes
+      for (const [id, m] of aircraftMeshes) {
+        if (!seenIds.has(id)) {
+          scene.remove(m.body);
+          scene.remove(m.ring);
+          scene.remove(m.trail);
+          aircraftMeshes.delete(id);
+        }
+      }
+
+      // Update slots from ledger
+      const seenKeys = new Set();
+      const CELL_SIZE = 60; // matches CELL constant in main sim
+      for (const [key, reservations] of ledger) {
+        if (!reservations || reservations.length === 0) continue;
+        const r = reservations[reservations.length - 1];
+        if (!r) continue;
+        // cellKey format is "gridX,gridY" — derive world coords
+        const parts = key.split(',');
+        const gx = parseInt(parts[0]), gy = parseInt(parts[1]);
+        if (isNaN(gx) || isNaN(gy)) continue;
+        const x = gx * CELL_SIZE + CELL_SIZE / 2;
+        const z = gy * CELL_SIZE + CELL_SIZE / 2;
+
+        seenKeys.add(key);
+        const m = getOrCreateSlotMesh(key, x, z);
+        // Slots float at mid altitude since they don't carry layer info in this ledger format
+        m.cube.position.set(x, altToY(1350), z);
+        m.cube.rotation.y = simTime * 0.5;
+        m.lastSeen = simTime;
+
+        const age = simTime - r.startT;
+        m.mat.opacity = Math.max(0.25, 0.85 - age * 0.15);
+      }
+
+      // Remove stale slots
+      for (const [key, m] of slotMeshes) {
+        if (!seenKeys.has(key)) {
+          if (simTime - m.lastSeen > 2) {
+            scene.remove(m.cube);
+            slotMeshes.delete(key);
+          }
+        }
+      }
+
+      // Auto-orbit when in perspective view
+      if (autoOrbit && controls) {
+        const t = simTime * 0.05;
+        const radius = 900;
+        camera.position.x = WORLD_W / 2 + Math.cos(t) * radius;
+        camera.position.z = WORLD_H / 2 + Math.sin(t) * radius;
+        controls.update();
+      } else if (controls) {
+        controls.update();
+      }
+
+      renderer.render(scene, camera);
+    }
+
+    function setView(view) {
+      currentView = view;
+      autoOrbit = false;
+      if (!controls) return;
+
+      const cx = WORLD_W / 2, cz = WORLD_H / 2, cy = 200;
+      controls.target.set(cx, cy, cz);
+
+      if (view === 'perspective') {
+        camera.position.set(cx + 600, 700, cz + 700);
+      } else if (view === 'topdown') {
+        camera.position.set(cx, 1400, cz + 0.1);
+      } else if (view === 'side') {
+        camera.position.set(cx, cy + 50, cz + 1100);
+      }
+      controls.update();
+    }
+
+    return { init, update, setView };
+  })();
+
   function loop(now) {
     const dt = paused ? 0 : Math.min(0.1, (now - last) / 1000) * params.speedMul;
     last = now;
     const { activeConflicts, conflictSet, transCount } = step(dt);
     draw(activeConflicts, conflictSet, transCount);
+    Three3D.update(aircraft, ledger, simTime);
     requestAnimationFrame(loop);
   }
 
   // Presets
   const PRESETS = {
-    morning:   { n: 15, tol: 8, emergencyPct: 2,  mode: 'auction' },
-    rush:      { n: 50, tol: 6, emergencyPct: 5,  mode: 'auction' },
-    emergency: { n: 35, tol: 6, emergencyPct: 20, mode: 'auction' },
-    stress:    { n: 90, tol: 4, emergencyPct: 5,  mode: 'auction' },
+    morning:   { n: 15, tol: 8, emergencyPct: 2,  mode: 'auction', weather: true,  weatherIntensity: 0.3 },
+    rush:      { n: 50, tol: 6, emergencyPct: 5,  mode: 'auction', weather: true,  weatherIntensity: 0.5 },
+    emergency: { n: 35, tol: 6, emergencyPct: 20, mode: 'auction', weather: true,  weatherIntensity: 0.4 },
+    stress:    { n: 90, tol: 4, emergencyPct: 5,  mode: 'auction', weather: false, weatherIntensity: 0 },
+    storm:     { n: 45, tol: 6, emergencyPct: 8,  mode: 'auction', weather: true,  weatherIntensity: 1.0 },
   };
   function applyPreset(name) {
     const p = PRESETS[name];
@@ -1159,13 +1785,19 @@
     params.tol = p.tol;
     params.emergencyPct = p.emergencyPct;
     params.mode = p.mode;
+    params.weather = p.weather;
+    params.weatherIntensity = p.weatherIntensity;
     document.getElementById('in-n').value = p.n;
     document.getElementById('lbl-n').textContent = p.n;
     document.getElementById('in-tol').value = p.tol;
     document.getElementById('lbl-tol').textContent = '±' + p.tol + '°';
     document.getElementById('in-em').value = p.emergencyPct;
     document.getElementById('lbl-em').textContent = p.emergencyPct;
-    document.querySelectorAll('.mode-row button').forEach(b => {
+    document.getElementById('in-wx').value = Math.round(p.weatherIntensity * 100);
+    document.getElementById('lbl-wx').textContent = Math.round(p.weatherIntensity * 100) + '%';
+    document.getElementById('wx-on').classList.toggle('active', p.weather);
+    document.getElementById('wx-off').classList.toggle('active', !p.weather);
+    document.querySelectorAll('.mode-row button[data-mode]').forEach(b => {
       b.classList.toggle('active', b.dataset.mode === p.mode);
     });
     reset();
@@ -1188,9 +1820,9 @@
     params.speedMul = +e.target.value / 10;
     document.getElementById('lbl-speed').textContent = params.speedMul.toFixed(1) + '×';
   });
-  document.querySelectorAll('.mode-row button').forEach(btn => {
+  document.querySelectorAll('.mode-row button[data-mode]').forEach(btn => {
     btn.addEventListener('click', () => {
-      document.querySelectorAll('.mode-row button').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.mode-row button[data-mode]').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       params.mode = btn.dataset.mode;
       reset();
@@ -1201,7 +1833,54 @@
   });
   document.getElementById('btn-reset').addEventListener('click', reset);
 
+  // Weather controls
+  document.getElementById('wx-on').addEventListener('click', () => {
+    params.weather = true;
+    document.getElementById('wx-on').classList.add('active');
+    document.getElementById('wx-off').classList.remove('active');
+  });
+  document.getElementById('wx-off').addEventListener('click', () => {
+    params.weather = false;
+    weatherCells = [];
+    document.getElementById('wx-off').classList.add('active');
+    document.getElementById('wx-on').classList.remove('active');
+  });
+  document.getElementById('in-wx').addEventListener('input', e => {
+    params.weatherIntensity = +e.target.value / 100;
+    document.getElementById('lbl-wx').textContent = e.target.value + '%';
+  });
+
+  // View tab switching (2D / 3D)
+  const view2D = document.querySelector('.view-2d');
+  const view3D = document.querySelector('.view-3d');
+  document.querySelectorAll('.view-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const v = tab.dataset.view;
+      if (v === '2d') {
+        view2D.classList.add('active');
+        view3D.classList.remove('active');
+      } else {
+        view3D.classList.add('active');
+        view2D.classList.remove('active');
+        // Trigger a resize so renderer fits the now-visible container
+        window.dispatchEvent(new Event('resize'));
+      }
+    });
+  });
+
+  // Camera preset buttons
+  document.querySelectorAll('.camera-presets button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.camera-presets button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      Three3D.setView(btn.dataset.cam);
+    });
+  });
+
   reset();
+  Three3D.init();
   requestAnimationFrame(loop);
 })();
 </script>

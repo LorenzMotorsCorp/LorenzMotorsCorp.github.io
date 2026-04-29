@@ -942,12 +942,12 @@
         const wxAtSlot = weatherAt(c.tx, c.ty);
         let finalPrice = res.price;
         let weatherPremium = 0;
-        if (wxAtSlot > 0.1 && !a.isEmergency) {
+        if (params.mode === 'auction' && wxAtSlot > 0.1 && !a.isEmergency) {
           weatherPremium = Math.round((res.price + 20) * wxAtSlot * 1.2);
           finalPrice += weatherPremium;
           weatherPremiumTotal += weatherPremium;
         }
-        if (finalPrice > 0) {
+        if (params.mode === 'auction' && finalPrice > 0) {
           totalRevenue += finalPrice;
           clearingPrices.push(finalPrice);
           if (clearingPrices.length > 100) clearingPrices.shift();

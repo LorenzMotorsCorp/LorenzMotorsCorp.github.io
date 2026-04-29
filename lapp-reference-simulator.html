@@ -605,6 +605,10 @@
           <span class="stat-label">Clearing Price (avg)</span>
           <span class="stat-val gold" id="stat-price">—</span>
         </div>
+        <div class="stat-row">
+          <span class="stat-label">Allocative Efficiency</span>
+          <span class="stat-val" id="stat-efficiency" style="color:#7ad88a;">—</span>
+        </div>
 
         <div class="revenue-row">
           <div class="stat-row" style="border:none; padding-bottom:0;">
@@ -794,13 +798,38 @@
       return { granted: true, price: 0, displaced };
     }
     if (existing.length === 0) return { granted: true, price: 0, displaced: [] };
-    if (mode === 'fcfs') return { granted: false, price: 0, displaced: [] };
+    // Contention event — record allocative efficiency vs an oracle (perfect-information benchmark).
+    // The oracle: knowing all current bids, allocates to the highest-value bidder.
+    // Achieved: whoever actually wins under the current mode.
+    if (mode === 'fcfs') {
+      // FCFS: the existing holder keeps the slot, regardless of bid value.
+      // Compare the holder's bid value vs. the maximum bid among contenders (the oracle's choice).
+      const heldBids = existing.map(e => e._bid ?? 0);
+      const allBids = [...heldBids, bid];
+      const oracleBid = Math.max(...allBids);
+      const achievedBid = heldBids[0] ?? 0; // first-arrived holder
+      if (oracleBid > 0) recordEfficiencyEvent(achievedBid, oracleBid);
+      return { granted: false, price: 0, displaced: [] };
+    }
     if (mode === 'auction') {
-      const maxComp = Math.max(...existing.map(e => e._bid ?? 0));
+      // Auction: highest current bidder wins (Vickrey clearing)
+      const heldBids = existing.map(e => e._bid ?? 0);
+      const allBids = [...heldBids, bid];
+      const oracleBid = Math.max(...allBids);
+      const maxComp = Math.max(...heldBids);
+      const achievedBid = bid > maxComp ? bid : maxComp;
+      if (oracleBid > 0) recordEfficiencyEvent(achievedBid, oracleBid);
       if (bid > maxComp) return { granted: true, price: maxComp, displaced: existing.map(e => e.ownerId) };
       return { granted: false, price: 0, displaced: [] };
     }
+    // 'none' mode — no allocation, slots not contested in a meaningful way; skip
     return { granted: true, price: 0, displaced: [] };
+  }
+
+  function recordEfficiencyEvent(achieved, oracle) {
+    efficiencyAchieved += achieved;
+    efficiencyOracle += oracle;
+    efficiencyEventCount++;
   }
 
   function planRoute(ox, oy, dx, dy, tol, speed, startTime) {
@@ -849,6 +878,10 @@
   let totalRevenue = 0;
   let revenueHistory = []; // {t, total} points for sparkline
   let logEntries = [];
+  let efficiencyEvents = []; // legacy field, kept for compatibility — see efficiencyAchieved/Oracle
+  let efficiencyAchieved = 0; // cumulative bid value of actual winners across contention events
+  let efficiencyOracle = 0;   // cumulative bid value of oracle-optimal winners (max contender) across contention events
+  let efficiencyEventCount = 0; // number of contention events recorded
   let paused = false;
 
   function pushLog(msg, cls) {
@@ -1049,6 +1082,10 @@
     weatherCells = [];
     weatherPremiumTotal = 0;
     nextWeatherSpawn = 3;
+    efficiencyEvents = [];
+    efficiencyAchieved = 0;
+    efficiencyOracle = 0;
+    efficiencyEventCount = 0;
     for (let i = 0; i < params.n; i++) aircraft.push(spawnOne());
   }
 
@@ -1428,6 +1465,23 @@
     document.getElementById('stat-energy').textContent = avgEnergy;
     const avgPrice = clearingPrices.length ? clearingPrices.reduce((s,v)=>s+v,0) / clearingPrices.length : 0;
     document.getElementById('stat-price').textContent = params.mode === 'auction' && clearingPrices.length ? '$' + avgPrice.toFixed(0) : '—';
+    // Allocative efficiency display (oracle-comparison method)
+    const effEl = document.getElementById('stat-efficiency');
+    if (params.mode === 'none') {
+      effEl.textContent = 'N/A';
+      effEl.style.color = 'var(--ink-dim)';
+    } else if (efficiencyEventCount === 0 || efficiencyOracle === 0) {
+      effEl.textContent = '—';
+      effEl.style.color = 'var(--ink-dim)';
+    } else {
+      const eff = efficiencyAchieved / efficiencyOracle;
+      const pct = Math.round(eff * 100);
+      effEl.textContent = pct + '%';
+      // Color-code: green for high, amber for mid, red for low
+      if (pct >= 80) effEl.style.color = '#7ad88a';
+      else if (pct >= 60) effEl.style.color = 'var(--gold)';
+      else effEl.style.color = '#e08070';
+    }
     document.getElementById('stat-revenue').textContent = '$' + Math.floor(totalRevenue).toLocaleString();
     document.getElementById('rev-lorenz').textContent = '$' + Math.floor(totalRevenue * 0.40).toLocaleString();
     document.getElementById('rev-infra').textContent = '$' + Math.floor(totalRevenue * 0.30).toLocaleString();

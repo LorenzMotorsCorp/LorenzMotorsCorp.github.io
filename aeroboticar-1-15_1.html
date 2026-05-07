@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Aeroboticar 1:15 — Lorenz Aerospace</title>
+<meta name="description" content="The Aeroboticar 1:15 is a flyable scale model of Lorenz Motors' eVTOL flying car. Hand-built in New Jersey. Founding Edition of 50.">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link rel="icon" type="image/jpg" href="LorenzLogo.jpg">
+<style>
+  :root {
+    --bg: #08090c;
+    --bg-alt: #0e1016;
+    --ink: #e4e2dd;
+    --ink-dim: #6b7080;
+    --ink-mid: #9ca0ad;
+    --rule: #1a1d28;
+    --accent: #e04a3a;
+    --accent-soft: rgba(224, 74, 58, 0.12);
+    --gold: #d4a54a;
+    --blue: #5b8fd4;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'DM Mono', monospace;
+    font-size: 15px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* --- NAV --- */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    background: rgba(8, 9, 12, 0.9);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--rule);
+    padding: 0 clamp(24px, 4vw, 80px);
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .nav-logo {
+    font-family: 'Instrument Serif', serif;
+    font-size: 22px;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .nav-logo em { color: var(--accent); font-style: italic; }
+  .nav-links { display: flex; gap: 32px; }
+  .nav-links a {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--ink-dim);
+    transition: color 0.2s ease;
+  }
+  .nav-links a:hover { color: var(--ink); }
+  .nav-links .own {
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  @media (max-width: 700px) {
+    .nav-links { gap: 16px; }
+    .nav-links a { font-size: 9px; letter-spacing: 0.1em; }
+  }
+
+  /* --- SECTIONS --- */
+  section {
+    padding: clamp(80px, 12vw, 160px) clamp(24px, 6vw, 120px);
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+    display: block;
+  }
+  .section-rule {
+    width: 100%;
+    border: none;
+    border-top: 1px solid var(--rule);
+    margin: 0;
+  }
+
+  /* --- HERO --- */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-top: 100px;
+    position: relative;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: -10%;
+    width: 60%;
+    height: 70%;
+    background: radial-gradient(ellipse, rgba(224, 74, 58, 0.04) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .hero h1 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(42px, 7vw, 88px);
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 28px;
+    max-width: 900px;
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+  .hero-sub {
+    font-size: clamp(14px, 1.6vw, 17px);
+    color: var(--ink-mid);
+    max-width: 620px;
+    margin-bottom: 40px;
+    line-height: 1.8;
+  }
+  .hero-meta {
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+  .hero-meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .hero-meta-item .label {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+  }
+  .hero-meta-item .value {
+    font-family: 'Instrument Serif', serif;
+    font-size: 20px;
+    color: var(--ink);
+  }
+  .hero-meta-item .value.accent { color: var(--accent); }
+  .hero-meta-item .value.gold { color: var(--gold); }
+
+  /* --- HERO IMAGE BAND --- */
+  .hero-image-band {
+    padding: 0 clamp(24px, 6vw, 120px) clamp(60px, 8vw, 100px);
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .hero-image-band img {
+    width: 100%;
+    border: 1px solid var(--rule);
+    display: block;
+  }
+
+  /* --- OBJECT (mirrors problem-grid) --- */
+  .object-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    margin-top: 40px;
+  }
+  @media (max-width: 800px) { .object-grid { grid-template-columns: 1fr; gap: 32px; } }
+  .object-grid h2 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 400;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+  }
+  .object-grid h2 em { font-style: italic; color: var(--accent); }
+  .object-text {
+    color: var(--ink-mid);
+    font-size: 14px;
+    line-height: 1.9;
+  }
+  .object-text p { margin-bottom: 16px; }
+  .object-text strong { color: var(--ink); font-weight: 500; }
+
+  /* --- CONNECTION (mirrors protocol features) --- */
+  .connection-header { margin-bottom: 48px; }
+  .connection-header h2 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 400;
+    line-height: 1.15;
+    margin-bottom: 16px;
+  }
+  .connection-header h2 em { font-style: italic; color: var(--accent); }
+  .connection-header p {
+    color: var(--ink-mid);
+    font-size: 14px;
+    max-width: 700px;
+    line-height: 1.9;
+  }
+  .connection-features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin-top: 32px;
+  }
+  @media (max-width: 800px) { .connection-features { grid-template-columns: 1fr; } }
+  .feature {
+    background: var(--bg-alt);
+    padding: 32px 28px;
+    border: 1px solid var(--rule);
+    transition: border-color 0.2s ease;
+  }
+  .feature:hover { border-color: rgba(224, 74, 58, 0.3); }
+  .feature-num {
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    margin-bottom: 14px;
+    display: block;
+  }
+  .feature h3 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 20px;
+    font-weight: 400;
+    margin-bottom: 10px;
+    line-height: 1.3;
+  }
+  .feature p {
+    font-size: 12px;
+    color: var(--ink-dim);
+    line-height: 1.7;
+  }
+
+  /* --- FLIGHT (mirrors vehicle grid) --- */
+  .flight-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+    margin-top: 40px;
+  }
+  @media (max-width: 800px) { .flight-grid { grid-template-columns: 1fr; } }
+  .flight-text h2 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 400;
+    line-height: 1.15;
+    margin-bottom: 20px;
+  }
+  .flight-text h2 em { font-style: italic; color: var(--accent); }
+  .flight-text p {
+    color: var(--ink-mid);
+    font-size: 14px;
+    line-height: 1.9;
+    margin-bottom: 16px;
+  }
+  .flight-img {
+    width: 100%;
+    border: 1px solid var(--rule);
+    display: block;
+  }
+  .flight-specs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 28px;
+  }
+  .spec-item {
+    padding: 16px;
+    background: var(--bg-alt);
+    border: 1px solid var(--rule);
+  }
+  .spec-item .label {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    margin-bottom: 4px;
+    display: block;
+  }
+  .spec-item .value {
+    font-family: 'Instrument Serif', serif;
+    font-size: 18px;
+    color: var(--ink);
+  }
+
+  /* --- SPEC SECTION (mirrors sim-section band) --- */
+  .spec-section {
+    background: var(--bg-alt);
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    padding: clamp(60px, 8vw, 100px) clamp(24px, 6vw, 120px);
+    max-width: none;
+  }
+  .spec-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .spec-header { margin-bottom: 48px; }
+  .spec-header h2 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 400;
+    line-height: 1.15;
+    margin-bottom: 16px;
+  }
+  .spec-header h2 em { font-style: italic; color: var(--accent); }
+  .spec-header p {
+    color: var(--ink-mid);
+    font-size: 14px;
+    max-width: 700px;
+    line-height: 1.9;
+  }
+  .spec-table { border-top: 1px solid var(--rule); }
+  .spec-row {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--rule);
+    align-items: baseline;
+    gap: 24px;
+  }
+  @media (max-width: 700px) {
+    .spec-row { grid-template-columns: 1fr; gap: 4px; padding: 14px 0; }
+  }
+  .spec-row .key {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+  }
+  .spec-row .val {
+    font-family: 'Instrument Serif', serif;
+    font-size: 16px;
+    color: var(--ink);
+  }
+  .spec-row .val em { font-style: italic; color: var(--accent); }
+
+  /* --- BUY (mirrors cta-section) --- */
+  .buy-section { text-align: center; }
+  .buy-section > h2 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 400;
+    line-height: 1.15;
+    margin-bottom: 16px;
+  }
+  .buy-section > h2 em { font-style: italic; color: var(--accent); }
+  .buy-section > p {
+    color: var(--ink-mid);
+    font-size: 14px;
+    max-width: 600px;
+    margin: 0 auto 48px;
+    line-height: 1.9;
+  }
+  .buy-card {
+    max-width: 540px;
+    margin: 0 auto;
+    background: var(--bg-alt);
+    border: 1px solid var(--rule);
+    padding: 56px 44px 44px;
+    text-align: left;
+    position: relative;
+  }
+  .buy-card::before {
+    content: 'EDITION OF 50';
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--accent);
+    color: var(--bg);
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    padding: 5px 16px;
+    font-weight: 500;
+  }
+  .buy-card .product-name {
+    font-family: 'Instrument Serif', serif;
+    font-size: 32px;
+    line-height: 1.15;
+    margin-bottom: 8px;
+  }
+  .buy-card .product-name em { font-style: italic; color: var(--accent); }
+  .buy-card .product-tag {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    margin-bottom: 28px;
+  }
+  .buy-card .price-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 20px 0;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 28px;
+  }
+  .buy-card .price {
+    font-family: 'Instrument Serif', serif;
+    font-size: 36px;
+    color: var(--ink);
+  }
+  .buy-card .price-note {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+  }
+  .buy-card ul { list-style: none; margin-bottom: 32px; }
+  .buy-card ul li {
+    font-size: 13px;
+    color: var(--ink-mid);
+    padding: 8px 0;
+    padding-left: 22px;
+    position: relative;
+    line-height: 1.7;
+  }
+  .buy-card ul li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+  }
+  .buy-button {
+    display: block;
+    width: 100%;
+    padding: 16px;
+    font-family: inherit;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    text-align: center;
+    text-decoration: none;
+    background: var(--accent);
+    color: var(--bg);
+    border: 1px solid var(--accent);
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+  .buy-button:hover {
+    background: transparent;
+    color: var(--accent);
+  }
+  .buy-button.secondary {
+    background: transparent;
+    color: var(--ink);
+    border-color: var(--rule);
+    margin-top: 10px;
+  }
+  .buy-button.secondary:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* --- WAITLIST --- */
+  .waitlist {
+    margin-top: 64px;
+    text-align: center;
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .waitlist h3 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 22px;
+    font-weight: 400;
+    margin-bottom: 12px;
+    line-height: 1.3;
+  }
+  .waitlist h3 em { font-style: italic; color: var(--accent); }
+  .waitlist p {
+    color: var(--ink-mid);
+    font-size: 13px;
+    margin: 0 auto 20px;
+    line-height: 1.8;
+  }
+  .waitlist-form {
+    display: flex;
+    gap: 8px;
+  }
+  .waitlist-form input {
+    flex: 1;
+    background: var(--bg);
+    border: 1px solid var(--rule);
+    color: var(--ink);
+    padding: 14px 16px;
+    font-family: inherit;
+    font-size: 13px;
+  }
+  .waitlist-form input:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  .waitlist-form button {
+    background: var(--ink);
+    color: var(--bg);
+    border: none;
+    padding: 14px 24px;
+    font-family: inherit;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+  .waitlist-form button:hover { background: var(--accent); }
+
+  /* --- FOOTER --- */
+  footer {
+    border-top: 1px solid var(--rule);
+    padding: 40px clamp(24px, 6vw, 120px);
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+  .footer-left {
+    font-size: 11px;
+    color: var(--ink-dim);
+    line-height: 1.8;
+  }
+  .footer-left strong { color: var(--ink); font-weight: 500; }
+  .footer-right { display: flex; gap: 20px; }
+  .footer-right a {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+  .footer-right a:hover { color: var(--ink); }
+
+  /* --- ANIMATIONS --- */
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">Lorenz<em>Aero</em></a>
+  <div class="nav-links">
+    <a href="index.html#protocol">Protocol</a>
+    <a href="index.html#simulator">Simulator</a>
+    <a href="aeroboticar.html">Vehicle</a>
+    <a href="aeroboticar-1-15.html" class="own">Own One</a>
+    <a href="apply.html">Apply</a>
+    <a href="index.html#contact">Contact</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <span class="section-label reveal">Lorenz Aerospace · 1:15 Scale</span>
+  <h1 class="reveal">Fly the <em>future.</em></h1>
+  <p class="hero-sub reveal">
+    The Aeroboticar 1:15 is a flyable scale model of Lorenz Motors' eVTOL flying car —
+    hand-built in New Jersey by the same person developing the full-scale vehicle.
+    A designed object that flies. A working artifact of a flying car company in the making.
+  </p>
+  <div class="hero-meta reveal">
+    <div class="hero-meta-item">
+      <span class="label">Edition</span>
+      <span class="value accent">Founding · 50 Units</span>
+    </div>
+    <div class="hero-meta-item">
+      <span class="label">Scale</span>
+      <span class="value">1 : 15</span>
+    </div>
+    <div class="hero-meta-item">
+      <span class="label">Status</span>
+      <span class="value gold">Pre-order Open</span>
+    </div>
+    <div class="hero-meta-item">
+      <span class="label">Built In</span>
+      <span class="value">New Jersey</span>
+    </div>
+  </div>
+</section>
+
+<!-- HERO IMAGE BAND -->
+<div class="hero-image-band">
+  <img class="reveal" src="Aeroboticar.png" alt="Lorenz Aeroboticar 1:15 scale model" />
+</div>
+
+<hr class="section-rule">
+
+<!-- THE OBJECT -->
+<section id="object">
+  <span class="section-label reveal">The Object</span>
+  <div class="object-grid">
+    <h2 class="reveal">A designed object. <em>Not</em> a drone.</h2>
+    <div class="object-text reveal">
+      <p>
+        Most consumer drones are engineered first and styled later — a flight
+        controller wrapped in whatever frame the parts dictate. The
+        <strong>Aeroboticar 1:15</strong> is the opposite. It is a vehicle
+        first, with the same proportions, the same wing geometry, the same
+        ducted-fan architecture as the full-scale Aeroboticar — rendered at
+        a flyable scale.
+      </p>
+      <p>
+        The body is printed in ASA on industrial FDM hardware, in
+        the same coral and bone color story as the production design. Every
+        surface, every parting line, every fastener is intentional. This is
+        the kind of object that earns a place on a shelf and demands one in
+        the air.
+      </p>
+      <p>
+        Each unit is hand-assembled in New Jersey, individually numbered, and
+        ships in a presentation box.
+      </p>
+    </div>
+  </div>
+</section>
+
+<hr class="section-rule">
+
+<!-- CONNECTION -->
+<section id="connection">
+  <div class="connection-header reveal">
+    <span class="section-label">The Connection</span>
+    <h2>Same aircraft. <em>Different scale.</em></h2>
+    <p>
+      Owning an Aeroboticar 1:15 is not a souvenir purchase. It is a working
+      scale model of the same vehicle Lorenz Motors is developing at full
+      scale — and a document of the moment that vehicle was being built.
+    </p>
+  </div>
+  <div class="connection-features reveal">
+    <div class="feature">
+      <span class="feature-num">01</span>
+      <h3>Scale-Accurate</h3>
+      <p>Same tri-foil ducted-fan architecture as the production Aeroboticar. Same proportions. Same design language. Rendered at the smallest scale that physically flies.</p>
+    </div>
+    <div class="feature">
+      <span class="feature-num">02</span>
+      <h3>Founding Artifact</h3>
+      <p>Owners are documented as part of the early Lorenz Motors record. Each unit is numbered, registered, and acknowledged in the brand's archival material.</p>
+    </div>
+    <div class="feature">
+      <span class="feature-num">03</span>
+      <h3>Build Updates</h3>
+      <p>Owners receive monthly engineering updates from the full-scale program — flight test footage, prototype iterations, and behind-the-scenes work not published publicly.</p>
+    </div>
+    <div class="feature">
+      <span class="feature-num">04</span>
+      <h3>Independently Funded</h3>
+      <p>Lorenz Motors is independently funding the development of the full-scale Aeroboticar. Every unit sold supports the engineering of the production vehicle.</p>
+    </div>
+    <div class="feature">
+      <span class="feature-num">05</span>
+      <h3>Early Access</h3>
+      <p>Founding owners receive priority access to future Lorenz products, including the full-scale Aeroboticar reservation list and intermediate-scale releases.</p>
+    </div>
+    <div class="feature">
+      <span class="feature-num">06</span>
+      <h3>Limited Production</h3>
+      <p>v1 is a run of fifty units, individually numbered. Future scales and revisions will be distinct editions. The 1:15 is the foundational artifact of the line.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="section-rule">
+
+<!-- FLIGHT -->
+<section id="flight">
+  <span class="section-label reveal">Flight Capability</span>
+  <div class="flight-grid">
+    <div class="flight-text reveal">
+      <h2>Display-worthy. <em>Flight-capable.</em></h2>
+      <p>
+        The Aeroboticar 1:15 is fully flyable on a standard FPV stack — analog
+        video, 2.4 GHz ELRS control link, sub-250 g all-up weight. It is
+        designed to be flown, not just looked at, with replaceable panels
+        and modular construction so that a hard landing is a parts swap, not
+        a total loss.
+      </p>
+      <p>
+        It hovers. It cruises. It looks like the future doing both. Every
+        flight is a piece of the Aeroboticar story being told in physical
+        space — the same shape that will eventually carry a human, scaled
+        small enough to fit in a backpack.
+      </p>
+      <div class="flight-specs">
+        <div class="spec-item">
+          <span class="label">All-Up Weight</span>
+          <span class="value">~200 g</span>
+        </div>
+        <div class="spec-item">
+          <span class="label">Class</span>
+          <span class="value">Sub-250g</span>
+        </div>
+        <div class="spec-item">
+          <span class="label">Flight Time</span>
+          <span class="value">6–8 min</span>
+        </div>
+        <div class="spec-item">
+          <span class="label">Control</span>
+          <span class="value">ELRS 2.4GHz</span>
+        </div>
+      </div>
+    </div>
+    <img class="flight-img reveal" src="Aeroboticar.png" alt="Aeroboticar 1:15 in flight" />
+  </div>
+</section>
+
+<!-- SPEC SHEET -->
+<section class="spec-section">
+  <div class="spec-inner">
+    <div class="spec-header reveal">
+      <span class="section-label">Specifications</span>
+      <h2>Engineered <em>like the real thing.</em></h2>
+      <p>
+        Built around production-grade FPV electronics, dialed for cinematic flight
+        rather than racing. Every component chosen for reliability and aesthetic fit.
+      </p>
+    </div>
+    <div class="spec-table reveal">
+      <div class="spec-row"><span class="key">Architecture</span><span class="val">Ducted Fan Tri-foil</span></div>
+      <div class="spec-row"><span class="key">Scale</span><span class="val">1 : 15</span></div>
+      <div class="spec-row"><span class="key">Body</span><span class="val">ASA</span></div>
+      <div class="spec-row"><span class="key">Frame</span><span class="val">Carbon fiber tube</span></div>
+      <div class="spec-row"><span class="key">Color Story</span><span class="val">Coral · Bone · Carbon</span></div>
+      <div class="spec-row"><span class="key">Flight Controller</span><span class="val">G4 AIO · Betaflight</span></div>
+      <div class="spec-row"><span class="key">Motors</span><span class="val">F1404 brushless · ×4</span></div>
+      <div class="spec-row"><span class="key">Propellers</span><span class="val">2.5″ ducted tri-blade</span></div>
+      <div class="spec-row"><span class="key">Receiver</span><span class="val">ELRS 2.4 GHz</span></div>
+      <div class="spec-row"><span class="key">Video</span><span class="val">Analog 5.8 GHz</span></div>
+      <div class="spec-row"><span class="key">Battery</span><span class="val">2× 4S 450 mAh</span></div>
+      <div class="spec-row"><span class="key">Ships As</span><span class="val">BNF · bind to your radio</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- BUY -->
+<section class="buy-section" id="buy">
+  <span class="section-label reveal">Reserve Yours</span>
+  <h2 class="reveal">A flying car. <em>On your shelf.</em></h2>
+  <p class="reveal">
+    The first fifty Aeroboticar 1:15 units are available for pre-order. Each is
+    individually numbered, hand-built, and shipped from New Jersey. Production
+    is rolling — ship dates are confirmed in numbered order.
+  </p>
+
+  <div class="buy-card reveal">
+    <div class="product-name">Aeroboticar <em>1:15</em></div>
+    <div class="product-tag">Founding Edition · Numbered 001 – 050</div>
+    <div class="price-row">
+      <span class="price">$649</span>
+      <span class="price-note">USD · ships in 6–10 weeks</span>
+    </div>
+    <ul>
+      <li>Hand-built BNF cinewhoop in coral, bone, and carbon</li>
+      <li>Numbered plate · founding owner registry</li>
+      <li>Two 4S LiPo batteries · spare prop set · presentation box</li>
+      <li>Monthly build updates from the full-scale program</li>
+      <li>Priority access to future Lorenz products</li>
+    </ul>
+    <a class="buy-button" href="https://buy.stripe.com/eVq6oH0HM5Ad3kbeaR53O03" target="_blank" rel="noopener">Reserve · Pre-order →</a>
+    <a class="buy-button secondary" href="#waitlist">Join the waitlist instead</a>
+  </div>
+
+  <div class="waitlist reveal" id="waitlist">
+    <h3>Not ready? <em>Get notified</em> at next drop.</h3>
+    <p>
+      The Founding 50 will sell through. The next edition will be a separate run
+      with new numbering. Drop your email to be notified — no marketing, no spam.
+    </p>
+    <form class="waitlist-form" action="https://formspree.io/f/mzdovvwe" method="POST">
+      <input type="email" name="email" placeholder="you@domain.com" required>
+      <button type="submit">Notify Me</button>
+    </form>
+  </div>
+</section>
+
+<hr class="section-rule">
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">
+    <strong>Lorenz Motors Corp</strong><br>
+    Design Patent US-D1078585-S · Utility Patent Pending US 64/041,519<br>
+    Woodbridge, New Jersey<br>
+    peter@lorenzaero.com
+  </div>
+  <div class="footer-right">
+    <a href="https://www.linkedin.com/in/peter--roman/">LinkedIn</a>
+    <a href="https://www.youtube.com/channel/UCSqoZYtYOm6KCniw96xjAoA">YouTube</a>
+    <a href="https://www.instagram.com/lorenzaero">Instagram</a>
+  </div>
+</footer>
+
+<script>
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.12 });
+reveals.forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>

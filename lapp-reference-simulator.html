@@ -510,7 +510,7 @@
     </div>
     <div class="meta">
       v0.6 · 8-sector · Weather-aware dynamic pricing<br>
-      Altitude Band: 1000–1800 ft AGL<br>
+      Altitude Band: 1000–2400 ft AGL<br>
       <strong>Status:</strong> <a href="LAPP-v0.2-Whitepaper-Lorenz-Aerospace.pdf" target="_top">Read the whitepaper →</a>
     </div>
   </header>
@@ -720,15 +720,16 @@
   const spctx = sparkCanvas.getContext('2d');
   const SPW = sparkCanvas.width, SPH = sparkCanvas.height;
 
+  // Altitude tied to N-S projection of heading vector; ICAO hemispheric (odd=E, even=W) breaks ties within tier.
   const LAYERS = [
-    { name: 'L1', alt: 1000, dir: 'N',  compass:   0, color: '#ff4d3d' },
-    { name: 'L2', alt: 1100, dir: 'NE', compass:  45, color: '#ff8a3d' },
-    { name: 'L3', alt: 1200, dir: 'E',  compass:  90, color: '#ffc93d' },
-    { name: 'L4', alt: 1300, dir: 'SE', compass: 135, color: '#a3e635' },
-    { name: 'L5', alt: 1400, dir: 'S',  compass: 180, color: '#5eead4' },
-    { name: 'L6', alt: 1500, dir: 'SW', compass: 225, color: '#60a5fa' },
-    { name: 'L7', alt: 1600, dir: 'W',  compass: 270, color: '#a78bfa' },
-    { name: 'L8', alt: 1700, dir: 'NW', compass: 315, color: '#f472b6' },
+    { name: 'L1', alt: 1000, dir: 'S',  compass: 180, color: '#5eead4' },
+    { name: 'L2', alt: 1200, dir: 'SE', compass: 135, color: '#a3e635' },
+    { name: 'L3', alt: 1400, dir: 'SW', compass: 225, color: '#60a5fa' },
+    { name: 'L4', alt: 1600, dir: 'E',  compass:  90, color: '#ffc93d' },
+    { name: 'L5', alt: 1800, dir: 'W',  compass: 270, color: '#a78bfa' },
+    { name: 'L6', alt: 2000, dir: 'NE', compass:  45, color: '#ff8a3d' },
+    { name: 'L7', alt: 2200, dir: 'NW', compass: 315, color: '#f472b6' },
+    { name: 'L8', alt: 2400, dir: 'N',  compass:   0, color: '#ff4d3d' },
   ];
 
   const legendEl = document.getElementById('legend');
@@ -1381,7 +1382,7 @@
     // Side view
     sctx.fillStyle = '#070a0f';
     sctx.fillRect(0, 0, SW, SH);
-    const altMin = 950, altMax = 1750;
+    const altMin = 950, altMax = 2450;
     const mapAlt = alt => SH - 10 - ((alt - altMin) / (altMax - altMin)) * (SH - 20);
     const mapX = x => (x / W) * SW;
 
@@ -1510,8 +1511,8 @@
 
     // World scaling
     const WORLD_W = 1040, WORLD_H = 580;
-    const ALT_MIN = 1000, ALT_MAX = 1700;
-    const ALT_SCALE = 0.5; // 700 ft range -> 350 world units of vertical
+    const ALT_MIN = 1000, ALT_MAX = 2400;
+    const ALT_SCALE = 0.25; // 1400 ft range -> 350 world units of vertical
 
     function altToY(alt) {
       return (alt - ALT_MIN) * ALT_SCALE;
@@ -1634,7 +1635,7 @@
     function getOrCreateAircraftMesh(a) {
       let m = aircraftMeshes.get(a.id);
       if (!m) {
-        const layerColor = LAYERS[Math.round((a.altitude - ALT_MIN) / 100) % LAYERS.length].color;
+        const layerColor = LAYERS[Math.max(0, Math.min(LAYERS.length - 1, Math.round((a.altitude - ALT_MIN) / 200)))].color;
         const bodyGeo = new THREE.SphereGeometry(5, 12, 10);
         const bodyMat = new THREE.MeshStandardMaterial({
           color: new THREE.Color(layerColor),
@@ -1715,7 +1716,7 @@
         m.trail.geometry.attributes.position.needsUpdate = true;
 
         // Color by current layer
-        const layerIdx = Math.max(0, Math.min(LAYERS.length - 1, Math.round((a.altitude - ALT_MIN) / 100)));
+        const layerIdx = Math.max(0, Math.min(LAYERS.length - 1, Math.round((a.altitude - ALT_MIN) / 200)));
         const c = new THREE.Color(LAYERS[layerIdx].color);
         m.bodyMat.color.copy(c);
         m.bodyMat.emissive.copy(c);
@@ -1762,7 +1763,7 @@
         seenKeys.add(key);
         const m = getOrCreateSlotMesh(key, x, z);
         // Slots float at mid altitude since they don't carry layer info in this ledger format
-        m.cube.position.set(x, altToY(1350), z);
+        m.cube.position.set(x, altToY(1700), z);
         m.cube.rotation.y = simTime * 0.5;
         m.lastSeen = simTime;
 

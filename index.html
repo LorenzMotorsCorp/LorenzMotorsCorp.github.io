@@ -55,7 +55,7 @@
     text-decoration: none;
   }
   .nav-logo em { color: var(--accent); font-style: italic; }
-  .nav-links { display: flex; gap: 32px; }
+  .nav-links { display: flex; gap: 32px; align-items: center; }
   .nav-links a {
     font-size: 11px;
     letter-spacing: 0.15em;
@@ -71,9 +71,27 @@
   }
   .nav-links .own { color: var(--accent); font-weight: 500; }
 
+  /* prominent WISHFLY nav link */
+  .nav-links a.wishfly {
+    color: var(--bg);
+    background: linear-gradient(100deg, var(--accent), var(--gold));
+    padding: 7px 15px;
+    border-radius: 100px;
+    font-weight: 500;
+    box-shadow: 0 0 0 0 rgba(224, 74, 58, 0.5);
+    animation: wfpulse 2.6s ease-in-out infinite;
+  }
+  .nav-links a.wishfly:hover { color: var(--bg); transform: translateY(-1px); }
+  .nav-links a.wishfly .bfly { margin-right: 5px; }
+  @keyframes wfpulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(224, 74, 58, 0.45); }
+    50% { box-shadow: 0 0 20px 2px rgba(212, 165, 74, 0.5); }
+  }
+
   @media (max-width: 700px) {
-    .nav-links { gap: 16px; }
+    .nav-links { gap: 14px; }
     .nav-links a { font-size: 9px; letter-spacing: 0.1em; }
+    .nav-links a.wishfly { padding: 6px 11px; }
   }
 
   /* --- SECTIONS --- */
@@ -297,6 +315,90 @@
   }
   .sim-footer a:hover { opacity: 0.7; }
 
+  /* --- WISHFLY / DEMAND LAYER --- */
+  .wishfly-section {
+    position: relative;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    padding: clamp(70px, 9vw, 130px) clamp(24px, 6vw, 120px);
+    max-width: none;
+    overflow: hidden;
+    background: #090b10;
+  }
+  .wishfly-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(60% 55% at 8% 115%, rgba(224, 74, 58, 0.16), transparent 60%),
+      radial-gradient(55% 55% at 92% -15%, rgba(91, 143, 212, 0.16), transparent 60%);
+    pointer-events: none;
+  }
+  .wishfly-inner { max-width: 1000px; margin: 0 auto; position: relative; }
+  .wishfly-section h2 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(30px, 5vw, 56px);
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    margin-bottom: 24px;
+  }
+  .wishfly-section h2 em {
+    font-style: italic;
+    background: linear-gradient(100deg, var(--accent), var(--gold));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .wishfly-lede {
+    color: var(--ink-mid);
+    font-size: 15px;
+    line-height: 1.9;
+    max-width: 730px;
+    margin-bottom: 40px;
+  }
+  .wishfly-lede em { color: var(--ink); font-style: italic; }
+  .wishfly-points {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin-bottom: 44px;
+  }
+  @media (max-width: 800px) { .wishfly-points { grid-template-columns: 1fr; } }
+  .wfp {
+    background: var(--bg-alt);
+    border: 1px solid var(--rule);
+    padding: 24px 22px;
+  }
+  .wfp-k {
+    display: block;
+    font-family: 'Instrument Serif', serif;
+    font-size: 21px;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+  .wfp-v { font-size: 12px; color: var(--ink-dim); line-height: 1.7; }
+  .wishfly-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 18px 36px;
+    font-family: inherit;
+    font-size: 13px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--bg);
+    background: linear-gradient(100deg, var(--accent), var(--gold));
+    border-radius: 100px;
+    font-weight: 500;
+    box-shadow: 0 0 0 0 rgba(224, 74, 58, 0.5);
+    animation: wfpulse 2.6s ease-in-out infinite;
+    transition: transform 0.15s ease;
+  }
+  .wishfly-cta:hover { transform: translateY(-2px); }
+  .wishfly-cta .arr { font-size: 16px; }
+
   /* --- VEHICLE --- */
   .vehicle-grid {
     display: grid;
@@ -462,8 +564,6 @@
     transition: color 0.15s ease;
   }
   .footer-right a:hover { color: var(--ink); }
-  
-  
 
   /* --- ANIMATIONS --- */
   .reveal {
@@ -488,7 +588,7 @@
     <a href="aeroboticar-1-15.html" class="own">Own One</a>
     <a href="apply.html">Apply</a>
     <a href="#contact">Contact</a>
-    <a href="#" class="patent">Patent Pending</a>
+    <a href="Wishfly/" class="wishfly" target="_blank" rel="noopener"><span class="bfly">𓆟</span>WISHFLY</a>
   </div>
 </nav>
 
@@ -611,6 +711,26 @@
       <span>LAPP Reference Simulator v0.5 · Lorenz Aerospace</span>
       <a href="LAPP-v0.2-Whitepaper-Lorenz-Aerospace.pdf" download>Download Whitepaper (PDF) →</a>
     </div>
+  </div>
+</section>
+
+<!-- WISHFLY / DEMAND LAYER -->
+<section class="wishfly-section" id="wishfly">
+  <div class="wishfly-inner">
+    <span class="section-label reveal" style="color: var(--gold)">The Demand Layer</span>
+    <h2 class="reveal">Everyone <em>says</em> they want flying cars.<br>WISHFLY makes them <em>prove</em> it.</h2>
+    <p class="wishfly-lede reveal">
+      WISHFLY is Lorenz's public instrument for measuring latent demand. Anyone stuck in traffic opens it,
+      marks where they wish they could fly, and instantly sees how much of their day a Lorenz flight would
+      give back. Every wish becomes a live data point on the LAPP demand map — turning everyday gridlock
+      into the one dataset the entire eVTOL industry is missing: <em>where people actually want to fly, and when.</em>
+    </p>
+    <div class="wishfly-points reveal">
+      <div class="wfp"><span class="wfp-k">Live</span><span class="wfp-v">Runs on any phone, in any browser — no install.</span></div>
+      <div class="wfp"><span class="wfp-k">Real</span><span class="wfp-v">Each wish is a real origin–destination at a real, congested moment.</span></div>
+      <div class="wfp"><span class="wfp-k">Proprietary</span><span class="wfp-v">Aggregates into a demand map no competitor has.</span></div>
+    </div>
+    <a class="wishfly-cta reveal" href="Wishfly/" target="_blank" rel="noopener"><span class="bfly">𓆟</span> Launch WISHFLY <span class="arr">↗</span></a>
   </div>
 </section>
 

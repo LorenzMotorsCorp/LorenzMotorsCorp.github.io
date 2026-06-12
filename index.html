@@ -82,7 +82,6 @@
     animation: wfpulse 2.6s ease-in-out infinite;
   }
   .nav-links a.wishfly:hover { color: var(--bg); transform: translateY(-1px); }
-  .nav-links a.wishfly .bfly { margin-right: 5px; }
   @keyframes wfpulse {
     0%, 100% { box-shadow: 0 0 0 0 rgba(224, 74, 58, 0.45); }
     50% { box-shadow: 0 0 20px 2px rgba(212, 165, 74, 0.5); }
@@ -575,19 +574,109 @@
     opacity: 1;
     transform: translateY(0);
   }
+
+  /* --- LORENZ PHASE SPACE · scroll = time --- */
+  .lz-phase {
+    position: fixed;
+    z-index: -1;
+    top: 53%;
+    right: -4vw;
+    width: min(76vh, 700px);
+    height: min(76vh, 700px);
+    transform: translateY(-50%);
+    pointer-events: none;
+    -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 32%);
+    mask-image: linear-gradient(90deg, transparent 0%, #000 32%);
+  }
+  .lz-phase svg { width: 100%; height: 100%; display: block; overflow: visible; }
+  .lz-ghost { fill: none; stroke: #9ca0ad; stroke-opacity: 0.055; stroke-width: 1; stroke-linecap: butt; }
+  .lz-trace { fill: none; stroke: var(--accent); stroke-opacity: 0.32; stroke-width: 1.1; stroke-linecap: butt; }
+  .lz-hot   { fill: none; stroke: var(--accent); stroke-opacity: 0.95; stroke-width: 1.5; stroke-linecap: round; }
+  .lz-dart path   { fill: var(--accent); }
+  .lz-dart circle { fill: none; stroke: var(--accent); stroke-opacity: 0.35; stroke-width: 1; }
+  .lz-phase.lz-static .lz-trace { stroke-opacity: 0.18; }
+
+  .lz-hud {
+    position: fixed;
+    right: clamp(16px, 3vw, 40px);
+    bottom: 18px;
+    z-index: 40;
+    text-align: right;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    line-height: 2.1;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    pointer-events: none;
+    user-select: none;
+  }
+  .lz-hud span { display: block; }
+  .lz-hud b { color: var(--ink-mid); font-weight: 500; }
+  .lz-hud i { font-style: normal; color: var(--ink-mid); white-space: pre; }
+  .lz-hud .lz-sys { color: var(--accent); opacity: 0.75; }
+  .lz-hud .lz-hint { display: inline; color: var(--gold); transition: opacity 0.6s ease; }
+
+  /* nav wordmark = miniature phase portrait, fills in as you read */
+  .nav-logo { display: inline-flex; align-items: center; gap: 11px; }
+  .lz-logo { width: 40px; height: 28px; overflow: visible; flex: none; }
+  .lz-lghost { fill: none; stroke: #9ca0ad; stroke-opacity: 0.16; stroke-width: 1.1; }
+  .lz-ltrace { fill: none; stroke: var(--accent); stroke-opacity: 0.85; stroke-width: 1.1; }
+  .lz-ldot { fill: var(--gold); }
+
+  @media (max-width: 760px) {
+    .lz-phase {
+      right: auto; left: 50%; top: 50%;
+      transform: translate(-50%, -50%);
+      width: 140vw; height: 140vw;
+      opacity: 0.55;
+      -webkit-mask-image: none; mask-image: none;
+    }
+    .lz-hud { display: none; }
+    .lz-logo { width: 32px; height: 23px; }
+    .nav-logo { gap: 8px; }
+  }
+
+  :where(a, button, input, textarea, select, summary):focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .reveal { opacity: 1; transform: none; transition: none; }
+  }
 </style>
 </head>
 <body>
 
+<!-- Lorenz phase space: scroll = time. The page integrates
+     dx/dt = σ(y−x), dy/dt = x(ρ−z)−y, dz/dt = xy−βz as you read. -->
+<div class="lz-phase" aria-hidden="true">
+  <svg viewBox="0 0 600 600" preserveAspectRatio="xMidYMid meet">
+    <path class="lz-ghost" d=""/>
+    <path class="lz-trace" d=""/>
+    <path class="lz-hot" d=""/>
+    <g class="lz-dart" transform="translate(-200 -200)">
+      <circle r="7"/>
+      <path d="M8.5 0 L-6 4.6 L-2.8 0 L-6 -4.6 Z"/>
+    </g>
+  </svg>
+</div>
+<div class="lz-hud" aria-hidden="true">
+  <span class="lz-sys">Lorenz system · σ 10 · ρ 28 · β 8/3</span>
+  <span><b>x</b> <i class="lz-x">  0.00</i> <b>y</b> <i class="lz-y">  0.00</i> <b>z</b> <i class="lz-z">  0.00</i></span>
+  <span><b>t</b> <i class="lz-t">0.00</i> / 67.0 <span class="lz-hint">· scroll to integrate</span></span>
+</div>
+
+
 <nav>
-  <a class="nav-logo" href="#">Lorenz<em>Aero</em></a>
+  <a class="nav-logo" href="#"><svg class="lz-logo" viewBox="0 0 64 44" aria-hidden="true"><path class="lz-lghost" d=""/><path class="lz-ltrace" d=""/><circle class="lz-ldot" cx="-9" cy="-9" r="1.8"/></svg><span>Lorenz<em>Aero</em></span></a>
   <div class="nav-links">
     <a href="#protocol">Protocol</a>
     <a href="aeroboticar.html">Vehicle</a>
     <a href="aeroboticar-1-15.html" class="own">Own One</a>
     <a href="apply.html">Apply</a>
     <a href="#contact">Contact</a>
-    <a href="wishfly/" class="wishfly" target="_blank" rel="noopener"><span class="bfly">𓆟</span>WISHFLY</a>
+    <a href="wishfly/" class="wishfly" target="_blank" rel="noopener">WISHFLY</a>
   </div>
 </nav>
 
@@ -729,7 +818,7 @@
       <div class="wfp"><span class="wfp-k">Real</span><span class="wfp-v">Each wish is a real origin–destination at a real, congested moment.</span></div>
       <div class="wfp"><span class="wfp-k">Proprietary</span><span class="wfp-v">Aggregates into a demand map no competitor has.</span></div>
     </div>
-    <a class="wishfly-cta reveal" href="wishfly/" target="_blank" rel="noopener"><span class="bfly">𓆟</span> Launch WISHFLY <span class="arr">↗</span></a>
+    <a class="wishfly-cta reveal" href="wishfly/" target="_blank" rel="noopener">Launch WISHFLY <span class="arr">↗</span></a>
   </div>
 </section>
 
@@ -842,6 +931,233 @@ const observer = new IntersectionObserver((entries) => {
   });
 }, { threshold: 0.12 });
 reveals.forEach(el => observer.observe(el));
+</script>
+
+<script>
+/* ============================================================
+   LORENZ PHASE ENGINE · lorenzaero.com
+   Scroll = time. The page numerically integrates the Lorenz
+   system (sigma=10, rho=28, beta=8/3) with RK4 as you read.
+   The trace IS the butterfly; the dart is the current state.
+   ============================================================ */
+(function () {
+  'use strict';
+
+  var layer = document.querySelector('.lz-phase');
+  if (!layer) return;
+
+  var REDUCE = window.matchMedia &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- 1 · Integrate the Lorenz system (RK4) ---------- */
+  var SIGMA = 10, RHO = 28, BETA = 8 / 3;
+  var DT = 0.005, STEPS = 14000, SKIP = 600;
+
+  function f(s, o) {
+    o[0] = SIGMA * (s[1] - s[0]);
+    o[1] = s[0] * (RHO - s[2]) - s[1];
+    o[2] = s[0] * s[1] - BETA * s[2];
+  }
+
+  var n = STEPS - SKIP;
+  var X = new Float64Array(n), Y = new Float64Array(n), Z = new Float64Array(n);
+  (function integrate() {
+    var s = [-7.5, -3.6, 30];
+    var k1 = [0,0,0], k2 = [0,0,0], k3 = [0,0,0], k4 = [0,0,0], t = [0,0,0];
+    for (var i = 0; i < STEPS; i++) {
+      f(s, k1);
+      t[0]=s[0]+k1[0]*DT/2; t[1]=s[1]+k1[1]*DT/2; t[2]=s[2]+k1[2]*DT/2; f(t, k2);
+      t[0]=s[0]+k2[0]*DT/2; t[1]=s[1]+k2[1]*DT/2; t[2]=s[2]+k2[2]*DT/2; f(t, k3);
+      t[0]=s[0]+k3[0]*DT;   t[1]=s[1]+k3[1]*DT;   t[2]=s[2]+k3[2]*DT;   f(t, k4);
+      s[0] += (k1[0] + 2*k2[0] + 2*k3[0] + k4[0]) * DT / 6;
+      s[1] += (k1[1] + 2*k2[1] + 2*k3[1] + k4[1]) * DT / 6;
+      s[2] += (k1[2] + 2*k2[2] + 2*k3[2] + k4[2]) * DT / 6;
+      if (i >= SKIP) { var j = i - SKIP; X[j]=s[0]; Y[j]=s[1]; Z[j]=s[2]; }
+    }
+  })();
+
+  var xmin = Infinity, xmax = -Infinity, zmin = Infinity, zmax = -Infinity;
+  for (var i = 0; i < n; i++) {
+    if (X[i] < xmin) xmin = X[i]; if (X[i] > xmax) xmax = X[i];
+    if (Z[i] < zmin) zmin = Z[i]; if (Z[i] > zmax) zmax = Z[i];
+  }
+
+  /* x–z projection: the classic two-winged mask.
+     Optional [a,b) raw-index window; scaling stays global so a
+     windowed glyph sits exactly where it lives on the attractor. */
+  function buildPath(W, H, pad, D, a, b) {
+    var i0 = a || 0, i1 = (b === undefined) ? n : b;
+    var sx = (W - 2*pad) / (xmax - xmin), sy = (H - 2*pad) / (zmax - zmin);
+    var d = '', cum = [], len = 0, px = 0, py = 0, count = 0, idx = [];
+    for (var i = i0; i < i1; i += D) {
+      var x = pad + (X[i] - xmin) * sx;
+      var y = H - pad - (Z[i] - zmin) * sy;
+      if (count) len += Math.hypot(x - px, y - py);
+      cum.push(len); idx.push(i);
+      d += (count ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1);
+      px = x; py = y; count++;
+    }
+    return { d: d, cum: cum, idx: idx, len: len };
+  }
+
+  /* ---------- 2 · Phase-space layer ---------- */
+  var big   = buildPath(600, 600, 36, 2);
+  var ghost = layer.querySelector('.lz-ghost');
+  var trace = layer.querySelector('.lz-trace');
+  var hot   = layer.querySelector('.lz-hot');
+  var dart  = layer.querySelector('.lz-dart');
+
+  ghost.setAttribute('d', big.d);
+  trace.setAttribute('d', big.d);
+  hot.setAttribute('d', big.d);
+
+  var TOTAL = trace.getTotalLength();
+  var WIN = TOTAL * 0.035;            /* bright recent-history window */
+  trace.style.strokeDasharray = TOTAL;
+  trace.style.strokeDashoffset = TOTAL;
+  hot.style.strokeDasharray = WIN + ' ' + (TOTAL * 2);
+  hot.style.strokeDashoffset = WIN;
+
+  /* ---------- 3 · Nav-logo miniature (chaos progress bar) ----------
+     Full trajectory in a 64x44 box fills solid; use a short window
+     (~2 loops per wing + body strand), same glyph as the sim title. */
+  var logo = document.querySelector('.lz-logo');
+  var lghost, ltrace, ldot, LTOTAL = 0, small;
+  if (logo) {
+    var cr = [];
+    for (var ci = 1; ci < n && cr.length < 6; ci++)
+      if ((X[ci] < 0) !== (X[ci - 1] < 0)) cr.push(ci);
+    var LA = Math.max(0, cr[1] - 150), LB = Math.min(n, cr[5] + 250);
+    small  = buildPath(64, 44, 3, 5, LA, LB);
+    lghost = logo.querySelector('.lz-lghost');
+    ltrace = logo.querySelector('.lz-ltrace');
+    ldot   = logo.querySelector('.lz-ldot');
+    lghost.setAttribute('d', small.d);
+    ltrace.setAttribute('d', small.d);
+    LTOTAL = ltrace.getTotalLength();
+    ltrace.style.strokeDasharray = LTOTAL;
+    ltrace.style.strokeDashoffset = LTOTAL;
+  }
+
+  /* ---------- 4 · Telemetry HUD ---------- */
+  var hud = document.querySelector('.lz-hud');
+  var hx, hy, hz, ht, hint;
+  if (hud) {
+    hx = hud.querySelector('.lz-x'); hy = hud.querySelector('.lz-y');
+    hz = hud.querySelector('.lz-z'); ht = hud.querySelector('.lz-t');
+    hint = hud.querySelector('.lz-hint');
+  }
+  var T_END = (n - 1) * DT;
+  var lastTelemetry = -1;
+
+  function pad6(v) {
+    var s = v.toFixed(2);
+    while (s.length < 6) s = ' ' + s;   /* figure space: no jitter */
+    return s;
+  }
+  function telemetry(L) {
+    /* arc length -> decimated index -> raw state (head & numbers agree) */
+    var Ls = L / TOTAL * big.len;
+    var lo = 0, hi = big.cum.length - 1;
+    while (lo < hi) { var m = (lo + hi) >> 1; if (big.cum[m] < Ls) lo = m + 1; else hi = m; }
+    if (lo === lastTelemetry) return;
+    lastTelemetry = lo;
+    var r = big.idx[lo];
+    if (hx) {
+      hx.textContent = pad6(X[r]);
+      hy.textContent = pad6(Y[r]);
+      hz.textContent = pad6(Z[r]);
+      ht.textContent = (r * DT).toFixed(2);
+    }
+  }
+
+  /* ---------- 5 · Scroll = time ---------- */
+  var docH = 1, target = 0, p = 0, raf = null;
+
+  function measure() {
+    docH = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+  }
+  function readScroll() {
+    var y = window.scrollY || document.documentElement.scrollTop || 0;
+    target = Math.max(0, Math.min(1, y / docH));
+    if (hint && target > 0.02) hint.style.opacity = 0;
+    wake();
+  }
+
+  function render(prog) {
+    var L = prog * TOTAL;
+    trace.style.strokeDashoffset = TOTAL - L;
+    hot.style.strokeDashoffset = WIN - L;
+
+    var c  = trace.getPointAtLength(L);
+    var c0 = trace.getPointAtLength(Math.max(0, L - 2));
+    var c1 = trace.getPointAtLength(Math.min(TOTAL, L + 2));
+    var ang = Math.atan2(c1.y - c0.y, c1.x - c0.x) * 180 / Math.PI;
+    dart.setAttribute('transform',
+      'translate(' + c.x.toFixed(2) + ' ' + c.y.toFixed(2) + ') rotate(' + ang.toFixed(1) + ')');
+
+    if (logo) {
+      var lL = prog * LTOTAL;
+      ltrace.style.strokeDashoffset = LTOTAL - lL;
+      var lp = ltrace.getPointAtLength(lL);
+      ldot.setAttribute('cx', lp.x.toFixed(2));
+      ldot.setAttribute('cy', lp.y.toFixed(2));
+    }
+    telemetry(L);
+  }
+
+  function tick() {
+    p += (target - p) * 0.085;
+    if (Math.abs(target - p) < 0.0004) p = target;
+    render(p);
+    raf = (p === target) ? null : requestAnimationFrame(tick);
+  }
+  function wake() { if (!raf) raf = requestAnimationFrame(tick); }
+
+  /* ---------- 6 · Boot ---------- */
+  if (REDUCE) {
+    /* Static portrait: fully traced, no motion, honest final telemetry. */
+    layer.classList.add('lz-static');
+    trace.style.strokeDashoffset = 0;
+    hot.style.display = 'none';
+    dart.style.display = 'none';
+    if (logo) { ltrace.style.strokeDashoffset = 0; ldot.style.display = 'none'; }
+    if (hx) {
+      hx.textContent = pad6(X[n-1]); hy.textContent = pad6(Y[n-1]);
+      hz.textContent = pad6(Z[n-1]); ht.textContent = T_END.toFixed(2);
+      if (hint) hint.style.display = 'none';
+    }
+    return;
+  }
+
+  /* Intro: the ghost trajectory draws itself once on load. */
+  function drawIn(el, len, secs, delay) {
+    el.style.strokeDasharray = len;
+    el.style.strokeDashoffset = len;
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        el.style.transition = 'stroke-dashoffset ' + secs + 's cubic-bezier(.3,0,.2,1) ' + (delay || 0) + 's';
+        el.style.strokeDashoffset = 0;
+        setTimeout(function () {
+          el.style.transition = '';
+          el.style.strokeDasharray = 'none';
+          el.style.strokeDashoffset = 0;
+        }, (secs + (delay || 0)) * 1000 + 80);
+      });
+    });
+  }
+  drawIn(ghost, TOTAL, 2.8, 0.15);
+  if (logo) drawIn(lghost, LTOTAL, 2.0, 0.35);
+
+  measure();
+  readScroll();
+  render(p);
+
+  window.addEventListener('scroll', readScroll, { passive: true });
+  window.addEventListener('resize', function () { measure(); readScroll(); }, { passive: true });
+  window.addEventListener('load', function () { measure(); readScroll(); });
+  setTimeout(function () { measure(); readScroll(); }, 1500);  /* late images/fonts */
+})();
 </script>
 
 </body>

@@ -497,6 +497,10 @@
   footer em { color: var(--ink); font-style: italic; }
   footer a { color: var(--accent); text-decoration: none; }
   footer a:hover { text-decoration: underline; }
+
+  .title-wrap { display: flex; align-items: center; gap: 14px; }
+  .lz-mark { width: 46px; height: 32px; flex: none; overflow: visible; }
+  .lz-mark path { fill: none; stroke: var(--accent); stroke-opacity: 0.75; stroke-width: 1.1; }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
@@ -504,9 +508,12 @@
 <body>
 <div class="wrap">
   <header>
-    <div>
-      <h1 class="title">LAPP <em>Reference</em></h1>
-      <div class="subtitle">Lorenz Airspace Protocol · Interactive Simulator</div>
+    <div class="title-wrap">
+      <svg class="lz-mark" viewBox="0 0 64 44" aria-hidden="true"><path d="M34.2 26.1L34.7 27.3L35.1 28.3L35.5 29.2L35.9 30.1L36.4 30.9L36.9 31.6L37.6 32.2L38.4 32.7L39.4 33.0L40.7 33.0L42.2 32.8L44.1 32.2L46.3 31.0L48.8 29.0L51.6 26.2L54.3 22.5L56.7 18.2L58.2 13.9L58.4 10.6L57.1 8.9L54.5 9.0L51.1 10.3L47.5 12.3L44.1 14.5L41.1 16.6L38.6 18.5L36.7 20.3L35.3 21.9L34.2 23.3L33.4 24.6L32.8 25.9L32.3 27.0L31.9 28.1L31.5 29.0L31.0 29.9L30.6 30.7L30.0 31.4L29.4 32.0L28.6 32.5L27.6 32.8L26.3 32.9L24.8 32.8L23.0 32.2L20.8 31.0L18.3 29.1L15.6 26.4L12.9 22.8L10.5 18.5L8.9 14.3L8.6 10.9L9.7 9.1L12.2 9.0L15.5 10.2L19.1 12.1L22.6 14.3L25.6 16.4L28.1 18.4L30.0 20.1L31.5 21.7L32.6 23.2L33.4 24.5L34.0 25.8L34.5 26.9L34.9 28.0L35.3 29.0L35.7 29.9L36.1 30.7L36.6 31.4L37.2 32.1L38.0 32.6L38.9 33.0L40.0 33.2L41.4 33.1L43.1 32.7L45.2 31.7L47.6 30.1L50.3 27.7L53.1 24.3L55.8 20.2L57.7 15.8L58.6 11.9L58.0 9.4L55.9 8.7L52.8 9.5L49.2 11.3L45.5 13.4L42.3 15.6L39.6 17.6L37.4 19.5L35.8 21.1L34.5 22.7L33.6 24.0L32.9 25.3L32.4 26.5L31.9 27.6L31.5 28.6L31.0 29.5L30.6 30.3L30.0 31.1L29.4 31.7L28.6 32.2L27.6 32.5L26.4 32.7L25.0 32.5L23.2 32.0L21.1 31.0L18.7 29.2L16.0 26.6L13.3 23.2L10.9 19.1L9.2 14.9L8.7 11.4L9.7 9.4L11.9 9.1L15.1 10.1L18.6 12.0L22.0 14.1L25.1 16.2L27.6 18.1L29.5 19.9L31.1 21.5L32.2 23.0L33.0 24.4L33.6 25.6L34.1 26.8L34.5 27.9L34.9 28.9L35.2 29.8L35.6 30.7L36.0 31.5L36.5 32.1L37.1 32.8L37.8 33.2L38.7 33.6L39.9 33.8L41.3 33.7L43.0 33.2L45.1 32.3L47.6 30.6L50.4 28.1L53.3 24.6L56.1 20.2L58.2 15.5L59.0 11.4L58.3 8.9L56.1 8.2L52.8 9.2L49.0 11.1L45.2 13.4L41.9 15.6L39.1 17.7L36.9 19.5L35.2 21.2L33.9 22.7L33.0 24.0L32.2 25.3L31.6 26.4L31.1 27.5L30.6 28.4L30.0 29.3L29.4 30.1L28.7 30.7L27.9 31.2L26.8 31.5L25.6 31.5L24.0 31.3L22.2 30.6L20.1 29.4L17.7 27.5L15.2 24.8L12.8 21.4L10.8 17.6L9.7 14.0L9.7 11.3L11.0 10.0L13.4 10.1L16.4 11.3L19.6 13.1L22.6 15.0L25.3 17.0L27.5 18.8L29.2 20.5L30.4 22.0L31.4 23.5L32.1 24.8L32.5 26.0L32.8 27.2L33.1 28.3L33.2 29.3L33.3 30.2L33.4 31.1L33.4 31.9L33.4 32.7L33.4 33.4L33.4 34.1L33.4 34.7L33.4 35.3L33.4 35.9L33.4 36.4L33.4 36.9L33.4 37.3L33.4 37.7L33.3 38.1L33.3 38.5"/></svg>
+      <div>
+        <h1 class="title">LAPP <em>Reference</em></h1>
+        <div class="subtitle">Lorenz Airspace Protocol · Interactive Simulator</div>
+      </div>
     </div>
     <div class="meta">
       v0.6 · 8-sector · Weather-aware dynamic pricing<br>

@@ -398,6 +398,66 @@
   .wishfly-cta:hover { transform: translateY(-2px); }
   .wishfly-cta .arr { font-size: 16px; }
 
+  /* --- ORIGIN / STORY --- */
+  #story .story-wrap { max-width: 760px; }
+  #story .story-head {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 400;
+    line-height: 1.15;
+    margin-bottom: 36px;
+  }
+  #story .story-head em { font-style: italic; color: var(--accent); }
+  #story .story-body p {
+    color: var(--ink-mid);
+    font-size: 15px;
+    line-height: 1.95;
+    margin-bottom: 22px;
+  }
+  #story .story-lede { color: var(--ink); }
+  #story .story-pull {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(22px, 3vw, 32px);
+    font-style: italic;
+    line-height: 1.4;
+    color: var(--ink);
+    margin: 32px 0;
+  }
+  #story .story-pull em { color: var(--accent); }
+  #story .story-aside {
+    margin-top: 36px;
+    padding-top: 22px;
+    border-top: 1px solid var(--rule);
+    font-size: 12px;
+    color: var(--ink-dim);
+    letter-spacing: 0.04em;
+    line-height: 1.8;
+    max-width: 560px;
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 0.9s ease, transform 0.9s ease, color 0.9s ease;
+  }
+  #story .story-aside.lz-lit {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  #story .story-aside .lz-cue { color: var(--accent); }
+  #story .story-byline {
+    margin-top: 28px;
+    font-family: 'Instrument Serif', serif;
+    font-size: 20px;
+    color: var(--ink);
+  }
+  #story .story-byline span {
+    display: block;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    margin-top: 6px;
+  }
+
   /* --- VEHICLE --- */
   .vehicle-grid {
     display: grid;
@@ -643,6 +703,7 @@
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
     .reveal { opacity: 1; transform: none; transition: none; }
+    #story .story-aside { opacity: 1; transform: none; transition: none; }
   }
 </style>
 </head>
@@ -864,6 +925,24 @@
 
 <hr class="section-rule">
 
+<!-- ORIGIN / COMPANY STORY -->
+<section id="story">
+  <span class="section-label reveal">The Origin</span>
+  <div class="story-wrap">
+    <h2 class="story-head reveal">Why <em>Lorenz</em></h2>
+    <div class="story-body reveal">
+      <p class="story-lede">I was driving for Uber in my red 2018 Honda Civic Type R, finishing my last two semesters at NJIT, when it hit me: I wanted to do my senior capstone on flying cars.</p>
+      <p class="story-pull">Not because it sounded like a cool sci-fi fantasy, but because the next step in the evolution of transportation is in the <em>sky</em>.</p>
+      <p>I knew the market would doubt a solo founder with no blockbuster exit behind him, no war chest to self-fund something this ambitious. So I decided to build it one small, deliberate move at a time.</p>
+      <p>I named the company after Edward Lorenz, the MIT meteorologist who discovered the butterfly effect: the idea that a tiny change in initial conditions cascades into something enormous. That's the whole bet. Every small move toward bringing flying cars to reality compounds, and eventually it comes true.</p>
+    </div>
+    <p class="story-aside" id="story-aside">The trajectory drawing itself across this page is the <span class="lz-cue">Lorenz attractor</span> — the same system, the same principle.</p>
+    <p class="story-byline reveal">Peter Roman<span>Founder, Lorenz Motors Corp</span></p>
+  </div>
+</section>
+
+<hr class="section-rule">
+
 <!-- CREDENTIALS -->
 <section id="credentials">
   <span class="section-label reveal">Track Record</span>
@@ -1071,6 +1150,41 @@ reveals.forEach(el => observer.observe(el));
     }
   }
 
+  /* ---------- 4b · Story aside: lights up at the second wing-crossing ----------
+     Find the scroll progress at which the trajectory first switches lobes
+     (sign change in X). When the reader scrolls the attractor past that
+     point AND the story aside is in view, the line lands. */
+  var aside = document.getElementById('story-aside');
+  var asideLit = false;
+  var WING_PROG = 0;     /* progress in [0,1] of the lobe switch */
+  (function findWingCrossing() {
+    /* big was built with decimation D=2, so big.idx maps trace samples
+       to raw indices. Walk the decimated samples for the first X sign flip
+       past a small warmup, then convert its cumulative length to progress. */
+    var prevSign = X[big.idx[0]] < 0;
+    for (var k = 1; k < big.idx.length; k++) {
+      var sign = X[big.idx[k]] < 0;
+      if (sign !== prevSign && big.cum[k] > big.len * 0.04) {
+        WING_PROG = big.cum[k] / big.len;
+        break;
+      }
+      prevSign = sign;
+    }
+    if (WING_PROG === 0) WING_PROG = 0.12;  /* fallback */
+  })();
+
+  function maybeLightAside(prog) {
+    if (asideLit || !aside) return;
+    if (prog < WING_PROG) return;
+    /* only fire once the aside is actually on screen, so it lands in view */
+    var r = aside.getBoundingClientRect();
+    var vh = window.innerHeight || document.documentElement.clientHeight;
+    if (r.top < vh * 0.92 && r.bottom > 0) {
+      aside.classList.add('lz-lit');
+      asideLit = true;
+    }
+  }
+
   /* ---------- 5 · Scroll = time ---------- */
   var docH = 1, target = 0, p = 0, raf = null;
 
@@ -1104,6 +1218,7 @@ reveals.forEach(el => observer.observe(el));
       ldot.setAttribute('cy', lp.y.toFixed(2));
     }
     telemetry(L);
+    maybeLightAside(prog);
   }
 
   function tick() {
@@ -1122,6 +1237,7 @@ reveals.forEach(el => observer.observe(el));
     hot.style.display = 'none';
     dart.style.display = 'none';
     if (logo) { ltrace.style.strokeDashoffset = 0; ldot.style.display = 'none'; }
+    if (aside) aside.classList.add('lz-lit');
     if (hx) {
       hx.textContent = pad6(X[n-1]); hy.textContent = pad6(Y[n-1]);
       hz.textContent = pad6(Z[n-1]); ht.textContent = T_END.toFixed(2);

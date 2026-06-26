@@ -398,6 +398,98 @@
   .wishfly-cta:hover { transform: translateY(-2px); }
   .wishfly-cta .arr { font-size: 16px; }
 
+  /* --- MONARCH / REFERENCE APPLICATION --- */
+  .monarch-section {
+    position: relative;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    padding: clamp(70px, 9vw, 130px) clamp(24px, 6vw, 120px);
+    max-width: none;
+    overflow: hidden;
+    background: #090b10;
+  }
+  .monarch-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(52% 50% at 88% 6%, rgba(212, 165, 74, 0.13), transparent 60%),
+      radial-gradient(55% 52% at 6% 104%, rgba(224, 74, 58, 0.13), transparent 60%);
+    pointer-events: none;
+  }
+  .monarch-inner { max-width: 1000px; margin: 0 auto; position: relative; }
+  .monarch-section h2 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(30px, 5vw, 52px);
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    margin-bottom: 24px;
+  }
+  .monarch-section h2 em {
+    font-style: italic;
+    background: linear-gradient(100deg, var(--accent), var(--gold));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .monarch-lede {
+    color: var(--ink-mid);
+    font-size: 15px;
+    line-height: 1.9;
+    max-width: 720px;
+    margin-bottom: 44px;
+  }
+  .monarch-lede em { color: var(--ink); font-style: italic; }
+  .monarch-stage {
+    display: flex;
+    justify-content: center;
+    border: 1px solid var(--rule);
+    background:
+      repeating-linear-gradient(0deg, transparent, transparent 33px, rgba(255,255,255,0.012) 33px, rgba(255,255,255,0.012) 34px),
+      #070a0f;
+    padding: 22px 0;
+  }
+  .monarch-embed {
+    width: 100%;
+    max-width: 468px;
+    height: clamp(660px, 92vh, 940px);
+    border: none;
+    display: block;
+  }
+  .monarch-cap {
+    margin-top: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .monarch-cap span {
+    font-size: 11px;
+    color: var(--ink-dim);
+    letter-spacing: 0.05em;
+  }
+  .monarch-cap a {
+    font-size: 11px;
+    color: var(--accent);
+    text-decoration: none;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border-bottom: 1px dotted var(--accent);
+    transition: opacity 0.15s ease;
+  }
+  .monarch-cap a:hover { opacity: 0.7; }
+  .monarch-foot {
+    color: var(--ink-mid);
+    font-size: 15px;
+    line-height: 1.95;
+    max-width: 720px;
+    margin-top: 40px;
+  }
+  .monarch-foot em { color: var(--ink); font-style: italic; }
+  .monarch-foot b { color: var(--accent); font-weight: 400; }
+
   /* --- ORIGIN / STORY --- */
   #story .story-wrap { max-width: 760px; }
   #story .story-head {
@@ -938,6 +1030,37 @@
     </div>
     <p class="story-aside" id="story-aside">The trajectory drawing itself across this page is the <span class="lz-cue">Lorenz attractor</span> — the same system, the same principle.</p>
     <p class="story-byline reveal">Peter Roman<span>Founder, Lorenz Motors Corp</span></p>
+  </div>
+</section>
+
+<hr class="section-rule">
+
+<!-- MONARCH / REFERENCE APPLICATION -->
+<section class="monarch-section" id="monarch">
+  <div class="monarch-inner">
+    <span class="section-label reveal" style="color: var(--gold)">The Reference Application</span>
+    <h2 class="reveal">When the sky runs on a protocol,<br>this is what you <em>open</em>.</h2>
+    <p class="monarch-lede reveal">
+      Monarch is Lorenz's reference rider app: the role the Aeroboticar plays in hardware, one
+      layer up. It runs on the live LAPP logic. Pick a destination and it reads your heading,
+      assigns your altitude layer, clears a second-price slot, and shows you the minutes you get
+      back. It exists to prove a single point: <em>the protocol terminates in something a person
+      actually wants to open.</em>
+    </p>
+    <div class="monarch-stage reveal">
+      <iframe class="monarch-embed" src="monarch.html" loading="lazy" title="Monarch reference rider app"></iframe>
+    </div>
+    <div class="monarch-cap reveal">
+      <span>Monarch · reference rider app · runs in your browser</span>
+      <a href="monarch.html" target="_blank" rel="noopener">Open full screen ↗</a>
+    </div>
+    <p class="monarch-foot reveal">
+      Lorenz <b>operates the exchange, not the fleet.</b> Monarch is a reference implementation,
+      the open template any operator can fork to fly their own aircraft on LAPP. We ship it so the
+      standard is provably real and adoptable on day one, the way the web needed a browser before it
+      needed a thousand sites. The meter that matters runs underneath, at the protocol layer, beneath
+      every app built like this one.
+    </p>
   </div>
 </section>
 

@@ -325,6 +325,20 @@
     padding: 6px 10px;
     backdrop-filter: blur(4px);
   }
+  .video-thumb {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.55;
+    transition: opacity 0.2s ease, transform 0.3s ease;
+  }
+  .video-card:hover .video-thumb {
+    opacity: 0.75;
+    transform: scale(1.03);
+  }
+  .video-card .play { z-index: 2; }
 
   /* BACK THE BUILD */
   .back-section {
@@ -741,15 +755,18 @@
       <a href="https://www.youtube.com/channel/UCSqoZYtYOm6KCniw96xjAoA" target="_blank">YouTube Channel →</a>
     </div>
     <div class="video-grid reveal">
-      <a href="https://youtu.be/tGxED9YnH7k" target="LatestBuildVideo.png" class="video-card">
+      <a href="https://youtu.be/tGxED9YnH7k" target="_blank" class="video-card">
+        <img src="LatestBuildVideo.png" alt="Latest build video thumbnail" class="video-thumb">
         <span class="play">▶</span>
         <span class="video-label">Latest Build Video</span>
       </a>
-      <a href="https://youtu.be/u8riPJxL6rI" target="PrototypeFlightTest.png" class="video-card">
+      <a href="https://youtu.be/u8riPJxL6rI" target="_blank" class="video-card">
+        <img src="PrototypeFlightTest.png" alt="Prototype flight test thumbnail" class="video-thumb">
         <span class="play">▶</span>
         <span class="video-label">Prototype Flight Test</span>
       </a>
-      <a href="https://youtu.be/9eWLdJH91Kg" target="DesignDeepDive.png" class="video-card">
+      <a href="https://youtu.be/9eWLdJH91Kg" target="_blank" class="video-card">
+        <img src="DesignDeepDive.png" alt="Design deep dive thumbnail" class="video-thumb">
         <span class="play">▶</span>
         <span class="video-label">Design Deep Dive</span>
       </a>

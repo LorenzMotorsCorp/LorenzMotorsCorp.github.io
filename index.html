@@ -398,8 +398,8 @@
   .wishfly-cta:hover { transform: translateY(-2px); }
   .wishfly-cta .arr { font-size: 16px; }
 
-  /* --- MONARCH / REFERENCE APPLICATION --- */
-  .monarch-section {
+  /* --- BLACKWING / REFERENCE APPLICATION --- */
+  .blackwing-section {
     position: relative;
     border-top: 1px solid var(--rule);
     border-bottom: 1px solid var(--rule);
@@ -408,7 +408,7 @@
     overflow: hidden;
     background: #090b10;
   }
-  .monarch-section::before {
+  .blackwing-section::before {
     content: '';
     position: absolute;
     inset: 0;
@@ -417,8 +417,8 @@
       radial-gradient(55% 52% at 6% 104%, rgba(224, 74, 58, 0.13), transparent 60%);
     pointer-events: none;
   }
-  .monarch-inner { max-width: 1000px; margin: 0 auto; position: relative; }
-  .monarch-section h2 {
+  .blackwing-inner { max-width: 1000px; margin: 0 auto; position: relative; }
+  .blackwing-section h2 {
     font-family: 'Instrument Serif', serif;
     font-size: clamp(30px, 5vw, 52px);
     font-weight: 400;
@@ -426,22 +426,22 @@
     letter-spacing: -0.01em;
     margin-bottom: 24px;
   }
-  .monarch-section h2 em {
+  .blackwing-section h2 em {
     font-style: italic;
     background: linear-gradient(100deg, var(--accent), var(--gold));
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
   }
-  .monarch-lede {
+  .blackwing-lede {
     color: var(--ink-mid);
     font-size: 15px;
     line-height: 1.9;
     max-width: 720px;
     margin-bottom: 44px;
   }
-  .monarch-lede em { color: var(--ink); font-style: italic; }
-  .monarch-stage {
+  .blackwing-lede em { color: var(--ink); font-style: italic; }
+  .blackwing-stage {
     display: flex;
     justify-content: center;
     border: 1px solid var(--rule);
@@ -450,14 +450,14 @@
       #070a0f;
     padding: 22px 0;
   }
-  .monarch-embed {
+  .blackwing-embed {
     width: 100%;
     max-width: 468px;
     height: clamp(660px, 92vh, 940px);
     border: none;
     display: block;
   }
-  .monarch-cap {
+  .blackwing-cap {
     margin-top: 14px;
     display: flex;
     justify-content: space-between;
@@ -465,12 +465,12 @@
     flex-wrap: wrap;
     gap: 10px;
   }
-  .monarch-cap span {
+  .blackwing-cap span {
     font-size: 11px;
     color: var(--ink-dim);
     letter-spacing: 0.05em;
   }
-  .monarch-cap a {
+  .blackwing-cap a {
     font-size: 11px;
     color: var(--accent);
     text-decoration: none;
@@ -479,16 +479,16 @@
     border-bottom: 1px dotted var(--accent);
     transition: opacity 0.15s ease;
   }
-  .monarch-cap a:hover { opacity: 0.7; }
-  .monarch-foot {
+  .blackwing-cap a:hover { opacity: 0.7; }
+  .blackwing-foot {
     color: var(--ink-mid);
     font-size: 15px;
     line-height: 1.95;
     max-width: 720px;
     margin-top: 40px;
   }
-  .monarch-foot em { color: var(--ink); font-style: italic; }
-  .monarch-foot b { color: var(--accent); font-weight: 400; }
+  .blackwing-foot em { color: var(--ink); font-style: italic; }
+  .blackwing-foot b { color: var(--accent); font-weight: 400; }
 
   /* --- ORIGIN / STORY --- */
   #story .story-wrap { max-width: 760px; }
@@ -1035,27 +1035,27 @@
 
 <hr class="section-rule">
 
-<!-- MONARCH / REFERENCE APPLICATION -->
-<section class="monarch-section" id="monarch">
-  <div class="monarch-inner">
+<!-- BLACK WING / REFERENCE APPLICATION -->
+<section class="blackwing-section" id="blackwing">
+  <div class="blackwing-inner">
     <span class="section-label reveal" style="color: var(--gold)">The Reference Application</span>
     <h2 class="reveal">When the sky runs on a protocol,<br>this is what you <em>open</em>.</h2>
-    <p class="monarch-lede reveal">
-      Monarch is Lorenz's reference rider app: the role the Aeroboticarbon plays in hardware, one
+    <p class="blackwing-lede reveal">
+      Blackwing is Lorenz's reference rider app: the role the Aeroboticarbon plays in hardware, one
       layer up. It runs on the live LAPP logic. Pick a destination and it reads your heading,
       assigns your altitude layer, clears a second-price slot, and shows you the minutes you get
       back. It exists to prove a single point: <em>the protocol terminates in something a person
       actually wants to open.</em>
     </p>
-    <div class="monarch-stage reveal">
-      <iframe class="monarch-embed" src="monarch.html" loading="lazy" title="Monarch reference rider app"></iframe>
+    <div class="blackwing-stage reveal">
+      <iframe class="blackwing-embed" src="blackwing.html" loading="lazy" title="blackwing reference rider app"></iframe>
     </div>
-    <div class="monarch-cap reveal">
-      <span>Monarch · reference rider app · runs in your browser</span>
-      <a href="monarch.html" target="_blank" rel="noopener">Open full screen ↗</a>
+    <div class="blackwing-cap reveal">
+      <span>blackwing · reference rider app · runs in your browser</span>
+      <a href="blackwing.html" target="_blank" rel="noopener">Open full screen ↗</a>
     </div>
-    <p class="monarch-foot reveal">
-      Lorenz <b>operates the exchange, not the fleet.</b> Monarch is a reference implementation,
+    <p class="blackwing-foot reveal">
+      Lorenz <b>operates the exchange, not the fleet.</b> Blackwing is a reference implementation,
       the open template any operator can fork to fly their own aircraft on LAPP. We ship it so the
       standard is provably real and adoptable on day one, the way the web needed a browser before it
       needed a thousand sites. The meter that matters runs underneath, at the protocol layer, beneath

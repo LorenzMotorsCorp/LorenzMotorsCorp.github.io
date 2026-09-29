@@ -340,104 +340,6 @@
   }
   .video-card .play { z-index: 2; }
 
-  /* BACK THE BUILD */
-  .back-section {
-    text-align: center;
-  }
-  .back-section h2 {
-    font-family: 'Instrument Serif', serif;
-    font-size: clamp(30px, 4.5vw, 48px);
-    font-weight: 400;
-    line-height: 1.1;
-    margin-bottom: 18px;
-  }
-  .back-section h2 em { font-style: italic; color: var(--accent); }
-  .back-section .lede {
-    color: var(--ink-mid);
-    max-width: 600px;
-    margin: 0 auto 48px;
-    font-size: 14.5px;
-    line-height: 1.9;
-  }
-  .tiers {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2px;
-    margin-top: 24px;
-  }
-  @media (max-width: 800px) { .tiers { grid-template-columns: 1fr; } }
-  .tier {
-    background: var(--bg-alt);
-    border: 1px solid var(--rule);
-    padding: 36px 28px;
-    text-align: left;
-    display: flex;
-    flex-direction: column;
-    transition: border-color 0.2s ease;
-  }
-  .tier:hover { border-color: rgba(224, 74, 58, 0.4); }
-  .tier.featured {
-    border-color: var(--accent);
-    background: linear-gradient(180deg, rgba(224, 74, 58, 0.06) 0%, var(--bg-alt) 40%);
-  }
-  .tier-tag {
-    font-size: 9px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--ink-dim);
-    margin-bottom: 10px;
-  }
-  .tier.featured .tier-tag { color: var(--accent); }
-  .tier-name {
-    font-family: 'Instrument Serif', serif;
-    font-size: 28px;
-    margin-bottom: 4px;
-    line-height: 1.1;
-  }
-  .tier-name em { font-style: italic; color: var(--accent); }
-  .tier-price {
-    font-family: 'Instrument Serif', serif;
-    font-size: 36px;
-    margin-bottom: 20px;
-    color: var(--ink);
-  }
-  .tier-price em { font-style: italic; font-size: 14px; color: var(--ink-dim); margin-left: 4px; }
-  .tier ul {
-    list-style: none;
-    flex: 1;
-    margin-bottom: 24px;
-  }
-  .tier ul li {
-    font-size: 12.5px;
-    color: var(--ink-mid);
-    padding: 6px 0 6px 18px;
-    position: relative;
-    line-height: 1.6;
-  }
-  .tier ul li::before {
-    content: '§';
-    position: absolute;
-    left: 0;
-    top: 6px;
-    color: var(--accent);
-  }
-  .tier-cta {
-    display: block;
-    text-align: center;
-    padding: 14px;
-    font-family: inherit;
-    font-size: 11px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    text-decoration: none;
-    border: 1px solid var(--rule);
-    color: var(--ink);
-    transition: all 0.2s ease;
-  }
-  .tier-cta:hover { background: var(--accent); border-color: var(--accent); color: var(--bg); }
-  .tier.featured .tier-cta { background: var(--accent); border-color: var(--accent); color: var(--bg); }
-  .tier.featured .tier-cta:hover { background: transparent; color: var(--accent); }
-
   /* SIGNUP */
   .signup-section {
     text-align: center;
@@ -629,7 +531,7 @@
     <a href="/#protocol">Protocol</a>
     <a href="/#simulator">Simulator</a>
     <a href="/aeroboticar" class="active">Vehicle</a>
-    <a href="aeroboticar-1-15.html" class="own">Own One</a>
+    <a href="/flightclub" class="own">Flight Club</a>
     <a href="apply.html">Apply</a>
     <a href="/#contact">Contact</a>
   </div>
@@ -770,59 +672,6 @@
         <span class="play">▶</span>
         <span class="video-label">Design Deep Dive</span>
       </a>
-    </div>
-  </div>
-</section>
-
-<!-- BACK THE BUILD -->
-<section class="back-section" id="back">
-  <span class="section-label reveal">Back the Build</span>
-  <h2 class="reveal">Support the <em>first</em> flying car people actually want.</h2>
-  <p class="lede reveal">
-    Lorenz is independently funded. Every pre-order, every piece of merch, every founding
-    supporter signup compounds into engineering hours, materials, and infrastructure.
-    You're not buying a product — you're signaling demand and making the build happen faster.
-  </p>
-
-  <div class="tiers">
-    <div class="tier reveal">
-      <span class="tier-tag">Supporter</span>
-      <span class="tier-name">CAD Tee</span>
-      <span class="tier-price">$30</span>
-      <ul>
-        <li>Official Lorenz CAD-pattern t-shirt</li>
-        <li>Signals demand publicly</li>
-        <li>Ships within 2 weeks</li>
-        <li>Proceeds fund the 1:1 build</li>
-      </ul>
-      <a class="tier-cta" href="https://buy.stripe.com/14A28r626bYB8Ev2s953O02">Signal Demand →</a>
-    </div>
-
-    <div class="tier featured reveal">
-      <span class="tier-tag">Most Popular</span>
-      <span class="tier-name"><em>Founding</em> Supporter</span>
-      <span class="tier-price">$100 <em>one-time</em></span>
-      <ul>
-        <li>Numbered founding supporter ID</li>
-        <li>Signed Aeroboticarbon art print (11×17)</li>
-        <li>Exclusive monthly build updates</li>
-        <li>Early access to future campaigns</li>
-        <li>Name on the supporter wall</li>
-      </ul>
-      <a class="tier-cta" href="https://buy.stripe.com/28EeVdfCG8MpaMD8Qx53O01">Join Founding 100 →</a>
-    </div>
-
-    <div class="tier reveal">
-      <span class="tier-tag">Studio</span>
-      <span class="tier-name">Giclée Print</span>
-      <span class="tier-price">$250</span>
-      <ul>
-        <li>Museum-quality archival print</li>
-        <li>Large format (24×36)</li>
-        <li>Hand-signed and numbered</li>
-        <li>Limited run of 100</li>
-      </ul>
-      <a class="tier-cta" href="https://buy.stripe.com/8x27sL76a2o1cULaYF53O00">Reserve →</a>
     </div>
   </div>
 </section>

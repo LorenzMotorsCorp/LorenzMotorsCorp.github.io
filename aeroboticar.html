@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Aeroboticarbon — Lorenz Aerospace</title>
-<meta name="description" content="The Lorenz Aeroboticarbon: a reference eVTOL vehicle built around the LAPP airspace protocol. Ducted fan tri-foil architecture. 1:5 prototype complete.">
+<title>Aeroboticarbon | Lorenz Aerospace</title>
+<meta name="description" content="The Lorenz Aeroboticarbon: a two-seat electric VTOL with four shrouded ducted fans and a sports car body. 1:5 scale flight prototype built, full scale next.">
+<meta property="og:image" content="aeroboticarbon-front34.jpg">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 <link rel="icon" type="image/jpg" href="LorenzLogo.jpg">
 <style>
@@ -132,6 +133,61 @@
     display: block;
     margin: 0 auto;
     border: 1px solid var(--rule);
+  }
+
+  .hero-note {
+    margin-top: 12px;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+  }
+  .hero-img {
+    border: none;
+    -webkit-mask-image: radial-gradient(ellipse 55% 50% at 50% 50%, #000 62%, transparent 100%);
+    mask-image: radial-gradient(ellipse 55% 50% at 50% 50%, #000 62%, transparent 100%);
+  }
+
+  /* GALLERY */
+  .gallery {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    margin-top: 32px;
+  }
+  @media (max-width: 800px) { .gallery { grid-template-columns: 1fr; } }
+  .gallery figure { margin: 0; background: #050506; border: 1px solid var(--rule); }
+  .gallery img { width: 100%; display: block; aspect-ratio: 16 / 9; object-fit: cover; }
+  .gallery figcaption {
+    padding: 12px 16px;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+  }
+  .gallery .wide { grid-column: 1 / -1; }
+  .gallery .wide img { aspect-ratio: 21 / 9; object-position: 50% 70%; }
+  .gallery .proof img { aspect-ratio: 4 / 5; object-position: 50% 70%; }
+  .proof-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: clamp(28px, 4vw, 56px);
+    background: var(--bg-alt);
+    border: 1px solid var(--rule);
+  }
+  .proof-text h3 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(26px, 3.4vw, 38px);
+    font-weight: 400;
+    line-height: 1.15;
+    margin-bottom: 16px;
+  }
+  .proof-text h3 em { font-style: italic; color: var(--accent); }
+  .proof-text p { color: var(--ink-mid); font-size: 13.5px; line-height: 1.9; }
+
+  @media (max-width: 640px) {
+    .nav-links a:not(.active):not([href="/#contact"]) { display: none; }
   }
 
   /* OVERVIEW */
@@ -539,13 +595,14 @@
 
 <!-- HERO -->
 <section class="hero">
-  <div class="hero-eyebrow reveal">Lorenz Aerospace · Reference Vehicle</div>
+  <div class="hero-eyebrow reveal">Lorenz Aerospace · 2027 Design</div>
   <h1 class="reveal" style="animation-delay: 0.1s"><em>Aeroboticarbon</em></h1>
   <p class="hero-sub reveal" style="animation-delay: 0.2s">
-    The first eVTOL vehicle designed from the ground up around an open airspace protocol.
-    Ducted fan tri-foil architecture. Electric propulsion. LAPP-native flight stack.
+    A two-seat electric VTOL with four shrouded ducted fans, a carbon frame and the body
+    of a sports car. Built to fly point to point, and to fly natively on LAPP.
   </p>
-  <img class="hero-img reveal" src="Lorenz_Aeroboticar_rear_4x3.png" alt="Lorenz Aeroboticarbon render" />
+  <img class="hero-img reveal" src="aeroboticarbon-front34.jpg" alt="The Lorenz Aeroboticarbon in oxblood with four ducted fans, front three-quarter view" fetchpriority="high" />
+  <p class="hero-note reveal">Concept render</p>
 </section>
 
 <hr class="section-rule">
@@ -554,46 +611,78 @@
 <section id="overview">
   <span class="section-label reveal">The Vehicle</span>
   <div class="overview">
-    <h2 class="reveal">Hardware <em>designed</em> for the sky it flies in.</h2>
+    <h2 class="reveal">A car you'd want to own. <em>That flies.</em></h2>
     <div class="overview-text reveal">
       <p>
-        Most eVTOL vehicles are designed first and then retrofitted to whatever
-        airspace regulations eventually emerge. The <strong>Aeroboticarbon</strong> is
-        designed the other way around. Every specification — climb rate, energy
-        envelope, communication stack, vertical separation tolerance — is derived
-        from the requirements of the Lorenz Airspace Protocol.
+        Most eVTOL concepts look like drones with a seat bolted in. The <strong>Aeroboticarbon</strong>
+        starts from the other end: a low, two-seat body with the proportions of a sports car, and
+        four shrouded ducted fans at its corners where the wheels would be on a car.
       </p>
       <p>
-        The result is a vehicle that is not just compatible with dense urban
-        airspace operations, but native to them. The Aeroboticarbon is the reference
-        implementation that proves the protocol works in physical flight — the way
-        the original iPhone proved multi-touch was viable at scale.
+        The ducts keep the blades enclosed, which matters when people stand next to the aircraft.
+        A carbon fiber frame carries the load from each fan pod through the chassis, and a
+        swan-neck rear wing adds lift in forward flight. Electric propulsion throughout.
       </p>
       <p>
-        The aircraft uses a <strong>ducted fan tri-foil architecture</strong> with
-        a lift-generating rear wing for efficient forward flight. Electric
-        propulsion. Carbon-composite airframe. Currently at 1:5 scale; full-scale
-        development in progress.
+        It is also the reference aircraft for <strong>LAPP</strong>, the Lorenz Airspace Protocol.
+        Its climb rates, energy envelope and communication stack are specified against the same
+        protocol it will fly on, so the vehicle and the sky it flies in are designed together.
       </p>
     </div>
   </div>
 
   <div class="specs-grid reveal">
     <div class="spec">
-      <span class="spec-label">Architecture</span>
-      <span class="spec-value">Tri-foil<em>Ducted fan</em></span>
+      <span class="spec-label">Seats</span>
+      <span class="spec-value">2<em>Side by side</em></span>
     </div>
     <div class="spec">
       <span class="spec-label">Propulsion</span>
-      <span class="spec-value">Electric<em>VTOL</em></span>
+      <span class="spec-value">4 Ducted Fans<em>Electric VTOL</em></span>
     </div>
     <div class="spec">
       <span class="spec-label">Scale Prototype</span>
-      <span class="spec-value">1:5<em>Complete</em></span>
+      <span class="spec-value">1:5<em>Built, 16 lb</em></span>
     </div>
     <div class="spec">
       <span class="spec-label">Protocol</span>
       <span class="spec-value">LAPP<em>Native</em></span>
+    </div>
+  </div>
+</section>
+
+<hr class="section-rule">
+
+<!-- GALLERY -->
+<section id="design">
+  <span class="section-label reveal">The 2027 Design</span>
+  <h2 class="reveal" style="font-family: 'Instrument Serif', serif; font-size: clamp(30px, 4.5vw, 48px); font-weight: 400; line-height: 1.1;">
+    Oxblood, satin black, <em style="color: var(--accent);">four fans.</em>
+  </h2>
+  <div class="gallery">
+    <figure class="wide reveal">
+      <img src="aeroboticarbon-hero.jpg" alt="Aeroboticarbon side profile" loading="lazy">
+      <figcaption>Profile · concept render</figcaption>
+    </figure>
+    <figure class="reveal">
+      <img src="aeroboticarbon-rear34.jpg" alt="Aeroboticarbon rear three-quarter view" loading="lazy">
+      <figcaption>Rear three-quarter · concept render</figcaption>
+    </figure>
+    <figure class="reveal">
+      <img src="aeroboticarbon-front34.jpg" alt="Aeroboticarbon front three-quarter view" loading="lazy">
+      <figcaption>Front three-quarter · concept render</figcaption>
+    </figure>
+    <figure class="proof reveal">
+      <img src="aeroboticarbon-prototype.jpg" alt="The red and white 1:5 scale Aeroboticarbon prototype on gravel beneath a highway bridge" loading="lazy">
+      <figcaption>The 1:5 scale prototype · real photo</figcaption>
+    </figure>
+    <div class="proof-text reveal">
+      <h3>The renders are where it's going. <em>This is where it is.</em></h3>
+      <p>
+        The 1:5 scale Aeroboticarbon is a 16 lb coaxial octocopter with the production layout:
+        four ducted fan pods, a carbon frame, a printed body and the rear wing. It flies a Cube
+        Orange with a Jetson Orin Nano for autonomy and is entering tethered flight testing.
+      </p>
     </div>
   </div>
 </section>
@@ -615,10 +704,10 @@
       </div>
     </div>
     <div class="timeline-row reveal">
-      <div class="timeline-year">2023<em>Patent</em></div>
+      <div class="timeline-year">2025<em>Patent</em></div>
       <div class="timeline-content">
         <h3>Design patent granted</h3>
-        <p>U.S. Design Patent D1078585-S awarded for the Aeroboticarbon form factor — the distinctive tri-foil ducted fan silhouette.</p>
+        <p>U.S. Design Patent D1078585-S awarded for the Aeroboticarbon form factor: the distinctive tri-foil ducted fan silhouette.</p>
         <span class="tag done">Patent · Granted</span>
       </div>
     </div>
@@ -634,8 +723,16 @@
       <div class="timeline-year">2026<em>Protocol</em></div>
       <div class="timeline-content">
         <h3>LAPP whitepaper published</h3>
-        <p>The Lorenz Airspace Protocol — a market-based coordination framework for eVTOL traffic — published as a preprint and filed as a utility patent application. Reference simulator released publicly.</p>
+        <p>The Lorenz Airspace Protocol, a market-based coordination framework for eVTOL traffic, published as a preprint and filed as a provisional patent application. Reference simulator released publicly.</p>
         <span class="tag done">Patent · Pending</span>
+      </div>
+    </div>
+    <div class="timeline-row reveal">
+      <div class="timeline-year">2026<em>Design</em></div>
+      <div class="timeline-content">
+        <h3>The 2027 Aeroboticarbon design</h3>
+        <p>Production design direction set: two-seat sports car body, four outboard ducted fans, oxblood and satin black. The 1:5 prototype moves into tethered flight testing.</p>
+        <span class="tag done">Design · Revealed</span>
       </div>
     </div>
     <div class="timeline-row reveal">
@@ -695,7 +792,7 @@
 <footer>
   <div class="footer-left">
     <strong>Lorenz Motors Corp</strong><br>
-    Design Patent US-D1078585-S · Utility Patent Pending US 64/041,519<br>
+    Design Patent US-D1078585-S · Patent Pending, U.S. Provisional App. No. 64/041,519<br>
     Woodbridge, New Jersey<br>
     peter@lorenzaero.com
   </div>

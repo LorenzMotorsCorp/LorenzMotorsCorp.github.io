@@ -338,97 +338,87 @@
   }
   .sim-footer a:hover { opacity: 0.7; }
 
-  /* --- BLACKWING / REFERENCE APPLICATION --- */
-  .blackwing-section {
-    position: relative;
+  /* --- BUILD LOG PREVIEW --- */
+  .log-section {
     border-top: 1px solid var(--rule);
     border-bottom: 1px solid var(--rule);
     padding: clamp(70px, 9vw, 130px) clamp(24px, 6vw, 120px);
     max-width: none;
-    overflow: hidden;
-    background: #090b10;
+    background: var(--bg-alt);
   }
-  .blackwing-section::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background:
-      radial-gradient(52% 50% at 88% 6%, rgba(212, 165, 74, 0.13), transparent 60%),
-      radial-gradient(55% 52% at 6% 104%, rgba(224, 74, 58, 0.13), transparent 60%);
-    pointer-events: none;
+  .log-inner { max-width: 1200px; margin: 0 auto; }
+  .log-head {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: clamp(24px, 5vw, 80px);
+    align-items: end;
+    margin-bottom: 44px;
   }
-  .blackwing-inner { max-width: 1000px; margin: 0 auto; position: relative; }
-  .blackwing-section h2 {
+  .log-head h2 {
     font-family: 'Instrument Serif', serif;
-    font-size: clamp(30px, 5vw, 52px);
+    font-size: clamp(30px, 4.6vw, 52px);
     font-weight: 400;
     line-height: 1.1;
     letter-spacing: -0.01em;
-    margin-bottom: 24px;
   }
-  .blackwing-section h2 em {
-    font-style: italic;
-    background: linear-gradient(100deg, var(--accent), var(--gold));
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+  .log-head h2 em { font-style: italic; color: var(--accent); }
+  .log-head p { color: var(--ink-mid); font-size: 14px; line-height: 1.9; }
+  .log-stats { display: flex; gap: 32px; margin-top: 18px; }
+  .log-stats b { display: block; font-family: 'Instrument Serif', serif; font-weight: 400; font-size: 26px; color: var(--ink); line-height: 1.2; }
+  .log-stats span { font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-dim); }
+  @media (max-width: 800px) { .log-head { grid-template-columns: 1fr; } }
+  .log-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+    list-style: none;
   }
-  .blackwing-lede {
-    color: var(--ink-mid);
-    font-size: 15px;
-    line-height: 1.9;
-    max-width: 720px;
-    margin-bottom: 44px;
-  }
-  .blackwing-lede em { color: var(--ink); font-style: italic; }
-  .blackwing-stage {
-    display: flex;
-    justify-content: center;
-    border: 1px solid var(--rule);
-    background:
-      repeating-linear-gradient(0deg, transparent, transparent 33px, rgba(255,255,255,0.012) 33px, rgba(255,255,255,0.012) 34px),
-      #070a0f;
-    padding: 22px 0;
-  }
-  .blackwing-embed {
-    width: 100%;
-    max-width: 468px;
-    height: clamp(660px, 92vh, 940px);
-    border: none;
+  .log-strip li { display: flex; }
+  .log-card {
+    flex: 1;
     display: block;
+    position: relative;
+    text-decoration: none;
+    color: var(--ink);
+    background: var(--bg);
+    border: 1px solid var(--rule);
+    transition: border-color 0.2s ease;
   }
-  .blackwing-cap {
-    margin-top: 14px;
+  .log-card:hover { border-color: rgba(224, 74, 58, 0.45); }
+  .log-card .ph { aspect-ratio: 4 / 3; overflow: hidden; background: #050506; }
+  .log-card img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+    filter: saturate(0.85);
+    transition: transform 0.5s cubic-bezier(.2,.7,.2,1), filter 0.3s ease;
+  }
+  .log-card:hover img { transform: scale(1.04); filter: saturate(1); }
+  .log-card .meta { padding: 16px 18px 20px; }
+  .log-card .ch { font-size: 10px; letter-spacing: 0.2em; color: var(--accent); display: block; margin-bottom: 6px; }
+  .log-card h3 { font-family: 'Instrument Serif', serif; font-size: 21px; font-weight: 400; line-height: 1.2; margin-bottom: 4px; }
+  .log-card .yr { font-size: 11px; color: var(--ink-dim); letter-spacing: 0.05em; }
+  .log-foot {
+    margin-top: 28px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 16px;
   }
-  .blackwing-cap span {
-    font-size: 11px;
-    color: var(--ink-dim);
-    letter-spacing: 0.05em;
+  .log-foot span { font-size: 11px; color: var(--ink-dim); letter-spacing: 0.05em; }
+  @media (max-width: 900px) {
+    .log-strip {
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-padding-left: clamp(24px, 6vw, 120px);
+      -webkit-overflow-scrolling: touch;
+      margin: 0 calc(-1 * clamp(24px, 6vw, 120px));
+      padding: 0 clamp(24px, 6vw, 120px) 8px;
+      scrollbar-width: none;
+    }
+    .log-strip::-webkit-scrollbar { display: none; }
+    .log-strip li { flex: 0 0 72%; scroll-snap-align: start; }
   }
-  .blackwing-cap a {
-    font-size: 11px;
-    color: var(--accent);
-    text-decoration: none;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    border-bottom: 1px dotted var(--accent);
-    transition: opacity 0.15s ease;
-  }
-  .blackwing-cap a:hover { opacity: 0.7; }
-  .blackwing-foot {
-    color: var(--ink-mid);
-    font-size: 15px;
-    line-height: 1.95;
-    max-width: 720px;
-    margin-top: 40px;
-  }
-  .blackwing-foot em { color: var(--ink); font-style: italic; }
-  .blackwing-foot b { color: var(--accent); font-weight: 400; }
 
   /* --- ORIGIN / STORY --- */
   #story .story-wrap { max-width: 760px; }
@@ -766,6 +756,7 @@
   <div class="nav-links">
     <a href="#vehicle">Vehicle</a>
     <a href="#protocol">Protocol</a>
+    <a href="history.html">Build Log</a>
     <a href="/flightclub" class="own">Flight Club</a>
     <a href="apply.html">Apply</a>
     <a href="#contact">Contact</a>
@@ -970,32 +961,59 @@
 
 <hr class="section-rule">
 
-<!-- BLACK WING / REFERENCE APPLICATION -->
-<section class="blackwing-section" id="blackwing">
-  <div class="blackwing-inner">
-    <span class="section-label reveal" style="color: var(--gold)">The Reference Application</span>
-    <h2 class="reveal">When the sky runs on a protocol,<br>this is what you <em>open</em>.</h2>
-    <p class="blackwing-lede reveal">
-      Blackwing is Lorenz's reference rider app: the role the Aeroboticarbon plays in hardware, one
-      layer up. It runs on the live LAPP logic. Pick a destination and it reads your heading,
-      assigns your altitude layer, clears a second-price slot, and shows you the minutes you get
-      back. It exists to prove a single point: <em>the protocol terminates in something a person
-      actually wants to open.</em>
-    </p>
-    <div class="blackwing-stage reveal">
-      <iframe class="blackwing-embed" src="blackwing.html" loading="lazy" title="blackwing reference rider app"></iframe>
+<!-- BUILD LOG PREVIEW -->
+<section class="log-section" id="buildlog">
+  <div class="log-inner">
+    <span class="section-label reveal">The Build Log</span>
+    <div class="log-head reveal">
+      <h2>From a solar drone in 2019<br>to the <em>Aeroboticarbon</em>.</h2>
+      <div>
+        <p>Every frame, print, failure and fix, posted as it happened. The whole story, told in eight chapters.</p>
+        <div class="log-stats">
+          <div><b>189</b><span>Posts</span></div>
+          <div><b>8</b><span>Chapters</span></div>
+          <div><b>2019&ndash;2026</b><span>Span</span></div>
+        </div>
+      </div>
     </div>
-    <div class="blackwing-cap reveal">
-      <span>blackwing · reference rider app · runs in your browser</span>
-      <a href="blackwing.html" target="_blank" rel="noopener">Open full screen ↗</a>
+    <ol class="log-strip reveal">
+      <li><a class="log-card" href="history.html#ch-1">
+        <div class="ph"><img src="history-media/17842655056450361.jpg" alt="The 2019 NJIT Highlander Drone Competition, which Lorenz won" loading="lazy"></div>
+        <div class="meta"><span class="ch">CHAPTER 01</span><h3>First Flight</h3><span class="yr">2019</span></div>
+      </a></li>
+      <li><a class="log-card" href="history.html#ch-2">
+        <div class="ph"><img src="history-media/17917974856349497.jpg" alt="The 38 lb solar midscale prototype on a workbench" loading="lazy"></div>
+        <div class="meta"><span class="ch">CHAPTER 02</span><h3>The Midscale</h3><span class="yr">2019 to 2020</span></div>
+      </a></li>
+      <li><a class="log-card" href="history.html#ch-3">
+        <div class="ph"><img src="history-media/17949119641780642.jpg" alt="The 3D printed dronecar model, finished on Pi Day 2022" loading="lazy"></div>
+        <div class="meta"><span class="ch">CHAPTER 03</span><h3>The Dronecar</h3><span class="yr">2020 to 2022</span></div>
+      </a></li>
+      <li><a class="log-card" href="history.html#ch-4">
+        <div class="ph"><img src="history-media/18058985624356077.jpg" alt="The Lorenz Aeroboticar model photographed outdoors" loading="lazy"></div>
+        <div class="meta"><span class="ch">CHAPTER 04</span><h3>Patents and a Proof of Concept</h3><span class="yr">2023 to 2025</span></div>
+      </a></li>
+      <li><a class="log-card" href="history.html#ch-5">
+        <div class="ph"><img src="history-media/18536233738039309.jpg" alt="An Aeroboticar concept render on a runway" loading="lazy"></div>
+        <div class="meta"><span class="ch">CHAPTER 05</span><h3>The Vision</h3><span class="yr">2025 to 2026</span></div>
+      </a></li>
+      <li><a class="log-card" href="history.html#ch-6">
+        <div class="ph"><img src="history-media/18354385567232700.jpg" alt="The 3D printed body of the 1:5 scale Aeroboticar" loading="lazy"></div>
+        <div class="meta"><span class="ch">CHAPTER 06</span><h3>Building the 1:5</h3><span class="yr">2026</span></div>
+      </a></li>
+      <li><a class="log-card" href="history.html#ch-7">
+        <div class="ph"><img src="history-media/18092440766063775.jpg" alt="The finished 1:5 scale prototype under a highway bridge" loading="lazy"></div>
+        <div class="meta"><span class="ch">CHAPTER 07</span><h3>Getting Ready to Fly</h3><span class="yr">2026</span></div>
+      </a></li>
+      <li><a class="log-card" href="history.html#ch-8">
+        <div class="ph"><img src="history-media/17924096139217780.jpg" alt="A studio render of the 2027 Aeroboticarbon" loading="lazy"></div>
+        <div class="meta"><span class="ch">CHAPTER 08</span><h3>The 2027 Aeroboticarbon</h3><span class="yr">2026</span></div>
+      </a></li>
+    </ol>
+    <div class="log-foot reveal">
+      <span>Straight from @lorenzaero on Instagram</span>
+      <a class="cta-link primary" href="history.html">Read the full Build Log &rarr;</a>
     </div>
-    <p class="blackwing-foot reveal">
-      Lorenz <b>operates the exchange, not the fleet.</b> Blackwing is a reference implementation,
-      the open template any operator can fork to fly their own aircraft on LAPP. We ship it so the
-      standard is provably real and adoptable on day one, the way the web needed a browser before it
-      needed a thousand sites. The meter that matters runs underneath, at the protocol layer, beneath
-      every app built like this one.
-    </p>
   </div>
 </section>
 

@@ -43,6 +43,7 @@
   .badge{position:absolute;top:10px;right:10px;font-size:10px;letter-spacing:.1em;background:rgba(8,9,12,.75);padding:3px 8px;color:var(--ink)}
   .play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Instrument Serif',serif;font-size:42px;color:var(--accent);pointer-events:none}
   .meta{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:10px}
+  .chapter{scroll-margin-top:72px}
   .cap{color:var(--ink-mid);font-size:13.5px;line-height:1.85;white-space:pre-line;word-wrap:break-word}
   .cap a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
   .cap.empty{color:var(--ink-dim);font-style:italic}
@@ -3071,7 +3072,7 @@ const first=shown[0].date.slice(0,4), last=shown[shown.length-1].date.slice(0,4)
 document.getElementById('stats').innerHTML=`<div><b>${shown.length}</b><span>Posts</span></div><div><b>${nMedia}</b><span>Photos & videos</span></div><div><b>${first===last?first:first+'–'+last}</b><span>Span</span></div>`;
 shown.forEach((p,i)=>{
   const d=new Date(p.date); const key=d.getFullYear()+'-'+d.getMonth();
-  if(p.chapter){const c=document.createElement('div');c.className='chapter';c.dataset.ch=p.chapter.title;c.innerHTML=`<span class="num">${p.chapter.num}</span><h3>${p.chapter.title}</h3><p>${p.chapter.sub}</p>`;tl.appendChild(c);cur='';}
+  if(p.chapter){const c=document.createElement('div');c.className='chapter';c.id='ch-'+p.chapter.num.replace(/\D/g,'');c.dataset.ch=p.chapter.title;c.innerHTML=`<span class="num">${p.chapter.num}</span><h3>${p.chapter.title}</h3><p>${p.chapter.sub}</p>`;tl.appendChild(c);cur='';}
   if(key!==cur){cur=key;const m=document.createElement('div');m.className='month';m.dataset.label=MONTHS[d.getMonth()]+' '+d.getFullYear();m.dataset.y=d.getFullYear();m.innerHTML=`<h2>${MONTHS[d.getMonth()]}<em>${d.getFullYear()}</em></h2>`;tl.appendChild(m);}
   const it=p.items[0]; const el=document.createElement('article'); el.className='post';
   const dateStr=d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
@@ -3119,6 +3120,7 @@ document.addEventListener('keydown',e=>{if(!lb.classList.contains('open'))return
   addEventListener('scroll',()=>{sync();show();},{passive:true});
   addEventListener('resize',build);addEventListener('load',build);build();
 })();
+if(location.hash){const t=document.getElementById(location.hash.slice(1));if(t)requestAnimationFrame(()=>t.scrollIntoView());}
 </script>
 </body>
 </html>

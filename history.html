@@ -1,0 +1,3124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Build Log | Lorenz Aerospace</title>
+<meta name="description" content="The Lorenz Aerospace build log: every step of building the Aeroboticarbon, from the first frame to the 1:5 scale prototype.">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link rel="icon" type="image/jpg" href="LorenzLogo.jpg">
+<style>
+  :root{--bg:#08090c;--bg-alt:#0e1016;--ink:#e4e2dd;--ink-dim:#6b7080;--ink-mid:#9ca0ad;--rule:#1a1d28;--accent:#e04a3a;--gold:#d4a54a}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--ink);font-family:'DM Mono',monospace;font-size:15px;line-height:1.7;-webkit-font-smoothing:antialiased}
+  nav{position:fixed;top:0;left:0;right:0;z-index:50;background:rgba(8,9,12,.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--rule);padding:0 clamp(24px,4vw,80px);height:60px;display:flex;align-items:center;justify-content:space-between}
+  .nav-logo{font-family:'Instrument Serif',serif;font-size:22px;letter-spacing:.04em;color:var(--ink);text-decoration:none}
+  .nav-logo em{color:var(--accent);font-style:italic}
+  .nav-links{display:flex;gap:32px}
+  .nav-links a{font-size:11px;letter-spacing:.15em;text-transform:uppercase;text-decoration:none;color:var(--ink-dim);transition:color .2s}
+  .nav-links a:hover{color:var(--ink)} .nav-links a.active{color:var(--accent)}
+  @media(max-width:640px){.nav-links{gap:16px}.nav-links a:not(.active):not([href="/#contact"]){display:none}}
+  .wrap{max-width:1000px;margin:0 auto;padding:0 clamp(24px,6vw,80px)}
+  header.hero{padding:140px 0 56px}
+  .label{font-size:10px;letter-spacing:.25em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:18px}
+  h1{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(44px,7vw,84px);line-height:1;letter-spacing:-.02em;margin-bottom:22px}
+  h1 em{font-style:italic;color:var(--accent)}
+  .sub{color:var(--ink-mid);max-width:560px;font-size:14px;line-height:1.85}
+  .stats{display:flex;gap:36px;margin-top:30px;flex-wrap:wrap}
+  .stats b{display:block;font-family:'Instrument Serif',serif;font-weight:400;font-size:26px;color:var(--ink)}
+  .stats span{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-dim)}
+  .timeline{position:relative;padding-bottom:120px}
+  .timeline::before{content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--rule)}
+  .month{position:relative;padding:44px 0 8px 40px}
+  .month h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:30px;line-height:1.1}
+  .month h2 em{font-style:italic;color:var(--ink-dim);font-size:22px;margin-left:8px}
+  .month::before{content:'';position:absolute;left:0;top:54px;width:15px;height:15px;border-radius:50%;background:var(--bg);border:1px solid var(--accent)}
+  .post{position:relative;margin:22px 0 0 40px;display:grid;grid-template-columns:260px 1fr;gap:26px;padding:20px;background:var(--bg-alt);border:1px solid var(--rule);transition:border-color .2s}
+  .post:hover{border-color:rgba(224,74,58,.35)}
+  .post::before{content:'';position:absolute;left:-36px;top:34px;width:7px;height:7px;border-radius:50%;background:var(--accent);opacity:.7}
+  .thumb{position:relative;display:block;aspect-ratio:1;overflow:hidden;background:#050506;cursor:pointer;border:0;padding:0;width:100%}
+  .thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .35s}
+  .post:hover .thumb img{transform:scale(1.03)}
+  .badge{position:absolute;top:10px;right:10px;font-size:10px;letter-spacing:.1em;background:rgba(8,9,12,.75);padding:3px 8px;color:var(--ink)}
+  .play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Instrument Serif',serif;font-size:42px;color:var(--accent);pointer-events:none}
+  .meta{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:10px}
+  .cap{color:var(--ink-mid);font-size:13.5px;line-height:1.85;white-space:pre-line;word-wrap:break-word}
+  .cap a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+  .cap.empty{color:var(--ink-dim);font-style:italic}
+  .chapter{position:relative;margin:72px 0 0;padding:28px 0 8px 40px;border-top:1px solid var(--rule)}
+  .chapter:first-child{margin-top:8px}
+  .chapter .num{font-size:10px;letter-spacing:.25em;text-transform:uppercase;color:var(--accent)}
+  .chapter h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(34px,5vw,52px);line-height:1.05;margin:8px 0 10px}
+  .chapter p{color:var(--ink-mid);font-size:14px;line-height:1.8;max-width:560px}
+  .chapter::before{content:'';position:absolute;left:1px;top:32px;width:13px;height:13px;background:var(--accent);transform:rotate(45deg)}
+  .story{color:var(--ink);font-size:14.5px;line-height:1.8}
+  details.orig{margin-top:14px}
+  details.orig summary{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-dim);cursor:pointer;list-style:none}
+  details.orig summary::-webkit-details-marker{display:none}
+  details.orig summary::before{content:'+ '} details.orig[open] summary::before{content:'– '}
+  details.orig summary:hover{color:var(--ink)}
+  details.orig .cap{margin-top:10px;padding-left:12px;border-left:1px solid var(--rule)}
+  .jump{display:inline-block;margin-top:26px;font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+  .scrub{position:fixed;top:76px;bottom:20px;right:0;width:40px;z-index:60;touch-action:none;cursor:grab;opacity:0;transition:opacity .35s;-webkit-user-select:none;user-select:none}
+  .scrub.on,.scrub.drag{opacity:1}
+  @media(hover:hover){.scrub{opacity:.55}.scrub:hover{opacity:1}}
+  .scrub .rail{position:absolute;right:14px;top:0;bottom:0;width:2px;background:var(--rule)}
+  .scrub .knob{position:absolute;right:8px;width:14px;height:46px;margin-top:-23px;border-radius:7px;background:var(--accent);box-shadow:0 2px 10px rgba(0,0,0,.5)}
+  .scrub .yr{position:absolute;right:26px;transform:translateY(-50%);font-size:9px;letter-spacing:.12em;color:var(--ink-dim);opacity:0;transition:opacity .2s;pointer-events:none}
+  .scrub .yr::after{content:'';position:absolute;right:-12px;top:50%;width:6px;height:1px;background:var(--ink-dim)}
+  .scrub.on .yr,.scrub.drag .yr,.scrub:hover .yr{opacity:1}
+  .scrub .bubble{position:absolute;right:52px;transform:translateY(-50%);display:none;white-space:nowrap;background:var(--bg-alt);border:1px solid var(--accent);padding:8px 14px;font-family:'Instrument Serif',serif;font-size:22px;line-height:1.1;color:var(--ink);pointer-events:none}
+  .scrub .bubble small{display:block;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:2px}
+  .scrub.drag .bubble{display:block}
+  .scrub.drag .yr{display:none}
+  @media(max-width:700px){.wrap{padding-right:44px}}
+  @media(max-width:700px){.post{grid-template-columns:1fr;gap:16px;padding:14px}}
+  .lb{position:fixed;inset:0;z-index:100;background:rgba(4,4,6,.96);display:none;align-items:center;justify-content:center}
+  .lb.open{display:flex}
+  .lb img,.lb video{max-width:92vw;max-height:84vh;display:block}
+  .lb button{position:absolute;background:none;border:1px solid var(--rule);color:var(--ink);font-family:inherit;font-size:20px;width:48px;height:48px;cursor:pointer}
+  .lb button:hover{border-color:var(--accent);color:var(--accent)}
+  .lb .x{top:20px;right:20px}.lb .pv{left:20px;top:50%;transform:translateY(-50%)}.lb .nx{right:20px;top:50%;transform:translateY(-50%)}
+  .lb .count{position:absolute;bottom:22px;left:0;right:0;text-align:center;font-size:11px;letter-spacing:.2em;color:var(--ink-dim)}
+  footer{border-top:1px solid var(--rule);padding:40px clamp(24px,6vw,120px);max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;flex-wrap:wrap;gap:24px;font-size:11px;color:var(--ink-dim);line-height:1.8}
+  footer strong{color:var(--ink);font-weight:500}
+  footer a{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-dim);text-decoration:none;margin-left:20px}
+  footer a:hover{color:var(--ink)}
+  :where(a,button):focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+</style>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="/">Lorenz<em>Aero</em></a>
+  <div class="nav-links">
+    <a href="/#vehicle">Vehicle</a>
+    <a href="/#protocol">Protocol</a>
+    <a href="history.html" class="active">Build Log</a>
+    <a href="/flightclub">Flight Club</a>
+    <a href="/#contact">Contact</a>
+  </div>
+</nav>
+<div class="wrap">
+  <header class="hero">
+    <span class="label">The Build Log</span>
+    <h1>Built in public, <em>one post at a time.</em></h1>
+    <p class="sub">The story of the Aeroboticar, from a solar drone in a college lab in 2019 to the 2027 Aeroboticarbon. Told in order, from the Lorenz Instagram.</p>
+    <div class="stats" id="stats"></div>
+    <a class="jump" href="#latest">Jump to the latest ↓</a>
+  </header>
+  <section class="timeline" id="tl"></section>
+</div>
+<div class="scrub" id="scrub" aria-hidden="true"><div class="rail"></div><div class="knob" id="knob"></div><div class="bubble" id="bub"></div></div>
+<div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Post media">
+  <button class="x" id="lbx" aria-label="Close">×</button>
+  <button class="pv" id="lbp" aria-label="Previous">‹</button>
+  <div id="lbm"></div>
+  <button class="nx" id="lbn" aria-label="Next">›</button>
+  <div class="count" id="lbc"></div>
+</div>
+<footer>
+  <div><strong>Lorenz Motors Corp</strong><br>Design Patent US-D1078585-S · Patent Pending, U.S. Provisional App. No. 64/041,519<br>Woodbridge, New Jersey · peter@lorenzaero.com</div>
+  <div><a href="https://www.instagram.com/lorenzaero">Instagram</a><a href="https://www.youtube.com/channel/UCSqoZYtYOm6KCniw96xjAoA">YouTube</a><a href="https://www.linkedin.com/in/peter--roman/">LinkedIn</a></div>
+</footer>
+<script>
+/* POSTS: edit "hide": true/false to show or hide any post. */
+const POSTS = [
+{
+"date": "2026-10-21T10:04:00",
+"caption": "Please do yourself a favor and ZOOM IN, and when you're done zooming in, go to lorenzaero.com on your desktop and bask in all the Aeroboticarbon '27's glory! I'm obsesseddddd.",
+"items": [
+{
+"type": "image",
+"src": "17882982771534514.jpg",
+"thumb": "17882982771534514.jpg"
+}
+],
+"story": "The finished 2027 renders, and the launch of the new lorenzaero.com."
+},
+{
+"date": "2026-10-20T15:53:00",
+"caption": "Golden hour",
+"items": [
+{
+"type": "image",
+"src": "18631130881054500.jpg",
+"thumb": "18631130881054500.jpg"
+}
+],
+"story": "Golden hour."
+},
+{
+"date": "2026-10-20T15:23:00",
+"caption": "Aeroboticarbon '27 renders. Thanks to the help of my friends at @meshy.ai I was able to take these images in @blender.official with the help of @claudeai.\n\nCheck out our updated site! At lorenzaero.com and sign up for Flight Club. lorenzaero.com/flightclub",
+"items": [
+{
+"type": "image",
+"src": "17924096139217780.jpg",
+"thumb": "17924096139217780.jpg"
+},
+{
+"type": "image",
+"src": "18105844736121406.jpg",
+"thumb": "18105844736121406.jpg"
+},
+{
+"type": "image",
+"src": "17896392426612333.jpg",
+"thumb": "17896392426612333.jpg"
+},
+{
+"type": "image",
+"src": "18484209028105539.jpg",
+"thumb": "18484209028105539.jpg"
+}
+],
+"story": "The first studio renders of the 2027 Aeroboticarbon, made in Blender."
+},
+{
+"date": "2026-10-19T10:22:00",
+"caption": "After the Tesla Roadster demo, I realized that wheels are essential for a flying \"car\", but I don't think cold gas thrusters are enough to hover an entire vehicle for more than 4 seconds.\n\nI think jet fans are the answer, and I found a way to make it look sick. Inspired by the 2026 Aeroboticar and the 2017 Roadster. It's as if the two had a baby. \n\nIntroducing the 2027 Aeroboticarbon. Please murder that like button.",
+"items": [
+{
+"type": "image",
+"src": "18120455158943098.jpg",
+"thumb": "18120455158943098.jpg"
+},
+{
+"type": "image",
+"src": "18016619579747179.jpg",
+"thumb": "18016619579747179.jpg"
+}
+],
+"story": "A rethink. To be a real car it needs wheels, and the fans have to do the real lifting. The answer is the 2027 Aeroboticarbon: a sports car body with four ducted fans.",
+"chapter": {
+"num": "Chapter 8",
+"title": "The 2027 Aeroboticarbon",
+"sub": "A new design for the full-scale vehicle: a sports car body with four ducted fans."
+}
+},
+{
+"date": "2026-10-19T10:20:00",
+"caption": "After the Tesla Roadster demo, I realized that wheels are essential for a flying \"car\", but I don't think cold gas thrusters are enough to hover an entire vehicle for more than 4 seconds.\n\nI think jet fans are the answer, and I found a way to make it look sick. Inspired by the 2026 Aeroboticar and the 2017 Roadster. It's as if the two had a baby. \n\nIntroducing the 2027 Aeroboticarbon. Please murder that like button.",
+"items": [
+{
+"type": "image",
+"src": "17952441681329038.jpg",
+"thumb": "17952441681329038.jpg"
+},
+{
+"type": "image",
+"src": "18092005916212107.jpg",
+"thumb": "18092005916212107.jpg"
+}
+],
+"hide": true,
+"why_hidden": "duplicate",
+"story": "A rethink of the design."
+},
+{
+"date": "2026-10-18T11:29:00",
+"caption": "Finished building the 1:5 scale Aeroboticar prototype that flies. It's supposed to be able to carry a person at full 1:1 scale.",
+"items": [
+{
+"type": "image",
+"src": "18107291051260971.jpg",
+"thumb": "18107291051260971.jpg"
+}
+],
+"story": "The 1:5 prototype, finished and built to fly, with a layout designed to scale up to carry a person."
+},
+{
+"date": "2026-09-24T16:26:00",
+"caption": "Concept: a flying car kit your kid builds at the kitchen table.\nI've spent 8 years building a real flying car. Now I'm working with a factory to turn it into a flat-pack solar kit for kids 8+. Four fans, one solar panel, zero screens.\nIt's coming to Lorenz Flight Club, a monthly build box from the team behind the flying car. The first 100 families lock in founding pricing for life.\nJoin the list, link in bio.\n(Concept render. Real prototype photos coming soon.)\n#STEM #STEMkids #flyingcar #kidsactivities #homeschool",
+"items": [
+{
+"type": "image",
+"src": "18134252500632245.jpg",
+"thumb": "18134252500632245.jpg"
+}
+],
+"story": "A spin-off idea: Lorenz Flight Club, a monthly build box for kids. (Concept render.)"
+},
+{
+"date": "2026-09-11T10:21:00",
+"caption": "Added wheels. JK it's a dolly, we're going to NY tomorrow!",
+"items": [
+{
+"type": "image",
+"src": "18130029523663247.jpg",
+"thumb": "18130029523663247.jpg"
+}
+],
+"story": "On a dolly and packed for a trip to New York."
+},
+{
+"date": "2026-08-13T09:23:00",
+"caption": "Lorenz Aeroboticarbon front lit",
+"items": [
+{
+"type": "image",
+"src": "17990123421009836.jpg",
+"thumb": "17990123421009836.jpg"
+}
+],
+"story": "The Aeroboticarbon, front lit."
+},
+{
+"date": "2026-08-05T07:00:00",
+"caption": "Finally upgraded the thruster assembly to something more realistic. Way more thrust. Way more grip.\n\nIs it grippy?",
+"items": [
+{
+"type": "video",
+"src": "17887378815436328.mp4",
+"poster": "17887378815436328.jpg",
+"thumb": "17887378815436328.jpg"
+},
+{
+"type": "image",
+"src": "17864642643648934.jpg",
+"thumb": "17864642643648934.jpg"
+},
+{
+"type": "image",
+"src": "18609358234028034.jpg",
+"thumb": "18609358234028034.jpg"
+}
+],
+"story": "An upgraded thruster assembly with more thrust and more grip."
+},
+{
+"date": "2026-08-03T16:39:00",
+"caption": "Lorenz Motors Corp will be making motors ... 3 phase, brushless DC permanent magnet synchronous, the way Tesla intended haha. I know axial flux are all the rave right now, but the radial flux motor is way easier to make, at least that's what chatgpt said.  We're starting with radial and then from there we'll probably transition to axial, we just have to figure out if we want to do two outer stator-one inner rotor or what. There's so many combinations you could do that it's complicated. If I find a simple tutorial on here from one of you guys I'll probably just do that, but it's important we can automate the process in the future, so I'll be looking for robotic systems that can make these motors automatically.",
+"items": [
+{
+"type": "image",
+"src": "17864547648644187.jpg",
+"thumb": "17864547648644187.jpg"
+}
+],
+"story": "The next frontier is motors. Lorenz plans to build its own, starting with radial flux and moving toward axial flux, with automated manufacturing in mind."
+},
+{
+"date": "2026-07-31T12:56:00",
+"caption": "Hanging by some ropes, fully branded. Test flights coming soon. Just going over some details.",
+"items": [
+{
+"type": "image",
+"src": "17965633008134040.jpg",
+"thumb": "17965633008134040.jpg"
+}
+],
+"story": "On the rig and fully branded, going over the last details before test flights."
+},
+{
+"date": "2026-07-31T12:55:00",
+"caption": "Fully branded now",
+"items": [
+{
+"type": "image",
+"src": "18114846391902252.jpg",
+"thumb": "18114846391902252.jpg"
+}
+],
+"story": "Fully branded."
+},
+{
+"date": "2026-07-31T12:54:00",
+"caption": "Hanging by some strings on a pulley I'll use for controlled test flights.",
+"items": [
+{
+"type": "image",
+"src": "17995611599809022.jpg",
+"thumb": "17995611599809022.jpg"
+}
+],
+"story": "Hung from a pulley rig. This is how the first test flights will run: controlled and tethered."
+},
+{
+"date": "2026-07-19T15:44:00",
+"caption": "",
+"items": [
+{
+"type": "image",
+"src": "18092843111059144.jpg",
+"thumb": "18092843111059144.jpg"
+},
+{
+"type": "image",
+"src": "17982795974861577.jpg",
+"thumb": "17982795974861577.jpg"
+},
+{
+"type": "image",
+"src": "18103725361886174.jpg",
+"thumb": "18103725361886174.jpg"
+},
+{
+"type": "image",
+"src": "18136674115607453.jpg",
+"thumb": "18136674115607453.jpg"
+}
+],
+"story": "More from the photoshoot."
+},
+{
+"date": "2026-07-19T15:22:00",
+"caption": "What does this bridge represent?",
+"items": [
+{
+"type": "image",
+"src": "18092440766063775.jpg",
+"thumb": "18092440766063775.jpg"
+}
+],
+"story": "Parked under a highway bridge, the exact kind of chokepoint the Aeroboticar is designed to fly over."
+},
+{
+"date": "2026-07-19T15:17:00",
+"caption": "Small scale flying car prototype photoshoot —Lorenz Aeroboticar 2026",
+"items": [
+{
+"type": "image",
+"src": "18085604900384506.jpg",
+"thumb": "18085604900384506.jpg"
+}
+],
+"story": "Photoshoot day for the finished 1:5 Aeroboticar.",
+"chapter": {
+"num": "Chapter 7",
+"title": "Getting Ready to Fly",
+"sub": "The finished prototype, a test rig, and what comes after it."
+}
+},
+{
+"date": "2026-05-06T18:10:00",
+"caption": "It's been a blast building this one by one day by day and posting for you. Let me know what content you want to see moving forward. I'll fly this for you soon!",
+"items": [
+{
+"type": "image",
+"src": "17935051269246941.jpg",
+"thumb": "17935051269246941.jpg"
+}
+],
+"story": "The 1:5 body is complete. Thanks to everyone who followed along day by day."
+},
+{
+"date": "2026-05-06T09:36:00",
+"caption": "Those final two pieces at the bottom (the gap) are printing right now. Then the real magic begins! :) what a journey this has been with you.",
+"items": [
+{
+"type": "image",
+"src": "18112182253896232.jpg",
+"thumb": "18112182253896232.jpg"
+},
+{
+"type": "image",
+"src": "17968614443905878.jpg",
+"thumb": "17968614443905878.jpg"
+}
+],
+"story": "The final two bottom pieces on the printer, the end of a long print marathon."
+},
+{
+"date": "2026-05-06T09:25:00",
+"caption": "Almost finished, should be done by tonight!",
+"items": [
+{
+"type": "image",
+"src": "17946765816158019.jpg",
+"thumb": "17946765816158019.jpg"
+},
+{
+"type": "image",
+"src": "18110890846678139.jpg",
+"thumb": "18110890846678139.jpg"
+}
+],
+"story": "Almost finished. The last pieces print tonight."
+},
+{
+"date": "2026-05-05T16:43:00",
+"caption": "Oh yaaaa",
+"items": [
+{
+"type": "image",
+"src": "18354385567232700.jpg",
+"thumb": "18354385567232700.jpg"
+}
+],
+"story": "It's starting to look like the car in the renders."
+},
+{
+"date": "2026-05-05T16:42:00",
+"caption": "Slide on the side yadadamean",
+"items": [
+{
+"type": "image",
+"src": "17888920530473053.jpg",
+"thumb": "17888920530473053.jpg"
+}
+],
+"story": "A side view of the assembled body."
+},
+{
+"date": "2026-05-05T16:42:00",
+"caption": "Ugnnnnnn",
+"items": [
+{
+"type": "image",
+"src": "18153139264461830.jpg",
+"thumb": "18153139264461830.jpg"
+}
+],
+"story": "Printing again. Body panels coming off the printer."
+},
+{
+"date": "2026-04-15T12:56:00",
+"caption": "Extruder jam, ordered a new nozzle, printing will resume in a few days. For now here's where we're at. Almost done!",
+"items": [
+{
+"type": "image",
+"src": "18042222998784386.jpg",
+"thumb": "18042222998784386.jpg"
+}
+],
+"story": "Extruder jam. A new nozzle is on the way and printing is paused, but the body is almost done."
+},
+{
+"date": "2026-04-08T11:40:00",
+"caption": "Front is all done. Starting the back now. The printer has been giving me false jams. Contacted support. Probably going to give it some rest given it's been printing for over a month straight. At the final stretch though!",
+"items": [
+{
+"type": "image",
+"src": "18220736785315557.jpg",
+"thumb": "18220736785315557.jpg"
+}
+],
+"story": "The front body section is printed. On to the back, with the printer fighting me along the way."
+},
+{
+"date": "2026-04-01T14:35:00",
+"caption": "You heard correctly. We are torching the personal flight idea in favor of squirrel flight technology. We need to help our furry little rodent friends get around and collect nuts scattered all over those damn huge ahh parks.\n\nThis is a lot better use of our time as engineers here at Lorenz. We have made a deal with the squirrels and they are going to give us nuts that we will then trade at the super market for money to keep the lights on in our maker spaces. \n\nSquirrels are the future.",
+"items": [
+{
+"type": "image",
+"src": "18100285639784393.jpg",
+"thumb": "18100285639784393.jpg"
+}
+],
+"story": "April Fools, part two."
+},
+{
+"date": "2026-04-01T13:03:00",
+"caption": "Effective immediately, Lorenz is suspending development of the A-Series (Human) eVTOL to focus entirely on the S-Series, our new tactical platform for squirrel drey-stabilization and acorn logistics.\n\n​Data confirms that urban squirrel populations need faster, more efficient ways to cache nuts. Our new \"S-Series\" test unit features integrated scent-gel navigation and a high-octane acorn fuel mix, designed for the unique needs of a rodent pilot in an aviator cap. The human market can wait.",
+"items": [
+{
+"type": "image",
+"src": "17905337952388864.jpg",
+"thumb": "17905337952388864.jpg"
+}
+],
+"story": "April Fools: Lorenz announces a pivot to squirrel transport."
+},
+{
+"date": "2026-03-31T12:49:00",
+"caption": "1:5 Aeroboticar by Lorenz. Trying to scale this is an absolute nightmare. If you would like to join our team DM us or @pete.with.the.heat",
+"items": [
+{
+"type": "image",
+"src": "18085532672012273.jpg",
+"thumb": "18085532672012273.jpg"
+}
+],
+"story": "The 1:5 Aeroboticar, assembled so far. Scaling it up is the hard part, so I started looking for people to join the team."
+},
+{
+"date": "2026-03-31T12:49:00",
+"caption": "1:5 Aeroboticar by Lorenz. Trying to scale this is an absolute nightmare. If you would like to join our team DM us or @pete.with.the.heat",
+"items": [
+{
+"type": "image",
+"src": "18366373318204748.jpg",
+"thumb": "18366373318204748.jpg"
+}
+],
+"hide": true,
+"why_hidden": "duplicate",
+"story": "The 1:5 Aeroboticar so far."
+},
+{
+"date": "2026-03-29T03:33:00",
+"caption": "Close ups of an Aeroboticar. Wing, fans, body.. There are many pieces to the puzzle. But when the pieces fit perfectly together, they create something.. spesh",
+"items": [
+{
+"type": "image",
+"src": "18094675841019115.jpg",
+"thumb": "18094675841019115.jpg"
+},
+{
+"type": "image",
+"src": "17885974695466866.jpg",
+"thumb": "17885974695466866.jpg"
+},
+{
+"type": "image",
+"src": "18086344862029076.jpg",
+"thumb": "18086344862029076.jpg"
+},
+{
+"type": "image",
+"src": "17848131774678544.jpg",
+"thumb": "17848131774678544.jpg"
+}
+],
+"story": "Close-ups of the printed parts: wing, fans and body. The pieces start fitting together."
+},
+{
+"date": "2026-03-27T19:10:00",
+"caption": "Ohhhhh yeah wing is doneeeeee!",
+"items": [
+{
+"type": "image",
+"src": "18084315974588667.jpg",
+"thumb": "18084315974588667.jpg"
+},
+{
+"type": "image",
+"src": "18335456719175488.jpg",
+"thumb": "18335456719175488.jpg"
+},
+{
+"type": "image",
+"src": "18354456817239881.jpg",
+"thumb": "18354456817239881.jpg"
+},
+{
+"type": "image",
+"src": "18120865126527501.jpg",
+"thumb": "18120865126527501.jpg"
+}
+],
+"story": "The printed rear wing is done."
+},
+{
+"date": "2026-03-27T08:38:00",
+"caption": "I wanna make these free",
+"items": [
+{
+"type": "image",
+"src": "18011396711689007.jpg",
+"thumb": "18011396711689007.jpg"
+}
+],
+"story": "Thinking about giving some of these designs away for free."
+},
+{
+"date": "2026-03-25T09:57:00",
+"caption": "Some cool looking wind tunnel simulation visualizations",
+"items": [
+{
+"type": "image",
+"src": "18099241303959490.jpg",
+"thumb": "18099241303959490.jpg"
+},
+{
+"type": "image",
+"src": "18012051446683891.jpg",
+"thumb": "18012051446683891.jpg"
+}
+],
+"story": "Wind tunnel simulations, checking how air moves around the body."
+},
+{
+"date": "2026-03-21T00:55:00",
+"caption": "Peachy 🍑 coral 🪸 bright red. Basking in all its glory.\nLorenz Aeroboticar 2026. If this interests you and you want to be a part of it, DM either myself or @peter._.roman and we'll get you on the team asap!",
+"items": [
+{
+"type": "video",
+"src": "18097258330966179.mp4",
+"poster": "18097258330966179.jpg",
+"thumb": "18097258330966179.jpg"
+},
+{
+"type": "image",
+"src": "17968446639040756.jpg",
+"thumb": "17968446639040756.jpg"
+}
+],
+"story": "A colorway study in peach, coral and bright red."
+},
+{
+"date": "2026-03-20T13:55:00",
+"caption": "100% done with getting it all ready for 3D printing. Scroll to the right for 1. Screenshot 2. Render\n\nAll parts are connected.\n\nI've been doing some research on how to move the project moving forward, and of course unless you're the perfect charismatic human being with infinite energy and magnetic positivity — you need funding.\n\nThere are a few New Jersey clean tech energy grants I'm looking at. Once I get this 1:5 to fly I'll be in a better position for some motion.\n\nLet's 🥂 toast 🍻 to a job well done @peter._.roman",
+"items": [
+{
+"type": "image",
+"src": "18085728068598928.jpg",
+"thumb": "18085728068598928.jpg"
+},
+{
+"type": "image",
+"src": "18053083190705743.jpg",
+"thumb": "18053083190705743.jpg"
+}
+],
+"story": "The full CAD model is finished and ready for 3D printing, every part connected. The next challenge is funding, starting with New Jersey clean tech grants."
+},
+{
+"date": "2026-03-15T10:54:00",
+"caption": "The brain and frame have been married 💒",
+"items": [
+{
+"type": "image",
+"src": "18091562222146783.jpg",
+"thumb": "18091562222146783.jpg"
+}
+],
+"story": "The brain meets the frame: flight electronics mounted on the airframe."
+},
+{
+"date": "2026-03-15T07:39:00",
+"caption": "New addition to the fam. Flight controller stage. Keeping things organized :)",
+"items": [
+{
+"type": "image",
+"src": "18108273478802645.jpg",
+"thumb": "18108273478802645.jpg"
+},
+{
+"type": "image",
+"src": "18119116909533019.jpg",
+"thumb": "18119116909533019.jpg"
+},
+{
+"type": "image",
+"src": "18076450238567767.jpg",
+"thumb": "18076450238567767.jpg"
+}
+],
+"story": "The flight controller stage, built and organized."
+},
+{
+"date": "2026-03-12T18:50:00",
+"caption": "Made some progress today. Here's a raw pic of where we're at so far.\n\nIt just needs batteries, flight controller, radio, AI vision, first person view camera, and body and LED's and that's pretty much it I think :)",
+"items": [
+{
+"type": "image",
+"src": "18084561241991239.jpg",
+"thumb": "18084561241991239.jpg"
+}
+],
+"story": "A raw progress shot. Still to go: batteries, flight controller, radio, AI vision, FPV camera, the body and the LEDs."
+},
+{
+"date": "2026-03-11T14:24:00",
+"caption": "The power stage is almost done. Moving on to the control stage after this.",
+"items": [
+{
+"type": "image",
+"src": "18093596726515632.jpg",
+"thumb": "18093596726515632.jpg"
+}
+],
+"story": "The power stage is nearly done. The control stage is next."
+},
+{
+"date": "2026-03-10T16:40:00",
+"caption": "Who wants to give me money?",
+"items": [
+{
+"type": "image",
+"src": "18134572153511420.jpg",
+"thumb": "18134572153511420.jpg"
+}
+],
+"hide": true,
+"why_hidden": "\"give me money\"",
+"story": "Taking stock of what comes next."
+},
+{
+"date": "2026-03-08T15:39:00",
+"caption": "The power and motor driver tray started; major milestone reached!! I've successfully printed the motor driver mounts and attached them to the first part of the power tray which is 1/4 complete.\n\nAll wires are just long enough to connect to their respective  parts, what a relief! Theory was correct. Design is proven. Major huge win.\n\nIdk about you but I'm going to celebrate with some hot chocolate 🍫🫕",
+"items": [
+{
+"type": "image",
+"src": "18345341227232587.jpg",
+"thumb": "18345341227232587.jpg"
+},
+{
+"type": "image",
+"src": "18330609790300131.jpg",
+"thumb": "18330609790300131.jpg"
+},
+{
+"type": "image",
+"src": "18163261729418068.jpg",
+"thumb": "18163261729418068.jpg"
+}
+],
+"story": "First big hardware milestone. The motor driver mounts are printed and on the power tray, and every wire reached its part on the first try. The layout math was right."
+},
+{
+"date": "2026-03-03T06:31:00",
+"caption": "Engineering isn't just about power; it’s about efficiency. Today, we’re revealing a first-of-its-kind innovation on the Lorenz Aeroboticar.\n\n​Most spoilers are designed to create downforce for ground vehicles. Our rear spoiler acts as a functional wing. In forward flight, this \"Lift-Glide\" mechanism generates vertical lift at the rear, significantly decreasing the load on the propulsion thrusters.\n\n​The result? A more efficient gliding state that extends battery life and increases our projected 300-mile flight range. This is the intersection of automotive design and aerospace physics.\n\n​The Algorithm Experiment:\nIf you're seeing this in your feed after interacting with my story earlier, then our \"human-powered\" reset is working!\n\n​Comment Challenge:\nHow many miles would you be willing to commute if you could glide over traffic at 100+ mph? 🚀👇 Drop a \"🚀\" if this tech belongs in the future!",
+"items": [
+{
+"type": "image",
+"src": "18096092374962653.jpg",
+"thumb": "18096092374962653.jpg"
+}
+],
+"story": "A design idea: the rear spoiler works as a wing. In forward flight it adds lift at the back and takes load off the fans."
+},
+{
+"date": "2026-02-25T12:28:00",
+"caption": "The frame will serve as the basis for the 1:5 Aeroboticar prototype that will then lead to the production of the human-carrying full scale.",
+"items": [
+{
+"type": "image",
+"src": "18136262743496658.jpg",
+"thumb": "18136262743496658.jpg"
+},
+{
+"type": "image",
+"src": "18065853857289383.jpg",
+"thumb": "18065853857289383.jpg"
+},
+{
+"type": "image",
+"src": "18092486839849934.jpg",
+"thumb": "18092486839849934.jpg"
+}
+],
+"story": "The 1:5 frame becomes the base for a flying prototype, the step before a full-scale vehicle that carries a person."
+},
+{
+"date": "2026-02-25T12:25:00",
+"caption": "Building a flying car proof of concept at Lorenz. The small frame you see on the ground is 1:5 the larger scale frame taking shape that will eventually become the full scale.",
+"items": [
+{
+"type": "image",
+"src": "17906906898357566.jpg",
+"thumb": "17906906898357566.jpg"
+}
+],
+"story": "Renders only go so far. Back to hardware: the small frame on the floor is a 1:5 version of the full-size frame.",
+"chapter": {
+"num": "Chapter 6",
+"title": "Building the 1:5",
+"sub": "A one-fifth scale prototype, designed in CAD and 3D printed piece by piece."
+}
+},
+{
+"date": "2026-02-18T17:52:00",
+"caption": "Shift your perspective. 🌍✨\nWe didn't build Lorenz just to beat traffic. We built it to bring back the wonder of flight. 🤩 To give you views of the Earth that were once reserved for birds and dreamers.\nIt’s not about rushing to your destination. It’s about the awe-inspiring journey above it all. 🧘‍♂️🚁\nExperience the freedom. Experience the view. Experience Lorenz.\n#Lorenz #FlyingCar #FutureOfTravel #Awe #ExperienceFlight",
+"items": [
+{
+"type": "image",
+"src": "17898395610388112.jpg",
+"thumb": "17898395610388112.jpg"
+}
+],
+"story": "The why behind Lorenz. Not just beating traffic, but bringing back the wonder of flight and the view from above."
+},
+{
+"date": "2026-01-31T12:13:00",
+"caption": "Got Wings?",
+"items": [
+{
+"type": "image",
+"src": "18561648715010666.jpg",
+"thumb": "18561648715010666.jpg"
+}
+],
+"story": "Got wings? The rear wing was part of the design from early on."
+},
+{
+"date": "2026-01-26T10:26:00",
+"caption": "Don't be jelly. Call the celly.",
+"items": [
+{
+"type": "image",
+"src": "18005321210833935.jpg",
+"thumb": "18005321210833935.jpg"
+}
+],
+"story": "A lighter post from the same campaign."
+},
+{
+"date": "2026-01-26T08:56:00",
+"caption": "Escape the Matrix.",
+"items": [
+{
+"type": "image",
+"src": "18108488749663125.jpg",
+"thumb": "18108488749663125.jpg"
+}
+],
+"story": "Escape the Matrix: leaving the traffic grid behind."
+},
+{
+"date": "2026-01-26T08:42:00",
+"caption": "Banking the clouds. Wyut?",
+"items": [
+{
+"type": "image",
+"src": "18091861492962341.jpg",
+"thumb": "18091861492962341.jpg"
+}
+],
+"story": "Banking through the clouds."
+},
+{
+"date": "2026-01-26T08:36:00",
+"caption": "Future is now.",
+"items": [
+{
+"type": "image",
+"src": "17886007188431238.jpg",
+"thumb": "17886007188431238.jpg"
+}
+],
+"story": "The message of the campaign: this future is closer than it looks."
+},
+{
+"date": "2026-01-26T08:30:00",
+"caption": "You're stuck in the Matrix. I'm landing on Mars.",
+"items": [
+{
+"type": "image",
+"src": "18065971277240655.jpg",
+"thumb": "18065971277240655.jpg"
+}
+],
+"story": "From a city stuck in traffic to the surface of Mars."
+},
+{
+"date": "2026-01-26T07:23:00",
+"caption": "Gridlock? Matrix? Same thing. Escape with Lorenz.",
+"items": [
+{
+"type": "image",
+"src": "18092572654797322.jpg",
+"thumb": "18092572654797322.jpg"
+}
+],
+"story": "Gridlock is the problem the Aeroboticar exists to solve."
+},
+{
+"date": "2026-01-25T18:06:00",
+"caption": "Mars",
+"items": [
+{
+"type": "image",
+"src": "18114264460554365.jpg",
+"thumb": "18114264460554365.jpg"
+}
+],
+"story": "Taking the concept as far as it goes: a Mars render."
+},
+{
+"date": "2026-01-25T17:24:00",
+"caption": "Lorenz Aeroboticar",
+"items": [
+{
+"type": "image",
+"src": "18559443043009733.jpg",
+"thumb": "18559443043009733.jpg"
+}
+],
+"story": "The Aeroboticar, rendered for a short campaign about escaping traffic."
+},
+{
+"date": "2026-01-25T16:22:00",
+"caption": "2027 is looking bleak. I mean sleek. Sorry. Invest at LorenzAero.com",
+"items": [
+{
+"type": "image",
+"src": "18080877184994743.jpg",
+"thumb": "18080877184994743.jpg"
+},
+{
+"type": "image",
+"src": "18553838929043376.jpg",
+"thumb": "18553838929043376.jpg"
+}
+],
+"story": "A new year and a sleeker look for the design.",
+"show_original": false
+},
+{
+"date": "2025-12-29T14:23:00",
+"caption": "You're chasing paper, I'm chasing vision.",
+"items": [
+{
+"type": "image",
+"src": "18108314890632554.jpg",
+"thumb": "18108314890632554.jpg"
+}
+],
+"story": "Closing out 2025 with the same focus: the vehicle."
+},
+{
+"date": "2025-11-16T15:04:00",
+"caption": "This is how big it is next to a 6 foot, 6 figure, 6 inches manikin. And this time—it flies.",
+"items": [
+{
+"type": "image",
+"src": "18132671875482767.jpg",
+"thumb": "18132671875482767.jpg"
+}
+],
+"story": "Scale check: the Aeroboticar next to a 6 ft human manikin.",
+"show_original": false
+},
+{
+"date": "2025-11-15T15:12:00",
+"caption": "This will be push-to-start. Adding the AI system in the trunk.",
+"items": [
+{
+"type": "image",
+"src": "18318042088171951.jpg",
+"thumb": "18318042088171951.jpg"
+}
+],
+"story": "Interior details taking shape: push-to-start, and a bay in the trunk for the onboard AI system."
+},
+{
+"date": "2025-11-14T10:58:00",
+"caption": "They called me delulu now I'm just Honolulu",
+"items": [
+{
+"type": "image",
+"src": "18548551990052487.jpg",
+"thumb": "18548551990052487.jpg"
+},
+{
+"type": "image",
+"src": "17866589295480724.jpg",
+"thumb": "17866589295480724.jpg"
+},
+{
+"type": "image",
+"src": "18058759172250382.jpg",
+"thumb": "18058759172250382.jpg"
+},
+{
+"type": "image",
+"src": "18112491073600892.jpg",
+"thumb": "18112491073600892.jpg"
+},
+{
+"type": "image",
+"src": "17946618296934937.jpg",
+"thumb": "17946618296934937.jpg"
+},
+{
+"type": "image",
+"src": "17934475701101878.jpg",
+"thumb": "17934475701101878.jpg"
+},
+{
+"type": "image",
+"src": "17862763020524444.jpg",
+"thumb": "17862763020524444.jpg"
+}
+],
+"story": "Seven new renders. People called the idea delusional. I kept building it anyway."
+},
+{
+"date": "2025-11-13T10:38:00",
+"caption": "What I've been up to.",
+"items": [
+{
+"type": "image",
+"src": "18076404896467805.jpg",
+"thumb": "18076404896467805.jpg"
+},
+{
+"type": "image",
+"src": "18033519584721392.jpg",
+"thumb": "18033519584721392.jpg"
+}
+],
+"story": "A look at the design work happening behind the scenes."
+},
+{
+"date": "2025-10-24T12:09:00",
+"caption": "​ This is 'Aeroboticar: Uprising.'\n\n I know many of you followed @lorenzaero for the dream of seeing the Aeroboticar come to life in the real world.\n\n And I will build it. 💯\n\n But physical prototypes cost hundreds of millions of dollars. To get there, we first need to build a movement. We need to create the \"meme-able moment\" that launches Lorenz into the stratosphere.\n\n​'Aeroboticar: Uprising' is that moment.\n\n This is the video game I've always dreamed of creating. But as an engineer, I had one rule: it has to be real.\n\n A lot of game artists create content that makes no physical sense. I went the other way. I did the calculations to ensure the Aeroboticar, its systems, and its sentient AI (Lorenz) are as realistic as possible. This isn't just fantasy; it's a simulation of the future. ⚙️\n\n Let's be honest: the physical car won't happen unless this game succeeds.\n\n I didn't have a lucky multi-million dollar exit. I've only ever had one focus: to make the best Aeroboticar possible. No compromises. No selling out. Just a true, visionary goal.\n\n This is the path to making it a reality.\n\n Here is the official description for the game:\n\n​AEROBOTICAR: UPRISING\n\n In a city that scrapes the clouds, the only way to rule is from above.\n\n Take control of the Lorenz Aeroboticar—a sentient AI vehicle engineered with real-world physics, caught in a war for the future.\n\n Navigate a dense, neon-lit world, outmaneuver rival factions, and fight for your autonomy. The sky is the new frontier, and it's yours to conquer.\n\n Rule the skies. Forge your destiny.",
+"items": [
+{
+"type": "image",
+"src": "18084777595786051.jpg",
+"thumb": "18084777595786051.jpg"
+}
+],
+"story": "I announced Aeroboticar: Uprising, a video game concept built on real physics. The goal was to grow an audience for the car while there was no money yet for hardware."
+},
+{
+"date": "2025-10-22T16:15:00",
+"caption": "Carbon fiber interior",
+"items": [
+{
+"type": "image",
+"src": "18024565046568577.jpg",
+"thumb": "18024565046568577.jpg"
+}
+],
+"story": "Inside the cabin: a carbon fiber interior study."
+},
+{
+"date": "2025-10-22T16:06:00",
+"caption": "Difted af.",
+"items": [
+{
+"type": "image",
+"src": "18084905323953897.jpg",
+"thumb": "18084905323953897.jpg"
+}
+],
+"story": "A drift shot, because a flying car should still look good on the ground."
+},
+{
+"date": "2025-10-22T16:03:00",
+"caption": "Carbon fiber off-white color way.",
+"items": [
+{
+"type": "image",
+"src": "18290766868287904.jpg",
+"thumb": "18290766868287904.jpg"
+}
+],
+"story": "An off-white carbon fiber colorway."
+},
+{
+"date": "2019-02-11T04:54:00",
+"caption": "The phase 1 small-scale prototype flies with 10 solar cells, 16 rechargeable lithium batteries, DJI flight controller, and DJI airframe.\n\n#engineering #CAD #CREO #flyingcar",
+"items": [
+{
+"type": "image",
+"src": "18024544774076783.jpg",
+"thumb": "18024544774076783.jpg"
+}
+],
+"story": "Where it started, in 2019. The phase 1 prototype: a small DJI-frame drone with 10 solar cells and 16 rechargeable lithium batteries. Small, but it flew.",
+"chapter": {
+"num": "Chapter 1",
+"title": "First Flight",
+"sub": "2019: a solar drone, a stack of CAD concepts, and a first place finish at NJIT."
+}
+},
+{
+"date": "2019-02-11T05:06:00",
+"caption": "3.5 lbs.\n\n#engineering #CAD #CREO #flyingcar",
+"items": [
+{
+"type": "image",
+"src": "17843907175365108.jpg",
+"thumb": "17843907175365108.jpg"
+}
+],
+"story": "It weighed 3.5 lbs."
+},
+{
+"date": "2019-02-11T05:14:00",
+"caption": "#engineering #CAD #CREO #flyingcar",
+"items": [
+{
+"type": "image",
+"src": "17915124886302935.jpg",
+"thumb": "17915124886302935.jpg"
+}
+],
+"story": "Alongside the hardware, the first CAD concepts for a solar passenger vehicle, built in CREO."
+},
+{
+"date": "2019-02-11T05:19:00",
+"caption": "#engineering #CAD #CREO #flyingcar",
+"items": [
+{
+"type": "image",
+"src": "18035418424032640.jpg",
+"thumb": "18035418424032640.jpg"
+}
+],
+"story": "Trying out a body shape."
+},
+{
+"date": "2019-02-11T05:23:00",
+"caption": "#engineering #CAD #CREO #flyingcar",
+"items": [
+{
+"type": "image",
+"src": "18016944991101663.jpg",
+"thumb": "18016944991101663.jpg"
+}
+],
+"story": "A longer cabin variation."
+},
+{
+"date": "2019-02-16T16:33:00",
+"caption": "This is the chassis of the fuselage body \n#CREO #CAD #engineering #flyingcar #chassis",
+"items": [
+{
+"type": "image",
+"src": "18179140489047864.jpg",
+"thumb": "18179140489047864.jpg"
+}
+],
+"story": "The chassis of the fuselage, the skeleton everything else hangs on."
+},
+{
+"date": "2019-02-16T16:35:00",
+"caption": "The chassis is in blue.\n#engineering #engineeringdesign #CREO #CAD #flyingcar",
+"items": [
+{
+"type": "image",
+"src": "17871016798315493.jpg",
+"thumb": "17871016798315493.jpg"
+}
+],
+"story": "The chassis inside the body, shown in blue."
+},
+{
+"date": "2019-02-16T16:38:00",
+"caption": "Here is an out-of-body example of the chassis as compared to the PAV.\n\n#engineeringdesign #engineering #CREO #CAD #flyingcar #chassis",
+"items": [
+{
+"type": "image",
+"src": "17955139816245552.jpg",
+"thumb": "17955139816245552.jpg"
+}
+],
+"story": "The chassis next to the full vehicle for comparison."
+},
+{
+"date": "2019-02-17T17:12:00",
+"caption": "Added LEDs to the airframes and the front-end\n\n#CAD #flyingcar #engineering #engineeringdesign #personalaerialvehicle",
+"items": [
+{
+"type": "image",
+"src": "17934759091268887.jpg",
+"thumb": "17934759091268887.jpg"
+}
+],
+"story": "LEDs added to the arms and the front end."
+},
+{
+"date": "2019-02-20T18:49:00",
+"caption": "#engineeringdesign #engineering #flyingcar #CREO #CAD #model #personalaerialvehicle #solar #electric",
+"items": [
+{
+"type": "image",
+"src": "18020091778108496.jpg",
+"thumb": "18020091778108496.jpg"
+}
+],
+"story": "Iterating on the body."
+},
+{
+"date": "2019-02-21T09:56:00",
+"caption": "#engineering #CREO #CAD #flyingcar #personalaerialvehicle #design #solar #electric",
+"items": [
+{
+"type": "image",
+"src": "17993206999196828.jpg",
+"thumb": "17993206999196828.jpg"
+}
+],
+"story": "Another body iteration."
+},
+{
+"date": "2019-02-21T13:49:00",
+"caption": "#ANSYS #engineering #design #CREO #solidworks #flyingcar #personalaerialvehicle",
+"items": [
+{
+"type": "image",
+"src": "18011778616080378.jpg",
+"thumb": "18011778616080378.jpg"
+}
+],
+"story": "Trying a longer, lower cabin."
+},
+{
+"date": "2019-02-21T14:02:00",
+"caption": "#flyingcar #engineering #engineeringdesign #CAD #CREO #solidworks #design #personalaerialvehicle #solar #electric #solarelectric",
+"items": [
+{
+"type": "image",
+"src": "17970403318222486.jpg",
+"thumb": "17970403318222486.jpg"
+}
+],
+"story": "Same design, different angle."
+},
+{
+"date": "2019-02-24T15:12:00",
+"caption": "Small detail added to the front end.\n\n#engineeringdesign #engineering #CAD #CREO #solidworks #ANSYS #personalaerialvehicle #flyingcar #science #technology",
+"items": [
+{
+"type": "image",
+"src": "17863483228334898.jpg",
+"thumb": "17863483228334898.jpg"
+}
+],
+"story": "A small detail added to the front."
+},
+{
+"date": "2019-02-25T14:28:00",
+"caption": "Experimenting with front and rear spoilers for emergency glide landings.\n\n#engineering #passengerdrones #CREO #CAD #science #flyingcar #personalaerialvehicle #design #engineeringdesign #future #innovation",
+"items": [
+{
+"type": "image",
+"src": "17976409717206211.jpg",
+"thumb": "17976409717206211.jpg"
+}
+],
+"story": "Experimenting with front and rear spoilers for emergency glide landings. A wing on the back would come back again years later."
+},
+{
+"date": "2019-02-25T14:32:00",
+"caption": "Rear angle\n\n#engineering #CREO #CAD #flyingcar #personalaerialvehicle #passengerdrones #design #innovation",
+"items": [
+{
+"type": "image",
+"src": "17916917368287836.jpg",
+"thumb": "17916917368287836.jpg"
+}
+],
+"story": "Rear angle."
+},
+{
+"date": "2019-02-25T15:17:00",
+"caption": "Side view\n\n#engineering #engineeringdesign #CREO #CAD #flyingcar #personalaerialvehicle #passengerdrones #innovation",
+"items": [
+{
+"type": "image",
+"src": "17871122947318780.jpg",
+"thumb": "17871122947318780.jpg"
+}
+],
+"story": "Side view."
+},
+{
+"date": "2019-03-02T12:59:00",
+"caption": "Design of a passenger drone \n#CREO #CAD #engineering #flyingcar #personalaerialvehicle #passengerdrone #design #engineeringdesign #innovation #NJIT #engineeringschool #invention #aerospace #aero #aviation #lorenz",
+"items": [
+{
+"type": "image",
+"src": "18009455656179398.jpg",
+"thumb": "18009455656179398.jpg"
+}
+],
+"story": "A new direction: a single-seat passenger drone."
+},
+{
+"date": "2019-03-02T13:03:00",
+"caption": "Rear view. RuneScape lookin' ahh\n#CREO #CAD #engineering #flyingcar #personalaerialvehicle #passengerdrone #design #engineeringdesign #innovation #NJIT #engineeringschool #invention #aerospace #aero #aviation #lorenz",
+"items": [
+{
+"type": "image",
+"src": "17870070787324704.jpg",
+"thumb": "17870070787324704.jpg"
+}
+],
+"story": "Rear view."
+},
+{
+"date": "2019-03-02T13:05:00",
+"caption": "Continuing the development of the body of the passenger drone. After trying a few different design, this one seems to optimize aerodynamics, solar cells exposure, and ergonomics.\n\n#CREO #CAD #engineering #flyingcar #personalaerialvehicle #passengerdrone #design #engineeringdesign #innovation #NJIT #engineeringschool #invention #aerospace #aero #aviation #lorenz",
+"items": [
+{
+"type": "image",
+"src": "17947880113251295.jpg",
+"thumb": "17947880113251295.jpg"
+}
+],
+"story": "After a few designs, this one balanced aerodynamics, solar cell exposure and ergonomics best."
+},
+{
+"date": "2019-03-05T19:14:00",
+"caption": "Top view facing right\n\n#CREO #CAD #engineering #flyingcar #personalaerialvehicle #passengerdrone #design #engineeringdesign #innovation #NJIT #engineeringschool #invention #aerospace #aero #aviation #lorenz",
+"items": [
+{
+"type": "image",
+"src": "17939921002270712.jpg",
+"thumb": "17939921002270712.jpg"
+}
+],
+"story": "Top view of the new frame."
+},
+{
+"date": "2019-03-05T19:14:00",
+"caption": "Rear view\n\n#CREO #CAD #engineering #flyingcar #personalaerialvehicle #passengerdrone #design #engineeringdesign #innovation #NJIT #engineeringschool #invention #aerospace #aero #aviation #lorenz",
+"items": [
+{
+"type": "image",
+"src": "18025493281104861.jpg",
+"thumb": "18025493281104861.jpg"
+}
+],
+"story": "The frame from behind."
+},
+{
+"date": "2019-03-05T19:15:00",
+"caption": "This is the first time I modeled the PAV with motors and props to scale, I also added fixed wings to alleviate stress from the motors for better efficiency during forward flight and to add more room for solar cells. \n#CREO #CAD #engineering #flyingcar #personalaerialvehicle #passengerdrone #design #engineeringdesign #innovation #NJIT #engineeringschool #invention #aerospace #aero #aviation #lorenz",
+"items": [
+{
+"type": "image",
+"src": "17866722958334795.jpg",
+"thumb": "17866722958334795.jpg"
+}
+],
+"story": "First time modeling the motors and props to scale. Fixed wings added to take load off the motors in forward flight and make room for more solar cells."
+},
+{
+"date": "2019-03-06T17:59:00",
+"caption": "Head on\n\n#CREO #CAD #engineering #flyingcar #personalaerialvehicle #passengerdrone #design #engineeringdesign #innovation #NJIT #engineeringschool #invention #aerospace #aero #aviation #lorenz",
+"items": [
+{
+"type": "image",
+"src": "17976573721212767.jpg",
+"thumb": "17976573721212767.jpg"
+}
+],
+"story": "Head on."
+},
+{
+"date": "2019-03-06T17:59:00",
+"caption": "Back added\n\n#CREO #CAD #engineering #flyingcar #personalaerialvehicle #passengerdrone #design #engineeringdesign #innovation #NJIT #engineeringschool #invention #aerospace #aero #aviation #lorenz",
+"items": [
+{
+"type": "image",
+"src": "18025607308118125.jpg",
+"thumb": "18025607308118125.jpg"
+}
+],
+"story": "Back panel added."
+},
+{
+"date": "2019-03-06T18:01:00",
+"caption": "#CREO #CAD #engineering #flyingcar #personalaerialvehicle #passengerdrone #design #engineeringdesign #innovation #NJIT #engineeringschool #invention #aerospace #aero #aviation #lorenz",
+"items": [
+{
+"type": "image",
+"src": "18012727942180087.jpg",
+"thumb": "18012727942180087.jpg"
+}
+],
+"story": "The frame with its seat."
+},
+{
+"date": "2019-03-09T12:34:00",
+"caption": "Body added \n\n#CREO #CAD #engineering #flyingcar #personalaerialvehicle #passengerdrone #design #engineeringdesign #innovation #NJIT #engineeringschool #invention #aerospace #aero #aviation #lorenz",
+"items": [
+{
+"type": "image",
+"src": "18012194362180031.jpg",
+"thumb": "18012194362180031.jpg"
+}
+],
+"story": "Body added."
+},
+{
+"date": "2019-03-09T12:35:00",
+"caption": "Some more detail\n\n#CREO #CAD #engineering #flyingcar #personalaerialvehicle #passengerdrone #design #engineeringdesign #innovation #NJIT #engineeringschool #invention #aerospace #aero #aviation #lorenz",
+"items": [
+{
+"type": "image",
+"src": "17843046730386734.jpg",
+"thumb": "17843046730386734.jpg"
+}
+],
+"story": "More detail."
+},
+{
+"date": "2019-03-09T14:48:00",
+"caption": "Smoothed the sides.\n\n#CREO #CAD #engineering #flyingcar #personalaerialvehicle #passengerdrone #design #engineeringdesign #innovation #NJIT #engineeringschool #invention #aerospace #aero #aviation #lorenz",
+"items": [
+{
+"type": "image",
+"src": "18010839913159224.jpg",
+"thumb": "18010839913159224.jpg"
+}
+],
+"story": "Smoothed the sides."
+},
+{
+"date": "2019-03-09T14:49:00",
+"caption": "Added carbon fiber interior\n\n#CREO #CAD #engineering #flyingcar #personalaerialvehicle #passengerdrone #design #engineeringdesign #innovation #NJIT #engineeringschool #invention #aerospace #aero #aviation #lorenz",
+"items": [
+{
+"type": "image",
+"src": "18003706558168747.jpg",
+"thumb": "18003706558168747.jpg"
+}
+],
+"story": "Carbon fiber interior added."
+},
+{
+"date": "2019-03-13T10:03:00",
+"caption": "Our engineering team is proposing a $3000 medium-scale prototype. \n\n#CREO #CAD #engineering #flyingcar #personalaerialvehicle #passengerdrone #design #engineeringdesign #innovation #NJIT #engineeringschool #invention #aerospace #aero #aviation #lorenz",
+"items": [
+{
+"type": "image",
+"src": "17873669266322667.jpg",
+"thumb": "17873669266322667.jpg"
+}
+],
+"story": "Our engineering team pitched a $3,000 medium-scale prototype."
+},
+{
+"date": "2019-03-18T16:52:00",
+"caption": "This version of the airframe arm is the last version, but flipped around. It's a lot lower to the ground making it a lower center of gravity.\n\n#CREO #CAD #engineering #flyingcar #personalaerialvehicle #passengerdrone #design #engineeringdesign #innovation #NJIT #engineeringschool #invention #aerospace #aero #aviation #lorenz",
+"items": [
+{
+"type": "image",
+"src": "18013713730157120.jpg",
+"thumb": "18013713730157120.jpg"
+}
+],
+"story": "The airframe arm flipped upside down for a lower center of gravity."
+},
+{
+"date": "2019-03-18T16:54:00",
+"caption": "#CREO #CAD #engineering #flyingcar #personalaerialvehicle #passengerdrone #design #engineeringdesign #innovation #NJIT #engineeringschool #invention #aerospace #aero #aviation #lorenz",
+"items": [
+{
+"type": "image",
+"src": "17979795997219724.jpg",
+"thumb": "17979795997219724.jpg"
+}
+],
+"story": "Same design with the body on."
+},
+{
+"date": "2019-03-23T12:41:00",
+"caption": "Testing motors\n\n#engineering #flyingcar #personalaerialvehicle #passengerdrone #design #engineeringdesign #innovation #NJIT #engineeringschool #invention #aerospace #aero #aviation #lorenz",
+"items": [
+{
+"type": "video",
+"src": "18019832353139324.mp4",
+"poster": "18019832353139324.jpg",
+"thumb": "18019832353139324.jpg"
+}
+],
+"story": "Testing motors."
+},
+{
+"date": "2019-03-23T15:38:00",
+"caption": "These PAVs fit in a standard 9' by 18' parking spot and charge on electric charging stations.\n\n#CREO #CAD #engineering #flyingcar #personalaerialvehicle #passengerdrone #design #engineeringdesign #innovation #NJIT #engineeringschool #invention #aerospace #aero #aviation #lorenz #photoshop",
+"items": [
+{
+"type": "image",
+"src": "18031458421111560.jpg",
+"thumb": "18031458421111560.jpg"
+}
+],
+"story": "Designed to fit in a standard 9 by 18 foot parking spot and charge at an EV station."
+},
+{
+"date": "2019-03-23T15:40:00",
+"caption": "Airfoils and motors \n#CREO #CAD #engineering #flyingcar #personalaerialvehicle #passengerdrone #design #engineeringdesign #innovation #NJIT #engineeringschool #invention #aerospace #aero #aviation #lorenz",
+"items": [
+{
+"type": "image",
+"src": "17954774443255221.jpg",
+"thumb": "17954774443255221.jpg"
+}
+],
+"story": "Airfoils and motors."
+},
+{
+"date": "2019-03-23T15:42:00",
+"caption": "Phase 1 prototype flight\n\n#CREO #CAD #engineering #flyingcar #personalaerialvehicle #passengerdrone #design #engineeringdesign #innovation #NJIT #engineeringschool #invention #aerospace #aero #aviation #lorenz #drone",
+"items": [
+{
+"type": "video",
+"src": "17954680162252703.mp4",
+"poster": "17954680162252703.jpg",
+"thumb": "17954680162252703.jpg"
+}
+],
+"story": "The phase 1 prototype in flight."
+},
+{
+"date": "2019-03-23T15:45:00",
+"caption": "4 square meters of solar cells and fixed wings for relieving load on motors during forward flight\n\n#CREO #CAD #engineering #flyingcar #personalaerialvehicle #passengerdrone #design #engineeringdesign #innovation #NJIT #engineeringschool #invention #aerospace #aero #aviation #lorenz",
+"items": [
+{
+"type": "image",
+"src": "18012375628167742.jpg",
+"thumb": "18012375628167742.jpg"
+}
+],
+"story": "Four square meters of solar cells, plus fixed wings to relieve the motors in forward flight."
+},
+{
+"date": "2019-03-26T11:54:00",
+"caption": "Added front windshield and headlights.\n\n#CREO #CAD #engineering #flyingcar #personalaerialvehicle #passengerdrone #design #engineeringdesign #innovation #NJIT #engineeringschool #invention #aerospace #aero #aviation #lorenz",
+"items": [
+{
+"type": "image",
+"src": "17915769652288997.jpg",
+"thumb": "17915769652288997.jpg"
+}
+],
+"story": "Front windshield and headlights added."
+},
+{
+"date": "2019-03-26T11:55:00",
+"caption": "#CREO #CAD #engineering #flyingcar #personalaerialvehicle #passengerdrone #design #engineeringdesign #innovation #NJIT #engineeringschool #invention #aerospace #aero #aviation #lorenz",
+"items": [
+{
+"type": "image",
+"src": "17929242358282829.jpg",
+"thumb": "17929242358282829.jpg"
+}
+],
+"story": "Rear three-quarter view."
+},
+{
+"date": "2019-03-26T11:56:00",
+"caption": "Front view.\n\n#CREO #CAD #engineering #flyingcar #personalaerialvehicle #passengerdrone #design #engineeringdesign #innovation #NJIT #engineeringschool #invention #aerospace #aero #aviation #lorenz",
+"items": [
+{
+"type": "image",
+"src": "18032627857096966.jpg",
+"thumb": "18032627857096966.jpg"
+}
+],
+"story": "Front view."
+},
+{
+"date": "2019-04-10T14:41:00",
+"caption": "Added landing legs to our drone for the NJIT Highlander Drone Competition.\n\n#CREO #CAD #engineering #flyingcar #personalaerialvehicle #passengerdrone #design #engineeringdesign #innovation #NJIT #engineeringschool #invention #aerospace #aero #aviation #lorenz",
+"items": [
+{
+"type": "image",
+"src": "17976798859241369.jpg",
+"thumb": "17976798859241369.jpg"
+}
+],
+"story": "Landing legs for the NJIT Highlander Drone Competition."
+},
+{
+"date": "2019-04-12T10:44:00",
+"caption": "Added a removable GPS mount for the 2019 Highlander Drone Competition.\n\n#CREO #CAD #engineering #flyingcar #personalaerialvehicle #passengerdrone #design #engineeringdesign #innovation #NJIT #engineeringschool #invention #aerospace #aero #aviation #lorenz",
+"items": [
+{
+"type": "image",
+"src": "17872162744348734.jpg",
+"thumb": "17872162744348734.jpg"
+}
+],
+"story": "A removable GPS mount for the competition."
+},
+{
+"date": "2019-04-17T11:43:00",
+"caption": "The PLA plastic legs broke after a killswitch landing from five feet in the air. We replaced them with these Onyx plastic that's stronger and has carbon fiber filaments throughout it.\n\n#CREO #CAD #engineering #flyingcar #personalaerialvehicle #passengerdrone #design #engineeringdesign #innovation #NJIT #engineeringschool #invention #aerospace #aero #aviation #lorenz",
+"items": [
+{
+"type": "image",
+"src": "17867823367362454.jpg",
+"thumb": "17867823367362454.jpg"
+}
+],
+"story": "The printed PLA legs broke after a killswitch drop from five feet. Replaced with carbon-fiber-filled Onyx."
+},
+{
+"date": "2019-04-18T11:32:00",
+"caption": "This is the final midscale CAD model that will be built having a wingspan of 4 feet with $3000 this May. It has been simplified to an 'H' airframe configuration, with solar-cell-airfoils on each arm to reduce motor load during forward flight.\n\n#CREO #CAD #engineering #flyingcar #personalaerialvehicle #passengerdrone #design #engineeringdesign #innovation #NJIT #engineeringschool #invention #aerospace #aero #aviation #lorenz",
+"items": [
+{
+"type": "image",
+"src": "18035554033121769.jpg",
+"thumb": "18035554033121769.jpg"
+}
+],
+"story": "The final midscale design: a 4 foot wingspan, an H frame, and solar cell airfoils on every arm. To be built that May on a $3,000 budget."
+},
+{
+"date": "2019-04-28T12:02:00",
+"caption": "Slight adjustments including a solar roof, and then airfoils extend all the way to the rotor.\n\n#CREO #CAD #engineering #flyingcar #personalaerialvehicle #passengerdrone #design #engineeringdesign #innovation #NJIT #engineeringschool #invention #aerospace #aero #aviation #lorenz",
+"items": [
+{
+"type": "image",
+"src": "18044314819100392.jpg",
+"thumb": "18044314819100392.jpg"
+}
+],
+"story": "A solar roof added, and the airfoils extended all the way to the rotors."
+},
+{
+"date": "2019-05-11T12:31:00",
+"caption": "We won 1st place out of 20 teams at the 2019 New Jersey Institute of Technology Highlander Drone Competition.  #engineering #flyingcar #personalaerialvehicle #passengerdrone #design #engineeringdesign #innovation #NJIT #engineeringschool #invention #aerospace #aero #aviation #lorenz #highlanderdronecompetition #NCEdrone #NJITdronecompetition",
+"items": [
+{
+"type": "image",
+"src": "17855335531410486.jpg",
+"thumb": "17855335531410486.jpg"
+}
+],
+"story": "First place out of 20 teams at the 2019 NJIT Highlander Drone Competition."
+},
+{
+"date": "2019-05-11T12:38:00",
+"caption": "Eggs were the payload for this challenge. As you can see, we had to design a carrying case of sorts so that the eggs would safely be suspended and carried by the drone without breaking. Then, the drone, along with the eggs, had to be maneuvered through a series of obstacles and hoops.\n\n#engineering #flyingcar #personalaerialvehicle #passengerdrone #design #engineeringdesign #innovation #NJIT #engineeringschool #invention #aerospace #aero #aviation #lorenz #NJITdronecompetition #NCEdrone",
+"items": [
+{
+"type": "image",
+"src": "17842655056450361.jpg",
+"thumb": "17842655056450361.jpg"
+}
+],
+"story": "The challenge: carry eggs through obstacles and hoops without breaking them."
+},
+{
+"date": "2019-05-11T12:44:00",
+"caption": "Scoreboard. \n9 out of 20 teams made it passed round one.\n4 out of those 9 teams placed and the others got disqualified from crashing.\n1 team placed first. That team is Lorenz.\n\n#engineering #flyingcar #personalaerialvehicle #passengerdrone #design #engineeringdesign #innovation #NJIT #engineeringschool #invention #aerospace #aero #aviation #lorenz #NJITdronecompetition #NCEdrone",
+"items": [
+{
+"type": "image",
+"src": "18031918654151248.jpg",
+"thumb": "18031918654151248.jpg"
+}
+],
+"story": "The scoreboard. 9 of 20 teams made it past round one, 4 placed, and Lorenz took first."
+},
+{
+"date": "2019-06-03T10:54:00",
+"caption": "The floor of the midscale prototype with holes cut by a water jet at the @njitmakerspace . Plus, the PVC tubing, not cut to size, that will become the chassis once we get some more materials.\n\n#CREO #CAD #engineering #flyingcar #personalaerialvehicle #passengerdrone #design #engineeringdesign #innovation #NJIT #engineeringschool #invention #aerospace #aero #aviation #lorenz",
+"items": [
+{
+"type": "image",
+"src": "17993235280242162.jpg",
+"thumb": "17993235280242162.jpg"
+}
+],
+"story": "The midscale build begins. The floor plate was water jet cut at the NJIT Makerspace, next to the PVC tubing that becomes the chassis.",
+"chapter": {
+"num": "Chapter 2",
+"title": "The Midscale",
+"sub": "A 38 lb solar prototype built from water jet cut plates, PVC and a lot of wire."
+}
+},
+{
+"date": "2019-06-04T10:51:00",
+"caption": "All of the components for the $3000 midscale passenger drone prototype. Xoar propellers, Epever MPPT solar charge controller, Sunnysky X5212S motors, motor mounts, chassis material, 16 solar cells, T-Motor Electronic speed controllers, Tattu 22000 14.8V battery, and DJI N3 flight controller.\n\n#CREO #CAD #engineering #flyingcar #personalaerialvehicle #passengerdrone #design #engineeringdesign #innovation #NJIT #engineeringschool #invention #aerospace #aero #aviation #lorenz",
+"items": [
+{
+"type": "image",
+"src": "18071959258001381.jpg",
+"thumb": "18071959258001381.jpg"
+}
+],
+"story": "Every component for the $3,000 midscale: Sunnysky motors, T-Motor ESCs, 16 solar cells, an MPPT charge controller and a 22,000 mAh battery."
+},
+{
+"date": "2019-07-28T11:34:00",
+"caption": "Slight update\n#CREO #CAD #engineering #flyingcar #personalaerialvehicle #passengerdrone #design #engineeringdesign #innovation #NJIT #engineeringschool #invention #aerospace #aero #aviation #lorenz",
+"items": [
+{
+"type": "image",
+"src": "17850561925509416.jpg",
+"thumb": "17850561925509416.jpg"
+}
+],
+"story": "A slight update to the midscale design."
+},
+{
+"date": "2019-08-12T14:09:00",
+"caption": "Progress so far, banana for scale\n#engineering #flyingcar #personalaerialvehicle #passengerdrone #design #engineeringdesign #innovation #invention #aerospace #aero #aviation #lorenz",
+"items": [
+{
+"type": "image",
+"src": "17845594774559630.jpg",
+"thumb": "17845594774559630.jpg"
+},
+{
+"type": "image",
+"src": "17845490995573653.jpg",
+"thumb": "17845490995573653.jpg"
+}
+],
+"story": "Progress on the frame. Banana for scale."
+},
+{
+"date": "2019-10-31T13:18:00",
+"caption": "This delivery drone prototype is 38 lbs, so it may need dual-axial motors if we're to add the roof of the chassis. Ordering a larger battery for now, and working on configuring the flight controller. The Inertial Measurement Unit (IMU) and GPS are getting some magnetic interference so we gotta figure that out too.\n\n#engineering #flyingcar #personalaerialvehicle #passengerdrone #design #engineeringdesign #innovation #invention #aerospace #aero #aviation #lorenz #njit",
+"items": [
+{
+"type": "image",
+"src": "17917974856349497.jpg",
+"thumb": "17917974856349497.jpg"
+}
+],
+"story": "The midscale came in at 38 lbs. Next up: a bigger battery, flight controller setup, and fixing magnetic interference on the IMU and GPS."
+},
+{
+"date": "2019-12-23T21:22:00",
+"caption": "Reveal. Gotta put the energy out there cuz I've been holding this for a few months and nothing's been happening :) #engineering #flyingcar #personalaerialvehicle #passengerdrone #design #engineeringdesign #innovation #invention #aerospace #aero #aviation #lorenz #njit #physics #electrical #flight #drone #mechanicalengineering #aeronautics #design #CAD #creo  #creoparametric #solidworks #photoshop #bigbrain #reveal #autopilot #passenger #artificialintelligence #AI",
+"items": [
+{
+"type": "image",
+"src": "18120558898022153.jpg",
+"thumb": "18120558898022153.jpg"
+}
+],
+"story": "Meanwhile, a new concept I held onto for months before revealing it."
+},
+{
+"date": "2019-12-25T15:55:00",
+"caption": "The landing pads are Near Field Communication (NFC) charging.\n\n#engineering #flyingcar #personalaerialvehicle #passengerdrone #design #engineeringdesign #innovation #invention #aerospace #aero #aviation #lorenz #njit #physics #electrical #flight #drone #mechanicalengineering #aeronautics #design #CAD #creo #creoparametric #solidworks #photoshop #bigbrain #reveal #autopilot #passenger #artificialintelligence #AI",
+"items": [
+{
+"type": "image",
+"src": "18079868215156858.jpg",
+"thumb": "18079868215156858.jpg"
+}
+],
+"story": "Landing pads that charge the vehicle wirelessly."
+},
+{
+"date": "2020-01-06T14:00:00",
+"caption": "All four motors are spinning after ESC calibration, but only two at a time spin at any one time when arming.\n\n#engineering #flyingcar #personalaerialvehicle #passengerdrone #design #engineeringdesign #innovation #invention #aerospace #aero #aviation #lorenz #njit #physics #electrical #flight #drone #mechanicalengineering #aeronautics #design #CAD #creo #creoparametric #solidworks #photoshop #bigbrain #reveal #autopilot #passenger #artificialintelligence #AI",
+"items": [
+{
+"type": "video",
+"src": "17881946005488016.mp4",
+"poster": "17881946005488016.jpg",
+"thumb": "17881946005488016.jpg"
+}
+],
+"story": "All four motors spinning after ESC calibration, with one problem still to solve."
+},
+{
+"date": "2020-01-07T11:00:00",
+"caption": "The Lorenz propeller cages are sound damping while also providing protection from the rapidly spinning blades. They also act as landing gear and are flush with the airfoils.\n\n#engineering #flyingcar #personalaerialvehicle #passengerdrone #design #engineeringdesign #innovation #invention #aerospace #aero #aviation #lorenz #njit #physics #electrical #flight #drone #mechanicalengineering #aeronautics #design #CAD #creo #creoparametric #solidworks #photoshop #bigbrain #reveal #autopilot #passenger #artificialintelligence #AI",
+"items": [
+{
+"type": "image",
+"src": "17869127737576842.jpg",
+"thumb": "17869127737576842.jpg"
+}
+],
+"story": "Propeller cages that damp sound, protect the blades, and double as landing gear."
+},
+{
+"date": "2020-01-08T23:27:00",
+"caption": "Top, front, and side perspective views.\n\n#engineering #flyingcar #personalaerialvehicle #passengerdrone #design #engineeringdesign #innovation #invention #aerospace #aero #aviation #lorenz #njit #physics #electrical #flight #drone #mechanicalengineering #aeronautics #design #CAD #creo #creoparametric #solidworks #photoshop #bigbrain #reveal #autopilot #passenger #artificialintelligence #AI",
+"items": [
+{
+"type": "image",
+"src": "17861280718632688.jpg",
+"thumb": "17861280718632688.jpg"
+},
+{
+"type": "image",
+"src": "18118899952067051.jpg",
+"thumb": "18118899952067051.jpg"
+},
+{
+"type": "image",
+"src": "17869334287567866.jpg",
+"thumb": "17869334287567866.jpg"
+}
+],
+"story": "Top, front and side views."
+},
+{
+"date": "2020-01-19T19:12:00",
+"caption": "Made this electronic speed controller (ESC) today after starting to wire the motors to the battery and flight controller.  #innovation #invention #aerospace #aero #aviation #lorenz #njit #physics #electrical #flight #drone #mechanicalengineering #aeronautics #design #CAD #creo #creoparametric #photoshop #autopilot #passenger #artificialintelligence #AI",
+"items": [
+{
+"type": "image",
+"src": "17869139917582072.jpg",
+"thumb": "17869139917582072.jpg"
+}
+],
+"story": "Building an ESC harness while wiring the motors to the battery and flight controller."
+},
+{
+"date": "2020-01-19T19:35:00",
+"caption": "Making wires is fun\n\n#engineering #flyingcar #personalaerialvehicle #passengerdrone #design #engineeringdesign #innovation #invention #aerospace #aero #aviation #lorenz #njit #physics #electrical #flight #drone #mechanicalengineering #aeronautics #design #CAD #creo #creoparametric #photoshop #autopilot #passenger #artificialintelligence #AI",
+"items": [
+{
+"type": "image",
+"src": "18087922225134352.jpg",
+"thumb": "18087922225134352.jpg"
+},
+{
+"type": "image",
+"src": "17850669838828847.jpg",
+"thumb": "17850669838828847.jpg"
+},
+{
+"type": "image",
+"src": "17860300687671475.jpg",
+"thumb": "17860300687671475.jpg"
+},
+{
+"type": "image",
+"src": "18126179398026999.jpg",
+"thumb": "18126179398026999.jpg"
+},
+{
+"type": "image",
+"src": "17854322272758467.jpg",
+"thumb": "17854322272758467.jpg"
+},
+{
+"type": "image",
+"src": "18124216180037615.jpg",
+"thumb": "18124216180037615.jpg"
+}
+],
+"story": "Making wires."
+},
+{
+"date": "2020-01-21T10:42:00",
+"caption": "All of the electronic speed controllers are installed. I'm going to do the Power Distribution Board (PDB) next.\n\n#engineering #flyingcar #personalaerialvehicle #passengerdrone #design #engineeringdesign #innovation #invention #aerospace #aero #aviation #lorenz #njit #physics #electrical #flight #drone #mechanicalengineering #aeronautics #design #CAD #creo #creoparametric #photoshop #autopilot #passenger #artificialintelligence #AI",
+"items": [
+{
+"type": "image",
+"src": "17868828559593634.jpg",
+"thumb": "17868828559593634.jpg"
+},
+{
+"type": "image",
+"src": "17862857146646879.jpg",
+"thumb": "17862857146646879.jpg"
+},
+{
+"type": "image",
+"src": "17899335619422835.jpg",
+"thumb": "17899335619422835.jpg"
+},
+{
+"type": "image",
+"src": "17881129021495616.jpg",
+"thumb": "17881129021495616.jpg"
+}
+],
+"story": "All the ESCs installed. The power distribution board is next."
+},
+{
+"date": "2020-02-16T19:04:00",
+"caption": "Close-up of the Power Distribution Board.\n\n#engineering #flyingcar #personalaerialvehicle #passengerdrone #design #engineeringdesign #innovation #invention #aerospace #aero #aviation #lorenz #njit #physics #electrical #flight #drone #electricalengineering #aeronautics #design #CAD #creo #creoparametric #photoshop #autopilot #passenger #artificialintelligence #AI",
+"items": [
+{
+"type": "image",
+"src": "18092871073092756.jpg",
+"thumb": "18092871073092756.jpg"
+}
+],
+"story": "Close-up of the power distribution board."
+},
+{
+"date": "2020-02-17T13:58:00",
+"caption": "Dynamic Propeller Cages allow for propulsion without fuselage tilt during flight, which provides passengers a smoother, more comfortable ride :) #engineering #flyingcar #personalaerialvehicle #passengerdrone #design #engineeringdesign #innovation #invention #aerospace #aero #aviation #lorenz #njit #physics #electrical #flight #drone #mechanicalengineering #aeronautics #design #CAD #creo #creoparametric #photoshop #autopilot #passenger #artificialintelligence #AI",
+"items": [
+{
+"type": "video",
+"src": "18099105160122637.mp4",
+"poster": "18099105160122637.jpg",
+"thumb": "18099105160122637.jpg"
+}
+],
+"story": "Dynamic propeller cages: they tilt for propulsion so the cabin stays level and the ride stays smooth."
+},
+{
+"date": "2020-02-21T10:31:00",
+"caption": "For those wondering, the increased efficiency in the black solar cells increases the power absorbed by 6X. Also, the solar dashboard has been included this time for the calculation, hence the increase in area from 7 to 12 sq. m.\n\n#engineering #passengerdrone #design #engineeringdesign #innovation #invention #aerospace #NREL #aviation #lorenz #njit #physics #electrical #flight #drone #mechanicalengineering #aeronautics #design #CAD #creo #creoparametric #photoshop #autopilot #passenger #artificialintelligence #deeplearning #electricalengineering #solar #sustainability #efficiency #transportation",
+"items": [
+{
+"type": "image",
+"src": "17848204783917549.jpg",
+"thumb": "17848204783917549.jpg"
+},
+{
+"type": "image",
+"src": "17866382899653903.jpg",
+"thumb": "17866382899653903.jpg"
+}
+],
+"story": "The solar math: better black cells and a solar dashboard push usable area to 12 square meters."
+},
+{
+"date": "2020-02-21T14:28:00",
+"caption": "😎\n\n#engineering #passengerdrone #design #engineeringdesign #innovation #invention #aerospace #aero #aviation #lorenz #njit #physics #electrical #flight #drone #mechanicalengineering #aeronautics #design #CAD #creo #creoparametric #photoshop #autopilot #passenger #artificialintelligence #deeplearning #electricalengineering #solar #sustainability #efficiency #transportation",
+"items": [
+{
+"type": "image",
+"src": "17871690355579103.jpg",
+"thumb": "17871690355579103.jpg"
+},
+{
+"type": "image",
+"src": "17848177114921682.jpg",
+"thumb": "17848177114921682.jpg"
+}
+],
+"story": "The concept, refined."
+},
+{
+"date": "2020-03-12T10:24:00",
+"caption": "Scale\n\n#engineering #passengerdrone #design #engineeringdesign #innovation #invention #aerospace #aero #aviation #lorenz #njit #physics #electrical #flight #drone #mechanicalengineering #aeronautics #design #CAD #creo #creoparametric #photoshop #autopilot #passenger #artificialintelligence #deeplearning #electricalengineering #solar #sustainability #efficiency #transportation",
+"items": [
+{
+"type": "image",
+"src": "18085997815163058.jpg",
+"thumb": "18085997815163058.jpg"
+}
+],
+"story": "Scale, next to a person."
+},
+{
+"date": "2020-03-22T23:11:00",
+"caption": "much redundant, such safe",
+"items": [
+{
+"type": "image",
+"src": "17940298168343320.jpg",
+"thumb": "17940298168343320.jpg"
+}
+],
+"story": "Redundancy, including parachutes."
+},
+{
+"date": "2020-06-18T13:33:00",
+"caption": "Updated the Mid-Scale by adding 4 bottom motors, extending the reach of each arm, and adding a second level, which can be used for housing the battery and other electronics.\n\n#engineeringdesign #engineeringscience #engineering  #creo #cad #3dcad #drone #dronecar #flight #update #multirotor #dualaxial #solar #electricalengineering #electronics",
+"items": [
+{
+"type": "image",
+"src": "17871706918768446.jpg",
+"thumb": "17871706918768446.jpg"
+}
+],
+"story": "Updating the midscale: 4 more motors underneath, longer arms, and a second level for the battery and electronics."
+},
+{
+"date": "2020-06-18T16:37:00",
+"caption": "Rear view.\n\n#engineeringdesign #engineeringscience #engineering #creo #cad #3dcad #drone #dronecar #flight #update #multirotor #dualaxial #solar #electricalengineering #electronics",
+"items": [
+{
+"type": "image",
+"src": "18147329554018370.jpg",
+"thumb": "18147329554018370.jpg"
+}
+],
+"story": "Rear view."
+},
+{
+"date": "2020-06-19T13:36:00",
+"caption": "#engineering #flyingcar #personalaerialvehicle #passengerdrone #design #engineeringdesign #innovation #invention #aerospace #aero #aviation #lorenz #njit #physics #electrical #flight #drone #mechanicalengineering #aeronautics #design #CAD #creo #creoparametric #photoshop #autopilot #passenger #artificialintelligence #AI",
+"items": [
+{
+"type": "image",
+"src": "17860380892944832.jpg",
+"thumb": "17860380892944832.jpg"
+}
+],
+"story": "Another midscale variation."
+},
+{
+"date": "2020-06-21T12:21:00",
+"caption": "#engineering #flyingcar #personalaerialvehicle #passengerdrone #design #engineeringdesign #innovation #invention #aerospace #aero #aviation #lorenz #njit #physics #electrical #flight #drone #mechanicalengineering #aeronautics #design #CAD #creo #creoparametric #photoshop #autopilot #passenger #artificialintelligence #AI",
+"items": [
+{
+"type": "image",
+"src": "17876992357724147.jpg",
+"thumb": "17876992357724147.jpg"
+}
+],
+"story": "A red version."
+},
+{
+"date": "2020-06-21T12:33:00",
+"caption": "#engineering #flyingcar #personalaerialvehicle #passengerdrone #design #engineeringdesign #innovation #invention #aerospace #aero #aviation #lorenz #njit #physics #electrical #flight #drone #mechanicalengineering #aeronautics #design #CAD #creo #creoparametric #photoshop #autopilot #passenger #artificialintelligence #AI",
+"items": [
+{
+"type": "image",
+"src": "17861938711947066.jpg",
+"thumb": "17861938711947066.jpg"
+}
+],
+"story": "Same design, different angle."
+},
+{
+"date": "2020-07-31T10:22:00",
+"caption": "I fried the power distribution board.\n\n#dronecar #prototype #largedrone #drone #engineering #physics #flightcontroller #lorenz #lorenzmotors #motors #flight #aerospace #aeronautics",
+"items": [
+{
+"type": "video",
+"src": "17861117033036063.mp4",
+"poster": "17861117033036063.jpg",
+"thumb": "17861117033036063.jpg"
+}
+],
+"story": "I fried the power distribution board."
+},
+{
+"date": "2020-08-14T14:28:00",
+"caption": "Repositioned the driver to forward facing, added steering wheel, pedals, and HUD.\n\n#engineering #dronecar #drone #flyingcar #passengerdrone",
+"items": [
+{
+"type": "image",
+"src": "18111969346179209.jpg",
+"thumb": "18111969346179209.jpg"
+},
+{
+"type": "image",
+"src": "17844972194328370.jpg",
+"thumb": "17844972194328370.jpg"
+}
+],
+"story": "A new layout: the driver faces forward, with a steering wheel, pedals and a HUD.",
+"chapter": {
+"num": "Chapter 3",
+"title": "The Dronecar",
+"sub": "2020 to 2022: a driver's seat, tilting thruster cages, flow analysis, and a printed model finished on Pi Day."
+}
+},
+{
+"date": "2020-08-14T14:39:00",
+"caption": "Steering wheel and pedals.\n\n#dronecar #passengerdrone #drone #flyingcar",
+"items": [
+{
+"type": "image",
+"src": "17844243746334247.jpg",
+"thumb": "17844243746334247.jpg"
+}
+],
+"story": "Steering wheel and pedals."
+},
+{
+"date": "2020-08-17T16:00:00",
+"caption": "1. Structural Subsystem.\n\n#engineering #passengerdrone #design #engineeringdesign #innovation #invention #aerospace #aero #aviation #lorenz #njit #physics #electrical #flight #drone #mechanicalengineering #aeronautics #design #CAD #creo #creoparametric #photoshop #autopilot #passenger #artificialintelligence #deeplearning #electricalengineering #solar #sustainability #efficiency #transportation",
+"items": [
+{
+"type": "image",
+"src": "18159599959050004.jpg",
+"thumb": "18159599959050004.jpg"
+}
+],
+"story": "The design broken into subsystems. 1: Structure."
+},
+{
+"date": "2020-08-17T16:01:00",
+"caption": "2. Electrical Subsystem\n\n#engineering #passengerdrone #design #engineeringdesign #innovation #invention #aerospace #aero #aviation #lorenz #njit #physics #electrical #flight #drone #mechanicalengineering #aeronautics #design #CAD #creo #creoparametric #photoshop #autopilot #passenger #artificialintelligence #deeplearning #electricalengineering #solar #sustainability #efficiency #transportation",
+"items": [
+{
+"type": "image",
+"src": "17874125494851216.jpg",
+"thumb": "17874125494851216.jpg"
+}
+],
+"story": "2: Electrical."
+},
+{
+"date": "2020-08-17T16:02:00",
+"caption": "4. Ergonomics Subsystem\n\n#engineering #passengerdrone #design #engineeringdesign #innovation #invention #aerospace #aero #aviation #lorenz #njit #physics #electrical #flight #drone #mechanicalengineering #aeronautics #design #CAD #creo #creoparametric #photoshop #autopilot #passenger #artificialintelligence #deeplearning #electricalengineering #solar #sustainability #efficiency #transportation",
+"items": [
+{
+"type": "image",
+"src": "17958965311344176.jpg",
+"thumb": "17958965311344176.jpg"
+}
+],
+"story": "4: Ergonomics."
+},
+{
+"date": "2020-08-17T16:02:00",
+"caption": "3. Aero Subsystem\n\n#engineering #passengerdrone #design #engineeringdesign #innovation #invention #aerospace #aero #aviation #lorenz #njit #physics #electrical #flight #drone #mechanicalengineering #aeronautics #design #CAD #creo #creoparametric #photoshop #autopilot #passenger #artificialintelligence #deeplearning #electricalengineering #solar #sustainability #efficiency #transportation",
+"items": [
+{
+"type": "image",
+"src": "17884062073681450.jpg",
+"thumb": "17884062073681450.jpg"
+}
+],
+"story": "3: Aero."
+},
+{
+"date": "2020-10-20T06:41:00",
+"caption": "Flying in a spaceship 🚀🚁🏎️\n#dronecar #flyingcar #passengerdrone #drone #transportation #engineering #aerospace #njit #stevens #technology #lorenz #motors #aerial #flight #innovation",
+"items": [
+{
+"type": "video",
+"src": "17885617897774449.mp4",
+"poster": "17885617897774449.jpg",
+"thumb": "17885617897774449.jpg"
+}
+],
+"story": "An animated fly-around."
+},
+{
+"date": "2020-10-20T14:26:00",
+"caption": "Added smol LED lights to the propeller cages. 💡\n#dronecar #drone #engineering #aerospace #transportaion #flyingcar #passengerdrone #spaceflight",
+"items": [
+{
+"type": "image",
+"src": "17881067503857592.jpg",
+"thumb": "17881067503857592.jpg"
+}
+],
+"story": "Small LEDs added to the propeller cages."
+},
+{
+"date": "2020-10-23T10:17:00",
+"caption": "Time lapse of making the stator. There's no easy way of making coils with straight sides that wrap around long edges, but you get the idea :)\n\n#motor #engineering #design #dronecar #engineeringdesign #innovation #invention #aerospace #aviation #lorenz #physics #electrical #flight #drone #mechanicalengineering #aeronautics #design #CAD #creo #creoparametric #electricalengineering  #transportation",
+"items": [
+{
+"type": "video",
+"src": "17894765389641876.mp4",
+"poster": "17894765389641876.jpg",
+"thumb": "17894765389641876.jpg"
+}
+],
+"story": "Time lapse of winding a motor stator. Building motors was on my mind even then."
+},
+{
+"date": "2020-12-15T22:55:00",
+"caption": "Finally learned how to animate on CREO lol I made a quick demonstration of how the mechanical propeller cages keep the fuselage level during flight. 🦋 unfortunately when I tried animating the propellers it would also move the entire propeller cage so just imagine the blades are spinning 😂\n#creo #dronecar #lorenz #flyingcar #engineering #drone #passengerdrone #supportsmallbusiness #quarantine #love #beautiful #viral #keepgoing #grateful #picoftheday #travel #explore",
+"items": [
+{
+"type": "video",
+"src": "17871704672114419.mp4",
+"poster": "17871704672114419.jpg",
+"thumb": "17871704672114419.jpg"
+}
+],
+"story": "First animation in CREO, showing how the cages keep the cabin level in flight."
+},
+{
+"date": "2020-12-17T14:15:00",
+"caption": "",
+"items": [
+{
+"type": "video",
+"src": "17886139990884476.mp4",
+"poster": "17886139990884476.jpg",
+"thumb": "17886139990884476.jpg"
+}
+],
+"story": "Another animation test."
+},
+{
+"date": "2020-12-21T15:03:00",
+"caption": "Does the flap of a butterfly door cause a tornado on the other side of the world? 🤔 \n🦋🌪️",
+"items": [
+{
+"type": "video",
+"src": "17879697533005381.mp4",
+"poster": "17879697533005381.jpg",
+"thumb": "17879697533005381.jpg"
+}
+],
+"story": "The butterfly doors."
+},
+{
+"date": "2021-02-16T17:04:00",
+"caption": "Her feet are looking gorgeous 👣\n#flyingcar #dronecar #lorenz #lorenzmotors #rocketboosters #thrusters #engineering #cad #creo #art #meme",
+"items": [
+{
+"type": "video",
+"src": "17917455706560627.mp4",
+"poster": "17917455706560627.jpg",
+"thumb": "17917455706560627.jpg"
+}
+],
+"story": "Rocket thrusters added to the cages."
+},
+{
+"date": "2021-02-16T18:24:00",
+"caption": "SpaceX lookin' ahh\n#lorenz #flyingcar @spacex #rocketboosters #dronecar #passengerdrone #rocketthrusters #thrusters #design #engineering #creo #cad",
+"items": [
+{
+"type": "image",
+"src": "17953970227404443.jpg",
+"thumb": "17953970227404443.jpg"
+},
+{
+"type": "image",
+"src": "18120413548168479.jpg",
+"thumb": "18120413548168479.jpg"
+},
+{
+"type": "image",
+"src": "17872368296263748.jpg",
+"thumb": "17872368296263748.jpg"
+},
+{
+"type": "image",
+"src": "17915690947586809.jpg",
+"thumb": "17915690947586809.jpg"
+},
+{
+"type": "image",
+"src": "17867004551312734.jpg",
+"thumb": "17867004551312734.jpg"
+}
+],
+"story": "The rocket boosters, from every angle."
+},
+{
+"date": "2021-02-21T12:13:00",
+"caption": "\"Pack coming in and I might need struts.\" :)\n\n✨UFO-Rick-&-Morty vibes✨\n\n#engineering #cad #flyingcar #dronecar #passengerdrone #creo #lorenz #lorenzmotors #suspension #struts #waters",
+"items": [
+{
+"type": "video",
+"src": "17862271433476488.mp4",
+"poster": "17862271433476488.jpg",
+"thumb": "17862271433476488.jpg"
+}
+],
+"story": "Suspension struts."
+},
+{
+"date": "2021-02-21T15:13:00",
+"caption": "It's subtle 🤏, but if you look closely, I added ✨ tail lights ✨ 💅\n\n#flyingcar #dronecar #passengerdrone",
+"items": [
+{
+"type": "image",
+"src": "17884108979008574.jpg",
+"thumb": "17884108979008574.jpg"
+},
+{
+"type": "image",
+"src": "17893667905859990.jpg",
+"thumb": "17893667905859990.jpg"
+}
+],
+"story": "Tail lights."
+},
+{
+"date": "2021-02-21T15:27:00",
+"caption": "That's aggressive.",
+"items": [
+{
+"type": "image",
+"src": "17867727689307285.jpg",
+"thumb": "17867727689307285.jpg"
+}
+],
+"story": "The cage up close."
+},
+{
+"date": "2021-02-22T16:48:00",
+"caption": "Since I didn't really explain how the pedals work. Also I'm redoing the steering wheel.\n\n#engineering #lorenzmotors #lorenz #creo #cad #flyingcar #dronecar #passengerdrone #innovation #rockets #spaceship #future #entrepreneur #businessmagnet",
+"items": [
+{
+"type": "image",
+"src": "18063821326263827.jpg",
+"thumb": "18063821326263827.jpg"
+},
+{
+"type": "image",
+"src": "17892131740888150.jpg",
+"thumb": "17892131740888150.jpg"
+}
+],
+"story": "How the pedals work, and the start of a new steering wheel."
+},
+{
+"date": "2021-02-24T18:21:00",
+"caption": "We're sitting in chairs. If you get the reference you win. Hint it's from the movie The Social Network :) one of my biggest inspos for this project :p",
+"items": [
+{
+"type": "video",
+"src": "17879332016097341.mp4",
+"poster": "17879332016097341.jpg",
+"thumb": "17879332016097341.jpg"
+}
+],
+"story": "A nod to one of my biggest inspirations for this project: The Social Network."
+},
+{
+"date": "2021-02-24T18:35:00",
+"caption": "It's better than what it was 😭 thanks for your energy guys :)",
+"items": [
+{
+"type": "image",
+"src": "18091677622241882.jpg",
+"thumb": "18091677622241882.jpg"
+}
+],
+"story": "The new seat."
+},
+{
+"date": "2021-03-04T14:27:00",
+"caption": "Now LorenzAero.com\n\nIf this doesn't sell for $6M, it's telling who we are as a society.\n\n#SuperRare #nft #nifty",
+"items": [
+{
+"type": "image",
+"src": "17916457234592145.jpg",
+"thumb": "17916457234592145.jpg"
+}
+],
+"story": "The design gets a new home name: Lorenz Aero.",
+"show_original": false
+},
+{
+"date": "2021-03-16T01:54:00",
+"caption": "Fuel ports to recharge the battery and refill the water tank. You can get 100 kWh of thrust from 27 Liters of water, which doesn't take up that much space, and at 60ish percent efficiency you'd need a 167 kWh battery to electrolyze the water to hydrogen and oxygen on the spot.",
+"items": [
+{
+"type": "video",
+"src": "17993626447326038.mp4",
+"poster": "17993626447326038.jpg",
+"thumb": "17993626447326038.jpg"
+}
+],
+"story": "Charging and water ports. The concept: electrolyze water onboard into hydrogen and oxygen for thrust."
+},
+{
+"date": "2021-03-24T21:45:00",
+"caption": "Servos to spin the rocket cage gears. The fourth gear underneath is to support the weight and it rotates freely.",
+"items": [
+{
+"type": "video",
+"src": "17869477463369493.mp4",
+"poster": "17869477463369493.jpg",
+"thumb": "17869477463369493.jpg"
+}
+],
+"story": "Servos that rotate the thruster cages through a gear drive."
+},
+{
+"date": "2021-03-31T18:03:00",
+"caption": "Tilt rotor gears extended out to support the weight of the rocket cage gear.\n#engineering #cad #lorenz #dronecar #flyingcar #meche #mechanicalengineering #electricalengineering #servos #drone #animation",
+"items": [
+{
+"type": "video",
+"src": "17865803363449401.mp4",
+"poster": "17865803363449401.jpg",
+"thumb": "17865803363449401.jpg"
+},
+{
+"type": "video",
+"src": "17894962714962491.mp4",
+"poster": "17894962714962491.jpg",
+"thumb": "17894962714962491.jpg"
+}
+],
+"story": "The tilt gears, extended to carry the cage's weight."
+},
+{
+"date": "2021-03-31T23:42:00",
+"caption": "2D flow analysis of the aerodynamics of airfoil. I'm going to add vortex generators, also known as shark fins, to the airfoils and then do a 3D multivariate particle flow analysis.\n#aerodynamics #engineering #mechanicalengineering #cad #flowanalysis #airfoils #aerospace #dronecar #flyingcar #lorenz",
+"items": [
+{
+"type": "video",
+"src": "18214491409016845.mp4",
+"poster": "18214491409016845.jpg",
+"thumb": "18214491409016845.jpg"
+}
+],
+"story": "2D flow analysis of the airfoil, with vortex generators planned next."
+},
+{
+"date": "2021-05-01T07:49:00",
+"caption": "Added white vortex generators. I'm gonna try redoing the 3D multivariate particle flow analysis on the airfoils and rocket cages.\n\nLorenzmotors.com\n\n#engineering #dronecar #flyingcar #lorenz #cad #aerospace #airflow #flowanalysis #vortexgenerators #sharkfins #vortex #airfoil #model #design #branding #marketing",
+"items": [
+{
+"type": "image",
+"src": "17942973178481050.jpg",
+"thumb": "17942973178481050.jpg"
+}
+],
+"story": "White vortex generators added."
+},
+{
+"date": "2021-05-02T08:21:00",
+"caption": "Finally got CREO to do 3D flow analysis on the tilted rocket cage airfoils and vortex generators without getting a fatal error.\n\nI'm thinking about adding a second seat behind the driver and adding a second set of doors. But, maybe not because it really do be lonely at the top. What do you think? 🤔\n\nLorenzmotors.com\n\n#engineering #aerodynamics #airfoil #flowanalysis #creo #cad #lorenz #dronecar #flyingcar",
+"items": [
+{
+"type": "video",
+"src": "18168692986137244.mp4",
+"poster": "18168692986137244.jpg",
+"thumb": "18168692986137244.jpg"
+}
+],
+"story": "Got CREO to run a full 3D flow analysis on the tilted cages and vortex generators."
+},
+{
+"date": "2021-12-19T13:07:00",
+"caption": "A Lorenz fits in a standard 9' wide parking space :) this is to scale, so as you can see it's a bit low to the ground, but it's a necessary design feature given the constraints of the parking-space.\n\nI also added struts, rearview mirrors, updated the lights, and if you look closely there is a seat in there that comfortably sits one. \n\nPlease enjoy the background scenery I made with my elite art skills! 😋\n\n#dronecar #flyingcar #lorenz #airmobility #aerialvehicle #aerospace #engineering #design #cad #drone #car #space #travel #innovation #technology #3d #model #3dmodel #creo #personalairmobility #future #transportation #transport",
+"items": [
+{
+"type": "image",
+"src": "18116526049271491.jpg",
+"thumb": "18116526049271491.jpg"
+},
+{
+"type": "image",
+"src": "17952537751600203.jpg",
+"thumb": "17952537751600203.jpg"
+},
+{
+"type": "image",
+"src": "18209370601113193.jpg",
+"thumb": "18209370601113193.jpg"
+},
+{
+"type": "image",
+"src": "17902722710378693.jpg",
+"thumb": "17902722710378693.jpg"
+},
+{
+"type": "image",
+"src": "18268744600018272.jpg",
+"thumb": "18268744600018272.jpg"
+},
+{
+"type": "image",
+"src": "18181336657090168.jpg",
+"thumb": "18181336657090168.jpg"
+}
+],
+"story": "Built to fit a standard 9 foot parking space. Struts, mirrors, new lights and a one-person seat added."
+},
+{
+"date": "2021-12-19T17:21:00",
+"caption": "I'm cracked at this. 😭\nAdded shark fins/vortex generators, Lorenz emblem in the front & back, strobes on the sides of the airfoils, and detailed the door a bit 😍\nComment what you think I should add.\n\nOh, and I almost forgot the carbon fiber skrr skrr (skirt)\n\n#dronecar #lorenz #flyingcar #aerialvehicle #airmobility #aerospace #engineering #cad #model #3drendering #creo #drone #car #innovation #futuristic #ev #transport #transportation",
+"items": [
+{
+"type": "image",
+"src": "17844732755702949.jpg",
+"thumb": "17844732755702949.jpg"
+},
+{
+"type": "image",
+"src": "17932771726779233.jpg",
+"thumb": "17932771726779233.jpg"
+},
+{
+"type": "image",
+"src": "18249155773074847.jpg",
+"thumb": "18249155773074847.jpg"
+},
+{
+"type": "image",
+"src": "17953260865534613.jpg",
+"thumb": "17953260865534613.jpg"
+},
+{
+"type": "image",
+"src": "17905021394469321.jpg",
+"thumb": "17905021394469321.jpg"
+},
+{
+"type": "image",
+"src": "17964988375505740.jpg",
+"thumb": "17964988375505740.jpg"
+},
+{
+"type": "image",
+"src": "17937774685795058.jpg",
+"thumb": "17937774685795058.jpg"
+},
+{
+"type": "image",
+"src": "18215411146096787.jpg",
+"thumb": "18215411146096787.jpg"
+}
+],
+"story": "Vortex generators, Lorenz emblems front and back, strobes, door details and a carbon fiber skirt."
+},
+{
+"date": "2021-12-20T10:17:00",
+"caption": "Added three 6\" speakers in the back, a sunroof, changed the strobes on the airfoils, and added a dashboard/steering wheel! (・∀・)\n\nAlso, a lot of my progress got deleted from yesterday. I think my computer has COVID or something :( 🤒 so I had to redo some stuff, including the shark fins, so they're slightly in a different position, but I think it's worth mentioning cause it looks better now :)\n\n#lorenz #drone #lorenzmotors #dronecar #flyingcar #aerialvehicle #aerialmobility #aerospace #aviation #art #cad #3D #engineering #innovation #technology #car #vehicle #transport #transportation #spacecraft #aeronautics",
+"items": [
+{
+"type": "image",
+"src": "17876828384543683.jpg",
+"thumb": "17876828384543683.jpg"
+},
+{
+"type": "image",
+"src": "17929936069921335.jpg",
+"thumb": "17929936069921335.jpg"
+}
+],
+"story": "Speakers, a sunroof, a dashboard and a steering wheel."
+},
+{
+"date": "2021-12-27T17:14:00",
+"caption": "I made struts for real this time. 🌈\nDefinitely harder than what I was expecting. I even looked at patents, because the main question I had was: how do struts NOT fall off when suspended in mid air?\nIt was quite a complex problem, and my design is super crude, but I think for a first prototype it will at least work and demonstrate its purpose.\nThe modular thruster cages are for the most part done, I just have to revamp the middle piece for it to be able to sustain the weight of the engine that I'm designing tomorrow. Looking forward to printing this thing piece by piece and putting it all together 🙌\n\n#engineering #design #lorenz #dronecar #flyingcar #struts #innovation #aerialvehicle #aerialmobility #airmobility #suspension #cad #3dmodel #nft #futuristic #technology #tech #entrepreneur #spring #art #automation #manufacturing #craft",
+"items": [
+{
+"type": "image",
+"src": "18073571776295153.jpg",
+"thumb": "18073571776295153.jpg"
+},
+{
+"type": "image",
+"src": "17903452979387184.jpg",
+"thumb": "17903452979387184.jpg"
+},
+{
+"type": "image",
+"src": "17899025858513569.jpg",
+"thumb": "17899025858513569.jpg"
+},
+{
+"type": "image",
+"src": "17920666895116906.jpg",
+"thumb": "17920666895116906.jpg"
+},
+{
+"type": "image",
+"src": "18007289497374915.jpg",
+"thumb": "18007289497374915.jpg"
+}
+],
+"story": "Real working struts, which turned out to be much harder than expected."
+},
+{
+"date": "2022-01-13T11:15:00",
+"caption": "Gonna have to go back in to add the 5\" propellers and sound proofing, but that's basically it for the thruster cage. As you can see, it's attached to the servo by a gear mechanism which will sit on the airfoils attached to the fuselage/cabin.\n\nI weighed this thruster cage and it comes out to roughly 0.6 pounds, which means we're on track for, I would say, a sub-20 pound dronecar prototype that's to 1/4th scale.\n\nOf course, the full-scale is going to contain metal alloys for the inner chassis, struts, and things of that nature, but my guess is, even then, the full-scale will probably be between 200-300 pounds! :)\n\n#lorenz #lorenzmotors #dronecar #flyingcar #engineering #cad #nft #3dmodel #art #aerialvehicle #aerialmobility #thrusters #futuristic #transport #transportation #innovation #technology #startup #aerospace",
+"items": [
+{
+"type": "image",
+"src": "17842942493706552.jpg",
+"thumb": "17842942493706552.jpg"
+},
+{
+"type": "image",
+"src": "17974929994473084.jpg",
+"thumb": "17974929994473084.jpg"
+},
+{
+"type": "image",
+"src": "18004252966377374.jpg",
+"thumb": "18004252966377374.jpg"
+},
+{
+"type": "image",
+"src": "17914509599326320.jpg",
+"thumb": "17914509599326320.jpg"
+},
+{
+"type": "image",
+"src": "17915282243205188.jpg",
+"thumb": "17915282243205188.jpg"
+},
+{
+"type": "image",
+"src": "17913303464151493.jpg",
+"thumb": "17913303464151493.jpg"
+}
+],
+"story": "The finished thruster cage, about 0.6 lbs, on track for a sub-20 lb quarter-scale model."
+},
+{
+"date": "2022-01-22T13:18:00",
+"caption": "Sometimes I'll be designing in CREO Parametric, the $10,000 CAD program I use, and it will randomly hit me that I made this 😭 I have to stop and just admire it, because I know for a fact this is what we're gonna be seeing when we look up in the sky in about 8 years time.\n\n3D printing has forced my design to look and feel that much more realistic, and given I'm almost done with the final touches, it couldn't seem more real 😍\n\nIt took me 3 years to get to the point I'm at now in my design, and although that sounds like a long time, when I started I knew that if I just kept incrementally improving on each iteration I would eventually end up somewhere I'm proud of. And this is it.\n\nI have to admit, I wasn't happy with my previous designs. I mean, they're alright, but I wouldn't give them higher than like a 6/10. This one, to me, is at least an 8/10, and although I know it will still get better, I think 80% is a good place to start in terms of bringing it to life.\n\n#engineering #dronecar #lorenz #cad #aerialmobility #flyingcar #aviation #aerospace #3dmodel #future #travel #vehicle #drone #innovation #tech #design #nft",
+"items": [
+{
+"type": "image",
+"src": "18198323371176530.jpg",
+"thumb": "18198323371176530.jpg"
+}
+],
+"story": "Three years of iterating, and the first design I was truly proud of."
+},
+{
+"date": "2022-01-23T08:09:00",
+"caption": "Posted this on my story, but it deserves to live on the grid. 😭\n\nDronecars are the future and Lorenz Motors is leading the way! :)\n\n#engineering #cad #lorenz #lorenzmotors #dronecar #flyingcar #aerialvehicle #aerialmobility #innovation #technology #aerospace #aeronautics #travel #nft",
+"items": [
+{
+"type": "image",
+"src": "17963165662539109.jpg",
+"thumb": "17963165662539109.jpg"
+}
+],
+"story": "Posted to the grid because it earned it."
+},
+{
+"date": "2022-01-26T18:14:00",
+"caption": "The 2022 Lorenz CAD model is ready to manufacture!\n\nSuper happy with how it turned out, just gotta print it out now and assemble!\n\n#engineering #cad #lorenz #lorenzmotors #dronecar #flyingcar #aerialvehicle #aerialmobility #innovation #technology #aerospace #aeronautics #travel #nft",
+"items": [
+{
+"type": "image",
+"src": "17905081955320166.jpg",
+"thumb": "17905081955320166.jpg"
+},
+{
+"type": "image",
+"src": "17985079528451831.jpg",
+"thumb": "17985079528451831.jpg"
+}
+],
+"story": "The 2022 CAD model, ready to manufacture."
+},
+{
+"date": "2022-01-26T20:45:00",
+"caption": "The CAD model is completely ready to manufacture!\n\nSuper happy with how it turned out, just gotta print it out and assemble!\n\n#engineering #cad #lorenz #lorenzmotors #dronecar #flyingcar #aerialvehicle #aerialmobility #innovation #technology #aerospace #aeronautics #travel #nft",
+"items": [
+{
+"type": "image",
+"src": "17948182273679336.jpg",
+"thumb": "17948182273679336.jpg"
+},
+{
+"type": "image",
+"src": "17877397439628967.jpg",
+"thumb": "17877397439628967.jpg"
+}
+],
+"story": "The 2022 CAD model, ready to manufacture.",
+"hide": true,
+"why_hidden": "duplicate"
+},
+{
+"date": "2022-02-01T21:44:00",
+"caption": "Starting to print out the chassis and outer body. I'm realizing that this will mainly be for show because of how weak the plastic is. I would need a metal 3D printer for key components that carry a lot of the load. That, or a complete redesign of the inner workings, but given this project was meant to show how we can build the real thing, I think I will settle for it being a mere model.\n\nAt least it will serve as motivation to move onto the next step of building the real thing. 😋 \n\nAfter this, I plan on diving into more software engineering to build out the flight controller and look for investors. Super exciting, but also an extremely humbling experience 😩\n\n#engineering #cad #lorenz #lorenzmotors #model #3D #3Dprint #flyingcar #prototype #mvp #aerialvehicle #transport #aerospace #flight #drone #car #dronecar #future #technology #innovation #nft",
+"items": [
+{
+"type": "image",
+"src": "17852934851684261.jpg",
+"thumb": "17852934851684261.jpg"
+},
+{
+"type": "image",
+"src": "17908040144289361.jpg",
+"thumb": "17908040144289361.jpg"
+},
+{
+"type": "image",
+"src": "17930826274997364.jpg",
+"thumb": "17930826274997364.jpg"
+},
+{
+"type": "image",
+"src": "18146130088218688.jpg",
+"thumb": "18146130088218688.jpg"
+},
+{
+"type": "image",
+"src": "17906958419398947.jpg",
+"thumb": "17906958419398947.jpg"
+},
+{
+"type": "image",
+"src": "18058384888305708.jpg",
+"thumb": "18058384888305708.jpg"
+}
+],
+"story": "Printing the chassis and body. Plastic made this a display model, not a flyer, but it proved the design could be built."
+},
+{
+"date": "2022-02-19T12:57:00",
+"caption": "Made some progress since the last time I posted. You can fully see the scale now with all 4 thrusters attached.\n\nI also added the interior: seat, frunk, trunk, dashboard, and rear deck with speakers.\n\nCurrently printing out the plastic body and then going to finish it off with the rest of the airfoils. Still gotta add the Lexan windshield and windows.\n\nAfter that I'll start getting into more software/programming and power solutions for the dronecar. That's where the real engineering begins 🤐 and all the tough problems gotta be solved.\n\nDefinitely making progress with the model, though, and it looks good for what it's worth 😋\n\n#engineering #lorenz #dronecar #flyingcar #technology #transport #physics #innovation #aerospace #aviation #cad #3dmodel #nft #startup #investments #finance #economics #flight",
+"items": [
+{
+"type": "image",
+"src": "17930995607046986.jpg",
+"thumb": "17930995607046986.jpg"
+},
+{
+"type": "image",
+"src": "17966371270526770.jpg",
+"thumb": "17966371270526770.jpg"
+},
+{
+"type": "image",
+"src": "17921483651196025.jpg",
+"thumb": "17921483651196025.jpg"
+},
+{
+"type": "image",
+"src": "17931027895933837.jpg",
+"thumb": "17931027895933837.jpg"
+},
+{
+"type": "image",
+"src": "18002285929396861.jpg",
+"thumb": "18002285929396861.jpg"
+},
+{
+"type": "image",
+"src": "17934671653987409.jpg",
+"thumb": "17934671653987409.jpg"
+},
+{
+"type": "image",
+"src": "18113742631283999.jpg",
+"thumb": "18113742631283999.jpg"
+}
+],
+"story": "All four thrusters attached, plus the interior: seat, frunk, trunk, dashboard and rear deck."
+},
+{
+"date": "2022-03-14T15:06:00",
+"caption": "I don't know if it's just a coincidence I finished on Pi Day, or if the universe planned this all along. I like to think it's the latter.\n\nSurprisingly, it only weighs just under 10 pounds. Given that it's about 6% the full-scale by weight by volume, and the fact that this model doesn't account for the weight of the power/electronics, I estimate the real thing to be between 250-300 pounds.\n\nOverall super happy with how it turned out even though it took about a month and a half to complete 😂\n\nI can only imagine how hard it's going to be to scale up, but I'll definitely be using this as a learning experience for what's to come🤞\n\n#dronecar #lorenz #engineering #flyingcar #cad #3dprint #model #technology #innovation #future #airmobility #personalaerialmobility #aerospace #nft #art #flight",
+"items": [
+{
+"type": "image",
+"src": "17949119641780642.jpg",
+"thumb": "17949119641780642.jpg"
+},
+{
+"type": "image",
+"src": "17904713648399087.jpg",
+"thumb": "17904713648399087.jpg"
+},
+{
+"type": "image",
+"src": "17978947822458644.jpg",
+"thumb": "17978947822458644.jpg"
+},
+{
+"type": "image",
+"src": "17941571668806386.jpg",
+"thumb": "17941571668806386.jpg"
+},
+{
+"type": "image",
+"src": "17952135130687217.jpg",
+"thumb": "17952135130687217.jpg"
+}
+],
+"story": "Finished on Pi Day. Just under 10 lbs, after about a month and a half of printing."
+},
+{
+"date": "2022-11-07T10:45:00",
+"caption": "Carbon fiber Lorenz Motors dronecar after being submerged in water for 24 hours to dissolve the PVA support material. I think it came out really good and I'm excited that this test print was a success.\n\n#dronecar #flyingcar #passengerdrone #3dprint #mechanics #cars #future #technology #legislation #bureaucracy #movement #socialization #change",
+"items": [
+{
+"type": "image",
+"src": "17971966378896225.jpg",
+"thumb": "17971966378896225.jpg"
+},
+{
+"type": "image",
+"src": "18329706169032857.jpg",
+"thumb": "18329706169032857.jpg"
+},
+{
+"type": "image",
+"src": "18258656530106595.jpg",
+"thumb": "18258656530106595.jpg"
+},
+{
+"type": "image",
+"src": "17966498653987345.jpg",
+"thumb": "17966498653987345.jpg"
+},
+{
+"type": "image",
+"src": "17962213883029915.jpg",
+"thumb": "17962213883029915.jpg"
+},
+{
+"type": "image",
+"src": "17988061531619463.jpg",
+"thumb": "17988061531619463.jpg"
+},
+{
+"type": "image",
+"src": "17953055780202485.jpg",
+"thumb": "17953055780202485.jpg"
+}
+],
+"story": "A carbon fiber test print, after soaking 24 hours to dissolve the support material."
+},
+{
+"date": "2023-05-03T10:32:00",
+"caption": "Changed the front emblem to the butterfly logo. Sorry for the double post.\n\nPosted this before, but you have to scroll through to find it, and I want it to be front and center when you scroll down on my page. This image was generated by an artificial intelligence when I passed a picture of my 3D printed drone-car model through it. This to me screams respect and it's crazy to think this image would not be possible without my efforts in manufacturing a physical model of the design. When I think of Lorenz Motors Drone-car, this is what I picture. The curvature of the airframe arms, the details of the front-facing \"struts\" (or trim, yet to be determined) and the spoiler in the back to bring together the sportiness of it all. This, to me, demands attention and looks equivalent to any hypercar that is ready to sprout into a butterfly. We are still in the caterpillar era, where cars are incapable of flight, but I've built a brand on the idea that the next stage in human transportation evolution is in the sky. My dream has always been to fly like a superhero, whether that be Iron Man or whoever, and I will not stop until I make that happen. My goal is to get these into the hands of anyone who wants one for the same price as a normal car. Of course, flight times are atrocious right now and technology needs to catch up to demand, but the only way we're going to get there is if we keep pushing for a world where personal flight is commonplace. Go cop Legalize Dronecar merch to help spread awareness of the movement. You'll be seeing these in the sky soon enough. Hopefully within 10-20 years. It all starts small. That's the \"butterfly effect\" - Edward Lorenz",
+"items": [
+{
+"type": "image",
+"src": "18000200593814046.jpg",
+"thumb": "18000200593814046.jpg"
+}
+],
+"story": "I ran a photo of the printed model through an AI image generator, and this is what came back: a hypercar about to become a butterfly.",
+"chapter": {
+"num": "Chapter 4",
+"title": "Patents and a Proof of Concept",
+"sub": "2023 to 2025: a patent filing, the Aeroboticar name, and a practical frame designed to work."
+}
+},
+{
+"date": "2023-12-08T20:21:00",
+"caption": "Patent pending #2020Vision",
+"items": [
+{
+"type": "image",
+"src": "18205626463286169.jpg",
+"thumb": "18205626463286169.jpg"
+}
+],
+"story": "Patent pending."
+},
+{
+"date": "2023-12-08T20:26:00",
+"caption": "Love got me here",
+"items": [
+{
+"type": "image",
+"src": "17985387668600493.jpg",
+"thumb": "17985387668600493.jpg"
+}
+],
+"story": "The frame in blueprint."
+},
+{
+"date": "2023-12-08T20:26:00",
+"caption": "Live long",
+"items": [
+{
+"type": "image",
+"src": "17986943786587327.jpg",
+"thumb": "17986943786587327.jpg"
+}
+],
+"story": "Front view blueprint."
+},
+{
+"date": "2023-12-08T20:27:00",
+"caption": "Win",
+"items": [
+{
+"type": "image",
+"src": "18008442395283203.jpg",
+"thumb": "18008442395283203.jpg"
+}
+],
+"story": "Top view blueprint."
+},
+{
+"date": "2024-11-12T15:46:00",
+"caption": "That's hot",
+"items": [
+{
+"type": "image",
+"src": "18018457454557174.jpg",
+"thumb": "18018457454557174.jpg"
+}
+],
+"story": "A new frame design."
+},
+{
+"date": "2024-11-16T13:13:00",
+"caption": "If you want one, blink twice.",
+"items": [
+{
+"type": "image",
+"src": "17983815653758464.jpg",
+"thumb": "17983815653758464.jpg"
+}
+],
+"story": "The first time the name appears: the Lorenz Aeroboticar."
+},
+{
+"date": "2025-02-20T10:33:00",
+"caption": "The first phase of this page was highly speculative. The designs were more aesthetic than pragmatic. I don't really know what to call that red drone-car design, but after the first time I 3D printed it, I settled out of court for $475,000. You know those synchronicity moments when things fall together at exactly the right times? It's almost as if the universe or God paid me, or rewarded me, for finishing the project. \n\nWe always worry about where money is going to come from, but there's a reason magic and money start with the same letter. I'm not obsessed with money or anything like that, I'm concerned with the fruits of my labor more than anything else, but money is funny. I often wonder what it is and how I can get more. It seems to be a social construct and only comes in times when \"someone else\" approves it.\n\nBut, given my experience with the lawsuit lining up so perfectly with the completion of the huge 3D printing project, I started thinking, maybe it's…maybe it’s the universe’s subtle confirmation that every bold creative leap carries its own magic. A kind of alchemy where passion and risk transmute into unexpected rewards, proving that when we pour our heart and soul into our work, abundance finds us in the most surprising ways.\n\nSo, although the road is slow and I often find myself switching gears to something else, I trek on. Whereas Phase 1 was all about \"moving fast and breaking things\"; aesthetics and attracting attention to the project, Phase 2 is all about pragmatism. It's about calculated moves, not just pop-science and the limits of \"what could be\". \n\nI know that doesn't make much sense, but from my perspective, I know what I'm saying lol all you gotta know is that we're not quitting :) and neither should you. Whatever you're chasing after, go get it.",
+"items": [
+{
+"type": "image",
+"src": "17944456058953430.jpg",
+"thumb": "17944456058953430.jpg"
+}
+],
+"story": "A shift from aesthetic to practical. The first designs were speculative. Now the focus is a proof of concept that actually works.",
+"show_original": false
+},
+{
+"date": "2025-02-20T10:55:00",
+"caption": "This project is about so much more than just a stupid passenger drone. It's what I'M passionate about. I hear so many people being like, \"you have to do what other people want. You have to listen to the market. You have to solve other people's problems.\" And although I am doing that to some extent, it's more about solving the problem \"I\" want solved. \n\nI'm not antisocial, and I love people, but sometimes my passions don't align with others. They'll want to do something I don't necessarily want to do. Like, \"Oh, I want to go on vacation.\" I'm all for making memories, but at what point on that trip do you reflect on your existence enough to realize you're actually here? The existentialism of realizing that this is all there is and that there is a likely chance you're going to live the same life over again?\n\nA lot of people live life like they live once and that's it. But, for me, I truly don't think that way. What if \"you\" is all there is? That would mean you could do anything you want. Would you rather be rich and alone, or poor and together? Because if \"you\" is all there is, then that means you own everything anyway. Everything is just a figment of your imagination. An extension of yourself.\n\nJust imagine God for a second. Since he is all there is, then wouldn't he become extremely lonely? Wouldn't he create some sort of simulation where he can experience \"wanting to be alone\"? And wouldn't that simulation perfectly resemble the daily struggles of money and finance? Because if God is alone. If the universe is one. Then it would want to create something within itself to experience wanting the ultimate existence of being alone: \"Not-having-anything\". \n\nMaybe that's why there's so much hate. Aren't we meanest to ourselves and nicest to other people? If we were truly NOT alone then people would probably love each other more. There's not even a word for \"the opposite of alone\". \"Together\"? But that's just being alone with each other lol\n\nThere's truly nothing out there besides this. God made an experience for himself so that he can experience something truly worth experiencing. All that sh* you DON'T want to do. Don't do it. Live like you're all there is.",
+"items": [
+{
+"type": "image",
+"src": "18057998666000522.jpg",
+"thumb": "18057998666000522.jpg"
+}
+],
+"story": "Why I keep building: this is the problem I want solved.",
+"show_original": false
+},
+{
+"date": "2025-02-20T11:04:00",
+"caption": "I guess I should probably talk about this proof of concept. There's a lot to consider when designing something that actually works, and I've been thinking about what these variables might be since 2018. Like, \"how can I fit this through a door?\" And, \"how high off the ground do the propellers have to be so they're not hitting the grass?\" Stuff you probably think is too boring to think about for more than 5 seconds.\n\nThis is the general design I \"fell\" onto. It hits all the main points, like having wheels that won't tip over, and a \"square\" frame. Everything else sort of wrapped itself around that.\n\nAs you can see on my '40 inch fans' reel, I spent $15,300 on motors, esc's, and fans, and another $5,600 on import tariffs, so over $20K in all for the main components. I didn't buy the batteries yet because you need to cycle them so that they don't die flat on you, and I'd rather not have to worry about that for the next two years until this thing is ready, but I wanted to spend the  last of my money from the lawsuit on Lorenz because I told God that I would if he let me win. And I'd rather keep my word then spend it on something completely opposite, like a house or something unrelated to the deal I made.\n\nAnyway, I know the frame doesn't line up exactly with rigid connectors, because I haven't designed those yet, but in general this is what it looks like, I'm just formally committing before moving forward by posting renders of it on Instagram lol it gives me more confidence because now there's some marketing behind it, and I'm a sucker for a good commercial:) \"we all want to be sold\" after all..",
+"items": [
+{
+"type": "image",
+"src": "18101598865500841.jpg",
+"thumb": "18101598865500841.jpg"
+}
+],
+"story": "The proof of concept: wheels that won't tip, a square frame, fans high enough to clear the grass, and everything sized to fit through a door."
+},
+{
+"date": "2025-02-21T11:10:00",
+"caption": "All the components for the flying car proof of concept that I'm building ($20,000)",
+"items": [
+{
+"type": "image",
+"src": "17911942506084922.jpg",
+"thumb": "17911942506084922.jpg"
+}
+],
+"story": "The parts for the proof of concept: about $20,000 in motors, ESCs and props."
+},
+{
+"date": "2025-07-17T12:01:00",
+"caption": "Swipe 👉 took some pics outside in the sun with the new Google Pixel 9 Pro's camera lol if you want to make this bigger just tell your dog about it. And hey, if your dog asks, tell her I said, \"woof woof,\" she'll know what it means.",
+"items": [
+{
+"type": "image",
+"src": "18058985624356077.jpg",
+"thumb": "18058985624356077.jpg"
+},
+{
+"type": "image",
+"src": "18073655959969716.jpg",
+"thumb": "18073655959969716.jpg"
+},
+{
+"type": "image",
+"src": "18072368146997938.jpg",
+"thumb": "18072368146997938.jpg"
+},
+{
+"type": "image",
+"src": "18043429967310138.jpg",
+"thumb": "18043429967310138.jpg"
+},
+{
+"type": "image",
+"src": "18062321210235990.jpg",
+"thumb": "18062321210235990.jpg"
+},
+{
+"type": "image",
+"src": "18187529122317055.jpg",
+"thumb": "18187529122317055.jpg"
+},
+{
+"type": "image",
+"src": "17960861615798512.jpg",
+"thumb": "17960861615798512.jpg"
+},
+{
+"type": "image",
+"src": "18046545692540680.jpg",
+"thumb": "18046545692540680.jpg"
+}
+],
+"story": "The design photographed outside in the sun."
+},
+{
+"date": "2025-10-18T16:21:00",
+"caption": "I've been waiting for AI to get better so that I can run some of my preliminary designs through them to generate something more detailed like what you see here. I've patented the TriFoil system and I think it gives Lorenz its unique brand identity. A lot of people think something like this is unrealistic, impossible, and never going to happen, but these are the same types of people that would say the same thing about combustion engines before they were demonstrated to work. And, to this day, it's not like engines are indestructible, are reliable past 200K miles, and it's not like they don't need maintenance. It takes effort to maintain and improve on the iterations necessary to make things a reality when they're not a reality yet. That's the definition of innovation. And if you don't see that, then you're just not very innovative are you, pipsqueak?",
+"items": [
+{
+"type": "image",
+"src": "18536233738039309.jpg",
+"thumb": "18536233738039309.jpg"
+}
+],
+"story": "AI finally caught up to my sketches. The TriFoil system, now patented, gives Lorenz its identity.",
+"chapter": {
+"num": "Chapter 5",
+"title": "The Vision",
+"sub": "Late 2025: AI tools finally render the design the way I always pictured it."
+},
+"show_original": false
+},
+{
+"date": "2025-10-19T11:46:00",
+"caption": "Goated",
+"items": [
+{
+"type": "image",
+"src": "18402448531185762.jpg",
+"thumb": "18402448531185762.jpg"
+}
+],
+"story": "On the runway."
+},
+{
+"date": "2025-10-19T15:04:00",
+"caption": "You can tap your home boy in this",
+"items": [
+{
+"type": "image",
+"src": "18291247720285120.jpg",
+"thumb": "18291247720285120.jpg"
+}
+],
+"story": "The cockpit."
+}
+];
+const M = 'history-media/';
+const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+function esc(s){return s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+function linkify(s){
+  return esc(s)
+    .replace(/\b((?:https?:\/\/)?(?:www\.)?lorenzaero\.com[\w\/.-]*)/gi,m=>`<a href="${m.startsWith('http')?m:'https://'+m}" target="_blank" rel="noopener">${m}</a>`)
+    .replace(/(^|[\s(])@([\w.]{2,30}[\w])/g,(a,p,h)=>`${p}<a href="https://www.instagram.com/${h}" target="_blank" rel="noopener">@${h}</a>`);
+}
+const shown=POSTS.filter(p=>!p.hide).sort((a,b)=>a.date.localeCompare(b.date));
+const tl=document.getElementById('tl'); let cur='';
+const nMedia=shown.reduce((n,p)=>n+p.items.length,0);
+const first=shown[0].date.slice(0,4), last=shown[shown.length-1].date.slice(0,4);
+document.getElementById('stats').innerHTML=`<div><b>${shown.length}</b><span>Posts</span></div><div><b>${nMedia}</b><span>Photos & videos</span></div><div><b>${first===last?first:first+'–'+last}</b><span>Span</span></div>`;
+shown.forEach((p,i)=>{
+  const d=new Date(p.date); const key=d.getFullYear()+'-'+d.getMonth();
+  if(p.chapter){const c=document.createElement('div');c.className='chapter';c.dataset.ch=p.chapter.title;c.innerHTML=`<span class="num">${p.chapter.num}</span><h3>${p.chapter.title}</h3><p>${p.chapter.sub}</p>`;tl.appendChild(c);cur='';}
+  if(key!==cur){cur=key;const m=document.createElement('div');m.className='month';m.dataset.label=MONTHS[d.getMonth()]+' '+d.getFullYear();m.dataset.y=d.getFullYear();m.innerHTML=`<h2>${MONTHS[d.getMonth()]}<em>${d.getFullYear()}</em></h2>`;tl.appendChild(m);}
+  const it=p.items[0]; const el=document.createElement('article'); el.className='post';
+  const dateStr=d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  el.innerHTML=`<button class="thumb" data-i="${i}" aria-label="Open media for post from ${dateStr}"><img loading="lazy" src="${M+it.thumb}" alt="">${p.items.length>1?`<span class="badge">1 / ${p.items.length}</span>`:''}${it.type==='video'?'<span class="play">▶</span>':''}</button>
+  <div><div class="meta">${dateStr}</div>${p.story?`<p class="story">${esc(p.story)}</p>`:''}${p.show_original===false||!p.caption?'':(p.story?`<details class="orig"><summary>Original post</summary><p class="cap">${linkify(p.caption)}</p></details>`:`<p class="cap">${linkify(p.caption)}</p>`)}</div>`;
+  if(i===shown.length-1)el.id='latest';
+  tl.appendChild(el);
+});
+const lb=document.getElementById('lb'),lbm=document.getElementById('lbm'),lbc=document.getElementById('lbc');
+let P=null,k=0;
+function show(){const it=P.items[k];lbm.innerHTML=it.type==='video'?`<video src="${M+it.src}" poster="${M+it.poster}" controls autoplay playsinline></video>`:`<img src="${M+it.src}" alt="">`;lbc.textContent=P.items.length>1?`${k+1} / ${P.items.length}`:'';document.getElementById('lbp').style.display=document.getElementById('lbn').style.display=P.items.length>1?'':'none';}
+tl.addEventListener('click',e=>{const t=e.target.closest('.thumb');if(!t)return;P=shown[+t.dataset.i];k=0;show();lb.classList.add('open');document.getElementById('lbx').focus();});
+function close(){lb.classList.remove('open');lbm.innerHTML='';}
+document.getElementById('lbx').onclick=close;
+document.getElementById('lbp').onclick=()=>{k=(k-1+P.items.length)%P.items.length;show()};
+document.getElementById('lbn').onclick=()=>{k=(k+1)%P.items.length;show()};
+lb.addEventListener('click',e=>{if(e.target===lb)close()});
+document.addEventListener('keydown',e=>{if(!lb.classList.contains('open'))return;if(e.key==='Escape')close();if(e.key==='ArrowLeft')document.getElementById('lbp').click();if(e.key==='ArrowRight')document.getElementById('lbn').click();});
+/* edge scrubber: drag along the right edge to fly through the timeline */
+(function(){
+  const sc=document.getElementById('scrub'),knob=document.getElementById('knob'),bub=document.getElementById('bub');
+  let marks=[],drag=false,hideT;
+  const maxS=()=>Math.max(1,document.documentElement.scrollHeight-innerHeight);
+  const top=el=>el.getBoundingClientRect().top+scrollY;
+  function build(){
+    sc.querySelectorAll('.yr').forEach(e=>e.remove());
+    marks=[...document.querySelectorAll('.month,.chapter')].map(el=>({el,t:top(el)}));
+    const H=sc.clientHeight,seen={};
+    document.querySelectorAll('.month').forEach(el=>{const y=el.dataset.y;if(seen[y])return;seen[y]=1;
+      const f=Math.min(1,Math.max(0,(top(el)-80)/maxS()));const l=document.createElement('div');l.className='yr';l.textContent=y;l.style.top=(f*H)+'px';sc.appendChild(l);});
+    sync();
+  }
+  function label(){
+    const y=scrollY+innerHeight*.3;let mo='',ch='';
+    for(const m of marks){if(m.t>y)break;if(m.el.dataset.label)mo=m.el.dataset.label;if(m.el.dataset.ch)ch=m.el.dataset.ch;}
+    return (ch?`<small>${ch}</small>`:'')+(mo||'Start');
+  }
+  function sync(){const f=scrollY/maxS(),H=sc.clientHeight;knob.style.top=(Math.min(1,f)*H)+'px';bub.style.top=Math.min(H-24,Math.max(24,f*H))+'px';if(drag)bub.innerHTML=label();}
+  function show(){sc.classList.add('on');clearTimeout(hideT);hideT=setTimeout(()=>{if(!drag)sc.classList.remove('on')},1400);}
+  function go(e){const r=sc.getBoundingClientRect();const f=Math.min(1,Math.max(0,(e.clientY-r.top)/r.height));window.scrollTo({top:f*maxS(),behavior:'instant'});sync();}
+  sc.addEventListener('pointerdown',e=>{drag=true;sc.classList.add('drag','on');sc.setPointerCapture(e.pointerId);go(e);e.preventDefault();});
+  sc.addEventListener('pointermove',e=>{if(drag)go(e)});
+  const end=()=>{if(!drag)return;drag=false;sc.classList.remove('drag');show();};
+  sc.addEventListener('pointerup',end);sc.addEventListener('pointercancel',end);
+  addEventListener('scroll',()=>{sync();show();},{passive:true});
+  addEventListener('resize',build);addEventListener('load',build);build();
+})();
+</script>
+</body>
+</html>

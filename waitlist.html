@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Join the Waitlist | Lorenz Aerospace</title>
+<meta name="description" content="Get in line for the Lorenz Aeroboticarbon, a two-seat electric VTOL with a sports car body. No deposit, no obligation.">
+<meta property="og:image" content="aeroboticarbon-hero.jpg">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link rel="icon" type="image/jpg" href="LorenzLogo.jpg">
+<style>
+  :root {
+    --bg: #08090c;
+    --bg-alt: #0e1016;
+    --ink: #e4e2dd;
+    --ink-dim: #6b7080;
+    --ink-mid: #9ca0ad;
+    --rule: #1a1d28;
+    --accent: #e04a3a;
+    --gold: #d4a54a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'DM Mono', monospace;
+    font-size: 15px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+    background: rgba(8, 9, 12, 0.9);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--rule);
+    padding: 0 clamp(24px, 4vw, 80px);
+    height: 60px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-logo {
+    font-family: 'Instrument Serif', serif;
+    font-size: 22px; letter-spacing: 0.04em;
+    color: var(--ink); text-decoration: none;
+  }
+  .nav-logo em { color: var(--accent); font-style: italic; }
+  .nav-back {
+    font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--ink-dim); text-decoration: none; transition: color 0.2s ease;
+  }
+  .nav-back:hover { color: var(--ink); }
+
+  main {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    max-width: 1200px; width: 100%;
+    margin: 0 auto;
+    padding: calc(60px + clamp(48px, 9vh, 110px)) clamp(24px, 6vw, 120px) clamp(60px, 9vh, 110px);
+    gap: clamp(40px, 6vw, 96px);
+    align-items: center;
+  }
+  @media (max-width: 860px) {
+    main { grid-template-columns: 1fr; padding-top: 104px; }
+  }
+
+  .label {
+    font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--accent); display: block; margin-bottom: 20px;
+  }
+  h1 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(40px, 5.4vw, 76px);
+    font-weight: 400; line-height: 1.02; letter-spacing: -0.02em;
+    margin-bottom: 24px;
+  }
+  h1 em { font-style: italic; color: var(--accent); }
+  .lede { color: var(--ink-mid); font-size: 14px; line-height: 1.9; max-width: 480px; }
+  .hero-img {
+    width: 100%; display: block; margin-top: 36px;
+    border: 1px solid var(--rule);
+    aspect-ratio: 16 / 9; object-fit: cover; object-position: 50% 58%;
+    background: #050506;
+  }
+  .img-cap {
+    margin-top: 10px; font-size: 9px; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--ink-dim);
+  }
+
+  .card {
+    background: var(--bg-alt);
+    border: 1px solid var(--rule);
+    padding: clamp(28px, 4vw, 44px);
+  }
+  .card h2 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 28px; font-weight: 400; line-height: 1.2; margin-bottom: 8px;
+  }
+  .card .sub { font-size: 12px; color: var(--ink-dim); margin-bottom: 28px; line-height: 1.7; }
+
+  .field { margin-bottom: 18px; }
+  .field label {
+    display: block; font-size: 9px; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--ink-dim); margin-bottom: 8px;
+  }
+  .field label .opt { color: #4a5062; }
+  .field input {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--rule);
+    color: var(--ink);
+    font-family: inherit; font-size: 14px;
+    padding: 13px 14px;
+    transition: border-color 0.2s ease;
+  }
+  .field input::placeholder { color: #3a3f4f; }
+  .field input:focus { outline: none; border-color: var(--accent); }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 480px) { .row { grid-template-columns: 1fr; gap: 0; } }
+  @media (max-width: 860px) { .hero-img, .img-cap { display: none; } }
+
+  .hp { position: absolute; left: -9999px; }
+
+  button {
+    width: 100%; margin-top: 8px;
+    padding: 16px 28px;
+    font-family: inherit; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase;
+    background: var(--accent); border: 1px solid var(--accent); color: var(--bg);
+    cursor: pointer; transition: all 0.2s ease;
+  }
+  button:hover { background: transparent; color: var(--accent); }
+  button:disabled { opacity: 0.5; cursor: wait; }
+
+  .fine {
+    margin-top: 18px; font-size: 10px; letter-spacing: 0.04em;
+    color: var(--ink-dim); line-height: 1.7;
+  }
+  .err { margin-top: 14px; font-size: 12px; color: var(--accent); display: none; }
+
+  .done { display: none; text-align: left; }
+  .done h2 em { font-style: italic; color: var(--accent); }
+  .done p { font-size: 13px; color: var(--ink-mid); line-height: 1.9; margin-bottom: 16px; }
+  .done a {
+    font-size: 11px; color: var(--accent); text-decoration: none;
+    letter-spacing: 0.1em; text-transform: uppercase; border-bottom: 1px dotted var(--accent);
+  }
+  .sent .form-wrap { display: none; }
+  .sent .done { display: block; }
+
+  footer {
+    border-top: 1px solid var(--rule);
+    padding: 28px clamp(24px, 6vw, 120px);
+    max-width: 1200px; width: 100%; margin: 0 auto;
+    font-size: 11px; color: var(--ink-dim);
+    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+  }
+  footer a { color: var(--ink-dim); text-decoration: none; }
+  footer a:hover { color: var(--ink); }
+
+  :where(a, button, input):focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">Lorenz<em>Aero</em></a>
+  <a class="nav-back" href="index.html">&larr; Home</a>
+</nav>
+
+<main>
+  <div>
+    <span class="label">Aeroboticarbon Waitlist</span>
+    <h1>Get in line for<br>the <em>first ones</em>.</h1>
+    <p class="lede">
+      The 1:5 scale prototype is built and full scale is next. Join the waitlist to hold
+      your place, get build updates as they happen, and hear first when reservations open.
+    </p>
+    <img class="hero-img" src="aeroboticarbon-hero.jpg" alt="The Lorenz Aeroboticarbon, an oxblood two-seat flying car with four ducted fans, in a dark studio">
+    <p class="img-cap">Concept render</p>
+  </div>
+
+  <div class="card" id="card">
+    <div class="form-wrap">
+      <h2>Join the waitlist</h2>
+      <p class="sub">Free. No deposit, no obligation.</p>
+      <form id="waitlist" novalidate>
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label for="name">Name <span class="opt">(optional)</span></label>
+            <input id="name" name="name" type="text" autocomplete="name" placeholder="First name">
+          </div>
+          <div class="field">
+            <label for="zip">ZIP code</label>
+            <input id="zip" name="zip" type="text" inputmode="numeric" autocomplete="postal-code" placeholder="07095" maxlength="10" required>
+          </div>
+        </div>
+        <div class="field">
+          <label for="trip">First trip you'd take <span class="opt">(optional)</span></label>
+          <input id="trip" name="first_trip" type="text" placeholder="Cabin upstate, the shore, a friend 3 hours away">
+        </div>
+        <input class="hp" type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <button type="submit" id="submit">Hold my place</button>
+        <p class="err" id="err" role="alert"></p>
+        <p class="fine">We use your ZIP to see where people want to fly. Your info stays with Lorenz and you can unsubscribe anytime.</p>
+      </form>
+    </div>
+    <div class="done" aria-live="polite">
+      <h2>You're <em>in line</em>.</h2>
+      <p>Thanks for believing early. You'll get build updates as the Aeroboticarbon moves toward full scale, and first notice when reservations open.</p>
+      <p>Want to watch it come together in the meantime?</p>
+      <a href="history.html">Read the Build Log &rarr;</a>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <span>Lorenz Motors Corp · Woodbridge, New Jersey</span>
+  <span><a href="https://www.instagram.com/lorenzaero">Instagram</a> · <a href="https://www.youtube.com/channel/UCSqoZYtYOm6KCniw96xjAoA">YouTube</a></span>
+</footer>
+
+<script>
+/* Paste your form endpoint here (Formspree, Getform, Basin, etc).
+   Formspree: create a form at formspree.io, then use https://formspree.io/f/XXXXXXX */
+const FORM_ENDPOINT = 'https://formspree.io/f/YOUR_FORM_ID';
+
+const form = document.getElementById('waitlist');
+const btn = document.getElementById('submit');
+const err = document.getElementById('err');
+const card = document.getElementById('card');
+
+function showErr(msg) { err.textContent = msg; err.style.display = 'block'; }
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  err.style.display = 'none';
+  const email = form.email.value.trim();
+  const zip = form.zip.value.trim();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showErr('Please enter a valid email.');
+  if (!/^\d{5}(-\d{4})?$/.test(zip)) return showErr('Please enter a 5-digit ZIP code.');
+  if (form._gotcha.value) return; // bot
+
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
+  try {
+    const data = new FormData(form);
+    data.append('source', 'lorenzaero.com waitlist');
+    const res = await fetch(FORM_ENDPOINT, {
+      method: 'POST',
+      body: data,
+      headers: { 'Accept': 'application/json' }
+    });
+    if (!res.ok) throw new Error();
+    card.classList.add('sent');
+  } catch (_) {
+    btn.disabled = false;
+    btn.textContent = 'Hold my place';
+    showErr('Something went wrong. Try again, or email peter@lorenzaero.com.');
+  }
+});
+</script>
+</body>
+</html>

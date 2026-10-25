@@ -500,6 +500,39 @@
   .vehicle-text p {
     color: var(--ink-mid);
     font-size: 14px;
+    line-height: 1.9;
+    margin-bottom: 16px;
+  }
+  .vehicle-img {
+    width: 100%;
+    border: 1px solid var(--rule);
+    display: block;
+  }
+  .vehicle-specs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 28px;
+  }
+  .spec-item {
+    padding: 16px;
+    background: var(--bg-alt);
+    border: 1px solid var(--rule);
+  }
+  .spec-item .label {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    margin-bottom: 4px;
+    display: block;
+  }
+  .spec-item .value {
+    font-family: 'Instrument Serif', serif;
+    font-size: 18px;
+    color: var(--ink);
+  }
+
   /* --- CREDENTIALS --- */
   .cred-row {
     display: grid;
@@ -581,6 +614,57 @@
     color: var(--accent);
   }
 
+  /* --- FOOTER --- */
+  footer {
+    border-top: 1px solid var(--rule);
+    padding: 40px clamp(24px, 6vw, 120px);
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+  .footer-left {
+    font-size: 11px;
+    color: var(--ink-dim);
+    line-height: 1.8;
+  }
+  .footer-left strong { color: var(--ink); font-weight: 500; }
+  .footer-right {
+    display: flex;
+    gap: 20px;
+  }
+  .footer-right a {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+  .footer-right a:hover { color: var(--ink); }
+
+  /* --- ANIMATIONS --- */
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* --- LORENZ PHASE SPACE · scroll = time --- */
+  .lz-phase {
+    position: fixed;
+    z-index: -1;
+    top: 53%;
+    right: -4vw;
+    width: min(76vh, 700px);
+    height: min(76vh, 700px);
     transform: translateY(-50%);
     pointer-events: none;
     -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 32%);
@@ -630,6 +714,7 @@
       -webkit-mask-image: none; mask-image: none;
     }
     .lz-hud { display: none; }
+    .lz-logo { width: 32px; height: 23px; }
     .nav-logo { gap: 8px; }
   }
 
@@ -739,6 +824,58 @@
       <div class="vehicle-specs">
         <div class="spec-item">
           <span class="label">Seats</span>
+          <span class="value">2</span>
+        </div>
+        <div class="spec-item">
+          <span class="label">Propulsion</span>
+          <span class="value">4 Ducted Fans, Electric</span>
+        </div>
+        <div class="spec-item">
+          <span class="label">Prototype</span>
+          <span class="value">1:5 Scale, 16 lb</span>
+        </div>
+        <div class="spec-item">
+          <span class="label">Airspace</span>
+          <span class="value">LAPP Native</span>
+        </div>
+      </div>
+      <a href="aeroboticar.html" class="cta-link" style="margin-top: 28px;">Explore the Aeroboticarbon →</a>
+    </div>
+    <div class="reveal">
+      <img class="vehicle-img" src="aeroboticarbon-prototype.jpg" alt="The red and white 1:5 scale Aeroboticarbon prototype on gravel beneath a highway bridge" loading="lazy" />
+      <p class="vehicle-proof-cap">The 1:5 scale prototype, New Jersey</p>
+    </div>
+  </div>
+</section>
+
+<hr class="section-rule">
+
+<!-- PROBLEM -->
+<section id="problem">
+  <span class="section-label reveal">The Network</span>
+  <div class="problem-grid">
+    <h2 class="reveal">Everyone is building the <em>aircraft</em>. Lorenz is also building the <em>sky</em>.</h2>
+    <div class="problem-text reveal">
+      <p>
+        Joby, Archer, Lilium, and dozens of other companies are racing to certify eVTOL
+        aircraft for urban air mobility. But every one of them assumes someone else will
+        solve the airspace coordination problem: the question of how hundreds of
+        vehicles share the same low-altitude sky safely, efficiently, and at scale.
+      </p>
+      <p>
+        Today, that altitude band (500–2,000 feet above ground) is essentially
+        unstructured. No protocol defines how aircraft select altitudes, resolve
+        route conflicts, or allocate scarce airspace during congestion. The FAA's
+        UTM framework provides architecture but not the protocol. EASA's U-space
+        defines service levels but not allocation logic.
+      </p>
+      <p>
+        Lorenz is filling that gap with LAPP, and flying it first on its own aircraft.
+      </p>
+    </div>
+  </div>
+</section>
+
 <hr class="section-rule">
 
 <!-- PROTOCOL -->
@@ -808,6 +945,60 @@
 
 <!-- ORIGIN / COMPANY STORY -->
 <section id="story">
+  <span class="section-label reveal">The Origin</span>
+  <div class="story-wrap">
+    <h2 class="story-head reveal">Why <em>Lorenz</em></h2>
+    <div class="story-body reveal">
+      <p class="story-lede">I was driving for Uber in my red 2018 Honda Civic Type R, finishing my last two semesters at NJIT, when it hit me: I wanted to do my senior capstone on flying cars.</p>
+      <p class="story-pull">Not because it sounded like a cool sci-fi fantasy, but because the next step in the evolution of transportation is in the <em>sky</em>.</p>
+      <p>I knew the market would doubt a solo founder with no blockbuster exit behind him, no war chest to self-fund something this ambitious. So I decided to build it one small, deliberate move at a time.</p>
+      <p>I named the company after Edward Lorenz, the MIT meteorologist who discovered the butterfly effect: the idea that a tiny change in initial conditions cascades into something enormous. That's the whole bet. Every small move toward bringing flying cars to reality compounds, and eventually it comes true.</p>
+    </div>
+    <p class="story-aside" id="story-aside">The trajectory drawing itself across this page is the <span class="lz-cue">Lorenz attractor</span>. Same system, same principle.</p>
+    <p class="story-byline reveal">Peter Roman<span>Founder, Lorenz Motors Corp</span></p>
+  </div>
+</section>
+
+<hr class="section-rule">
+
+<!-- BUILD LOG PREVIEW -->
+<section class="log-section" id="buildlog">
+  <div class="log-inner">
+    <span class="section-label reveal">The Build Log</span>
+    <div class="log-head reveal">
+      <h2>From a solar drone in 2019<br>to the <em>Aeroboticarbon</em>.</h2>
+      <div>
+        <p>Every frame, print, failure and fix, posted as it happened. The whole story, told in eight chapters.</p>
+        <div class="log-stats">
+          <div><b>189</b><span>Posts</span></div>
+          <div><b>8</b><span>Chapters</span></div>
+          <div><b>2019&ndash;2026</b><span>Span</span></div>
+        </div>
+      </div>
+    </div>
+    <ol class="log-strip reveal">
+      <li><a class="log-card" href="history.html#ch-1">
+        <div class="ph"><img src="history-media/17842655056450361.jpg" alt="The 2019 NJIT Highlander Drone Competition, which Lorenz won" loading="lazy"></div>
+        <div class="meta"><span class="ch">CHAPTER 01</span><h3>First Flight</h3><span class="yr">2019</span></div>
+      </a></li>
+      <li><a class="log-card" href="history.html#ch-2">
+        <div class="ph"><img src="history-media/17917974856349497.jpg" alt="The 38 lb solar midscale prototype on a workbench" loading="lazy"></div>
+        <div class="meta"><span class="ch">CHAPTER 02</span><h3>The Midscale</h3><span class="yr">2019 to 2020</span></div>
+      </a></li>
+      <li><a class="log-card" href="history.html#ch-3">
+        <div class="ph"><img src="history-media/17949119641780642.jpg" alt="The 3D printed dronecar model, finished on Pi Day 2022" loading="lazy"></div>
+        <div class="meta"><span class="ch">CHAPTER 03</span><h3>The Dronecar</h3><span class="yr">2020 to 2022</span></div>
+      </a></li>
+      <li><a class="log-card" href="history.html#ch-4">
+        <div class="ph"><img src="history-media/18058985624356077.jpg" alt="The Lorenz Aeroboticar model photographed outdoors" loading="lazy"></div>
+        <div class="meta"><span class="ch">CHAPTER 04</span><h3>Patents and a Proof of Concept</h3><span class="yr">2023 to 2025</span></div>
+      </a></li>
+      <li><a class="log-card" href="history.html#ch-5">
+        <div class="ph"><img src="history-media/18536233738039309.jpg" alt="An Aeroboticar concept render on a runway" loading="lazy"></div>
+        <div class="meta"><span class="ch">CHAPTER 05</span><h3>The Vision</h3><span class="yr">2025 to 2026</span></div>
+      </a></li>
+      <li><a class="log-card" href="history.html#ch-6">
+        <div class="ph"><img src="history-media/18354385567232700.jpg" alt="The 3D printed body of the 1:5 scale Aeroboticar" loading="lazy"></div>
         <div class="meta"><span class="ch">CHAPTER 06</span><h3>Building the 1:5</h3><span class="yr">2026</span></div>
       </a></li>
       <li><a class="log-card" href="history.html#ch-7">
@@ -851,6 +1042,58 @@
   </div>
 </section>
 
+<hr class="section-rule">
+
+<!-- CONTACT -->
+<section class="cta-section" id="contact">
+  <span class="section-label reveal">Collaborate</span>
+  <h2 class="reveal">Investors, engineers,<br>and <em>early believers</em></h2>
+  <p class="reveal">
+    Lorenz is raising a pre-seed round to take the Aeroboticarbon from 1:5 scale to full
+    scale, and is looking for aerospace engineers, airspace researchers, regulators and
+    operators who want to help build the vehicle and the network.
+  </p>
+  <div class="cta-links reveal">
+    <a class="cta-link primary" href="waitlist.html">Join the Waitlist</a>
+    <a class="cta-link" href="mailto:peter@lorenzaero.com">Contact Lorenz</a>
+    <a class="cta-link" href="LAPP-v0.2-Whitepaper-Lorenz-Aerospace.pdf" download>Read the Whitepaper</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">
+    <strong>Lorenz Motors Corp</strong><br>
+    Patent Pending · U.S. Application No. 64/041,519<br>
+    Design Patent US-D1078585-S<br>
+    Woodbridge, New Jersey
+  </div>
+  <div class="footer-right">
+    <a href="https://www.linkedin.com/in/peter--roman/">LinkedIn</a>
+    <a href="https://www.youtube.com/channel/UCSqoZYtYOm6KCniw96xjAoA">YouTube</a>
+    <a href="https://www.instagram.com/lorenzaero">Instagram</a>
+  </div>
+</footer>
+
+<script>
+// Reveal on scroll
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.12 });
+reveals.forEach(el => observer.observe(el));
+</script>
+
+<script>
+/* ============================================================
+   LORENZ PHASE ENGINE · lorenzaero.com
+   Scroll = time. The page numerically integrates the Lorenz
+   system (sigma=10, rho=28, beta=8/3) with RK4 as you read.
+   The trace IS the butterfly; the dart is the current state.
    ============================================================ */
 (function () {
   'use strict';
@@ -920,6 +1163,76 @@
   var dart  = layer.querySelector('.lz-dart');
 
   ghost.setAttribute('d', big.d);
+  trace.setAttribute('d', big.d);
+  hot.setAttribute('d', big.d);
+
+  var TOTAL = trace.getTotalLength();
+  var WIN = TOTAL * 0.035;            /* bright recent-history window */
+  trace.style.strokeDasharray = TOTAL;
+  trace.style.strokeDashoffset = TOTAL;
+  hot.style.strokeDasharray = WIN + ' ' + (TOTAL * 2);
+  hot.style.strokeDashoffset = WIN;
+
+  /* ---------- 3 · Nav-logo miniature (chaos progress bar) ----------
+     Full trajectory in a 64x44 box fills solid; use a short window
+     (~2 loops per wing + body strand), same glyph as the sim title. */
+  var logo = document.querySelector('.lz-logo');
+  var lghost, ltrace, ldot, LTOTAL = 0, small;
+  if (logo) {
+    var cr = [];
+    for (var ci = 1; ci < n && cr.length < 6; ci++)
+      if ((X[ci] < 0) !== (X[ci - 1] < 0)) cr.push(ci);
+    var LA = Math.max(0, cr[1] - 150), LB = Math.min(n, cr[5] + 250);
+    small  = buildPath(64, 44, 3, 5, LA, LB);
+    lghost = logo.querySelector('.lz-lghost');
+    ltrace = logo.querySelector('.lz-ltrace');
+    ldot   = logo.querySelector('.lz-ldot');
+    lghost.setAttribute('d', small.d);
+    ltrace.setAttribute('d', small.d);
+    LTOTAL = ltrace.getTotalLength();
+    ltrace.style.strokeDasharray = LTOTAL;
+    ltrace.style.strokeDashoffset = LTOTAL;
+  }
+
+  /* ---------- 4 · Telemetry HUD ---------- */
+  var hud = document.querySelector('.lz-hud');
+  var hx, hy, hz, ht, hint;
+  if (hud) {
+    hx = hud.querySelector('.lz-x'); hy = hud.querySelector('.lz-y');
+    hz = hud.querySelector('.lz-z'); ht = hud.querySelector('.lz-t');
+    hint = hud.querySelector('.lz-hint');
+  }
+  var T_END = (n - 1) * DT;
+  var lastTelemetry = -1;
+
+  function pad6(v) {
+    var s = v.toFixed(2);
+    while (s.length < 6) s = ' ' + s;   /* figure space: no jitter */
+    return s;
+  }
+  function telemetry(L) {
+    /* arc length -> decimated index -> raw state (head & numbers agree) */
+    var Ls = L / TOTAL * big.len;
+    var lo = 0, hi = big.cum.length - 1;
+    while (lo < hi) { var m = (lo + hi) >> 1; if (big.cum[m] < Ls) lo = m + 1; else hi = m; }
+    if (lo === lastTelemetry) return;
+    lastTelemetry = lo;
+    var r = big.idx[lo];
+    if (hx) {
+      hx.textContent = pad6(X[r]);
+      hy.textContent = pad6(Y[r]);
+      hz.textContent = pad6(Z[r]);
+      ht.textContent = (r * DT).toFixed(2);
+    }
+  }
+
+  /* ---------- 4b · Story aside: lights up at the second wing-crossing ----------
+     Find the scroll progress at which the trajectory first switches lobes
+     (sign change in X). When the reader scrolls the attractor past that
+     point AND the story aside is in view, the line lands. */
+  var aside = document.getElementById('story-aside');
+  var asideLit = false;
+  var WING_PROG = 0;     /* progress in [0,1] of the lobe switch */
   (function findWingCrossing() {
     /* big was built with decimation D=2, so big.idx maps trace samples
        to raw indices. Walk the decimated samples for the first X sign flip
@@ -968,6 +1281,40 @@
 
     var c  = trace.getPointAtLength(L);
     var c0 = trace.getPointAtLength(Math.max(0, L - 2));
+    var c1 = trace.getPointAtLength(Math.min(TOTAL, L + 2));
+    var ang = Math.atan2(c1.y - c0.y, c1.x - c0.x) * 180 / Math.PI;
+    dart.setAttribute('transform',
+      'translate(' + c.x.toFixed(2) + ' ' + c.y.toFixed(2) + ') rotate(' + ang.toFixed(1) + ')');
+
+    if (logo) {
+      var lL = prog * LTOTAL;
+      ltrace.style.strokeDashoffset = LTOTAL - lL;
+      var lp = ltrace.getPointAtLength(lL);
+      ldot.setAttribute('cx', lp.x.toFixed(2));
+      ldot.setAttribute('cy', lp.y.toFixed(2));
+    }
+    telemetry(L);
+    maybeLightAside(prog);
+  }
+
+  function tick() {
+    p += (target - p) * 0.085;
+    if (Math.abs(target - p) < 0.0004) p = target;
+    render(p);
+    raf = (p === target) ? null : requestAnimationFrame(tick);
+  }
+  function wake() { if (!raf) raf = requestAnimationFrame(tick); }
+
+  /* ---------- 6 · Boot ---------- */
+  if (REDUCE) {
+    /* Static portrait: fully traced, no motion, honest final telemetry. */
+    layer.classList.add('lz-static');
+    trace.style.strokeDashoffset = 0;
+    hot.style.display = 'none';
+    dart.style.display = 'none';
+    if (logo) { ltrace.style.strokeDashoffset = 0; ldot.style.display = 'none'; }
+    if (aside) aside.classList.add('lz-lit');
+    if (hx) {
       hx.textContent = pad6(X[n-1]); hy.textContent = pad6(Y[n-1]);
       hz.textContent = pad6(Z[n-1]); ht.textContent = T_END.toFixed(2);
       if (hint) hint.style.display = 'none';

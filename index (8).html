@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Lorenz Aerospace | The Aeroboticarbon</title>
+<meta name="description" content="Lorenz Aerospace is building the Aeroboticarbon, a two-seat electric VTOL with a sports car body, and LAPP, the protocol that lets aircraft like it share the sky.">
+<meta property="og:image" content="aeroboticarbon-hero.jpg">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:opsz,wght@9..40,400;9..40,500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link rel="icon" type="image/jpg" href="LorenzLogo.jpg">
+<style>
+  :root {
+    --bg: #08090c;
+    --bg-alt: #0e1016;
+    --ink: #e4e2dd;
+    --ink-dim: #6b7080;
+    --ink-mid: #9ca0ad;
+    --rule: #1a1d28;
+    --accent: #e04a3a;
+    --accent-soft: rgba(224, 74, 58, 0.12);
+    --gold: #d4a54a;
+    --blue: #5b8fd4;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'DM Mono', monospace;
+    font-size: 15px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* --- NAV --- */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    background: rgba(8, 9, 12, 0.9);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--rule);
+    padding: 0 clamp(24px, 4vw, 80px);
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .nav-logo {
+    font-family: 'Instrument Serif', serif;
+    font-size: 22px;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .nav-logo em { color: var(--accent); font-style: italic; }
+  .nav-links { display: flex; gap: 32px; align-items: center; }
+  .nav-links a {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--ink-dim);
+    transition: color 0.2s ease;
+  }
+  .nav-links a:hover { color: var(--ink); }
+  .nav-links .patent {
+    color: var(--gold);
+    font-weight: 500;
+  }
+  .nav-links .own { color: var(--accent); font-weight: 500; }
+
+  /* --- SECTIONS --- */
+  section {
+    padding: clamp(80px, 12vw, 160px) clamp(24px, 6vw, 120px);
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+    display: block;
+  }
+  .section-rule {
+    width: 100%;
+    border: none;
+    border-top: 1px solid var(--rule);
+    margin: 0;
+  }
+
+  /* --- HERO (vehicle-first) --- */
+  .hero {
+    position: relative;
+    max-width: none;
+    min-height: 100vh;
+    min-height: 100svh;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    background: #050506;
+    overflow: hidden;
+  }
+  .hero-copy {
+    padding: calc(60px + clamp(40px, 7vh, 88px)) clamp(24px, 6vw, 120px) 0;
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1.25fr 1fr;
+    column-gap: clamp(32px, 5vw, 80px);
+    align-items: end;
+    position: relative;
+    z-index: 2;
+  }
+  .hero-copy .section-label { grid-column: 1 / -1; }
+  .hero h1 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(42px, 5.8vw, 86px);
+    font-weight: 400;
+    line-height: 1.0;
+    letter-spacing: -0.02em;
+  }
+  .hero h1 em { font-style: italic; color: var(--accent); }
+  .hero-side { padding-bottom: 8px; }
+  .hero-sub {
+    font-size: clamp(13px, 1.2vw, 15px);
+    color: var(--ink-mid);
+    margin-bottom: 24px;
+    line-height: 1.8;
+  }
+  .hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; }
+  .hero-img {
+    display: block;
+    flex: 1 1 auto;
+    width: 100%;
+    min-height: 0;
+    height: 0;
+    min-height: 340px;
+    object-fit: cover;
+    object-position: 50% 58%;
+    margin-top: -2vh;
+    -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 16%, #000 80%, transparent 100%);
+    mask-image: linear-gradient(180deg, transparent 0%, #000 16%, #000 80%, transparent 100%);
+    opacity: 0;
+    animation: heroIn 2.2s cubic-bezier(.2,.7,.2,1) .25s forwards;
+  }
+  @keyframes heroIn { from { opacity: 0; transform: translateX(-3%); } to { opacity: 1; transform: none; } }
+  .hero-foot {
+    padding: 0 clamp(24px, 6vw, 120px) 32px;
+    max-width: 1200px;
+    width: 100%;
+    margin: -12px auto 0;
+    position: relative;
+    z-index: 2;
+  }
+  .hero-meta { display: flex; gap: clamp(20px, 3.5vw, 44px); flex-wrap: wrap; align-items: flex-end; }
+  .hero-meta-item { display: flex; flex-direction: column; gap: 2px; }
+  .hero-meta-item .label {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+  }
+  .hero-meta-item .value {
+    font-family: 'Instrument Serif', serif;
+    font-size: 19px;
+    color: var(--ink);
+  }
+  .hero-meta-item .value.accent { color: var(--gold); }
+  .hero-note {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    padding-bottom: 5px;
+  }
+  @media (max-width: 900px) {
+    .hero { min-height: auto; }
+    .hero-copy { grid-template-columns: 1fr; padding-top: 104px; }
+    .hero h1 { margin-bottom: 20px; }
+    .hero-img { height: 66vw; min-height: 0; flex: none; margin-top: 4px; object-position: 50% 60%; }
+    .hero-foot { margin-top: 0; padding-bottom: 48px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .hero-img { animation: none; opacity: 1; } }
+  @media (max-width: 640px) {
+    .nav-links { gap: 18px; }
+    .nav-links a:not([href="#vehicle"]):not([href="#contact"]) { display: none; }
+  }
+
+  .vehicle-proof-cap {
+    margin-top: 10px;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+  }
+
+  /* --- PROBLEM --- */
+  .problem-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    margin-top: 40px;
+  }
+  @media (max-width: 800px) { .problem-grid { grid-template-columns: 1fr; gap: 32px; } }
+  .problem-grid h2 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 400;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+  }
+  .problem-grid h2 em { font-style: italic; color: var(--accent); }
+  .problem-text {
+    color: var(--ink-mid);
+    font-size: 14px;
+    line-height: 1.9;
+  }
+  .problem-text p { margin-bottom: 16px; }
+
+  /* --- PROTOCOL --- */
+  .protocol-header {
+    margin-bottom: 48px;
+  }
+  .protocol-header h2 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 400;
+    line-height: 1.15;
+    margin-bottom: 16px;
+  }
+  .protocol-header h2 em { font-style: italic; color: var(--accent); }
+  .protocol-header p {
+    color: var(--ink-mid);
+    font-size: 14px;
+    max-width: 700px;
+    line-height: 1.9;
+  }
+  .protocol-features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin-top: 32px;
+  }
+  @media (max-width: 800px) { .protocol-features { grid-template-columns: 1fr; } }
+  .feature {
+    background: var(--bg-alt);
+    padding: 32px 28px;
+    border: 1px solid var(--rule);
+    transition: border-color 0.2s ease;
+  }
+  .feature:hover { border-color: rgba(224, 74, 58, 0.3); }
+  .feature-num {
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    margin-bottom: 14px;
+    display: block;
+  }
+  .feature h3 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 20px;
+    font-weight: 400;
+    margin-bottom: 10px;
+    line-height: 1.3;
+  }
+  .feature p {
+    font-size: 12px;
+    color: var(--ink-dim);
+    line-height: 1.7;
+  }
+
+  /* --- SIMULATOR --- */
+  .sim-section {
+    background: var(--bg-alt);
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    padding: clamp(60px, 8vw, 100px) clamp(24px, 6vw, 120px);
+    max-width: none;
+  }
+  .sim-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .sim-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .sim-header h2 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(24px, 3.5vw, 36px);
+    font-weight: 400;
+  }
+  .sim-header h2 em { font-style: italic; color: var(--accent); }
+  .sim-cta {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+  }
+  .sim-embed {
+    width: 100%;
+    border: 1px solid var(--rule);
+    background: #070a0f;
+    aspect-ratio: 16 / 10;
+    min-height: 500px;
+  }
+  .sim-footer {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .sim-footer span {
+    font-size: 11px;
+    color: var(--ink-dim);
+    letter-spacing: 0.05em;
+  }
+  .sim-footer a {
+    font-size: 11px;
+    color: var(--accent);
+    text-decoration: none;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border-bottom: 1px dotted var(--accent);
+    transition: opacity 0.15s ease;
+  }
+  .sim-footer a:hover { opacity: 0.7; }
+
+  /* --- BUILD LOG PREVIEW --- */
+  .log-section {
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    padding: clamp(70px, 9vw, 130px) clamp(24px, 6vw, 120px);
+    max-width: none;
+    background: var(--bg-alt);
+  }
+  .log-inner { max-width: 1200px; margin: 0 auto; }
+  .log-head {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: clamp(24px, 5vw, 80px);
+    align-items: end;
+    margin-bottom: 44px;
+  }
+  .log-head h2 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(30px, 4.6vw, 52px);
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+  }
+  .log-head h2 em { font-style: italic; color: var(--accent); }
+  .log-head p { color: var(--ink-mid); font-size: 14px; line-height: 1.9; }
+  .log-stats { display: flex; gap: 32px; margin-top: 18px; }
+  .log-stats b { display: block; font-family: 'Instrument Serif', serif; font-weight: 400; font-size: 26px; color: var(--ink); line-height: 1.2; }
+  .log-stats span { font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-dim); }
+  @media (max-width: 800px) { .log-head { grid-template-columns: 1fr; } }
+  .log-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+    list-style: none;
+  }
+  .log-strip li { display: flex; }
+  .log-card {
+    flex: 1;
+    display: block;
+    position: relative;
+    text-decoration: none;
+    color: var(--ink);
+    background: var(--bg);
+    border: 1px solid var(--rule);
+    transition: border-color 0.2s ease;
+  }
+  .log-card:hover { border-color: rgba(224, 74, 58, 0.45); }
+  .log-card .ph { aspect-ratio: 4 / 3; overflow: hidden; background: #050506; }
+  .log-card img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+    filter: saturate(0.85);
+    transition: transform 0.5s cubic-bezier(.2,.7,.2,1), filter 0.3s ease;
+  }
+  .log-card:hover img { transform: scale(1.04); filter: saturate(1); }
+  .log-card .meta { padding: 16px 18px 20px; }
+  .log-card .ch { font-size: 10px; letter-spacing: 0.2em; color: var(--accent); display: block; margin-bottom: 6px; }
+  .log-card h3 { font-family: 'Instrument Serif', serif; font-size: 21px; font-weight: 400; line-height: 1.2; margin-bottom: 4px; }
+  .log-card .yr { font-size: 11px; color: var(--ink-dim); letter-spacing: 0.05em; }
+  .log-foot {
+    margin-top: 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .log-foot span { font-size: 11px; color: var(--ink-dim); letter-spacing: 0.05em; }
+  @media (max-width: 900px) {
+    .log-strip {
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-padding-left: clamp(24px, 6vw, 120px);
+      -webkit-overflow-scrolling: touch;
+      margin: 0 calc(-1 * clamp(24px, 6vw, 120px));
+      padding: 0 clamp(24px, 6vw, 120px) 8px;
+      scrollbar-width: none;
+    }
+    .log-strip::-webkit-scrollbar { display: none; }
+    .log-strip li { flex: 0 0 72%; scroll-snap-align: start; }
+  }
+
+  /* --- ORIGIN / STORY --- */
+  #story .story-wrap { max-width: 760px; }
+  #story .story-head {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 400;
+    line-height: 1.15;
+    margin-bottom: 36px;
+  }
+  #story .story-head em { font-style: italic; color: var(--accent); }
+  #story .story-body p {
+    color: var(--ink-mid);
+    font-size: 15px;
+    line-height: 1.95;
+    margin-bottom: 22px;
+  }
+  #story .story-lede { color: var(--ink); }
+  #story .story-pull {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(22px, 3vw, 32px);
+    font-style: italic;
+    line-height: 1.4;
+    color: var(--ink);
+    margin: 32px 0;
+  }
+  #story .story-pull em { color: var(--accent); }
+  #story .story-byline {
+    margin-top: 28px;
+    font-family: 'Instrument Serif', serif;
+    font-size: 20px;
+    color: var(--ink);
+  }
+  #story .story-byline span {
+    display: block;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    margin-top: 6px;
+  }
+
+  /* --- VEHICLE --- */
+  .vehicle-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+    margin-top: 40px;
+  }
+  @media (max-width: 800px) { .vehicle-grid { grid-template-columns: 1fr; } }
+  .vehicle-text h2 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 400;
+    line-height: 1.15;
+    margin-bottom: 20px;
+  }
+  .vehicle-text h2 em { font-style: italic; color: var(--accent); }
+  .vehicle-text p {
+    color: var(--ink-mid);
+    font-size: 14px;
+    line-height: 1.9;
+    margin-bottom: 16px;
+  }
+  .vehicle-img {
+    width: 100%;
+    border: 1px solid var(--rule);
+    display: block;
+  }
+  .vehicle-video {
+    aspect-ratio: 3 / 4;
+    height: auto;
+    object-fit: cover;
+    background: #050506;
+  }
+  .vehicle-specs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 28px;
+  }
+  .spec-item {
+    padding: 16px;
+    background: var(--bg-alt);
+    border: 1px solid var(--rule);
+  }
+  .spec-item .label {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    margin-bottom: 4px;
+    display: block;
+  }
+  .spec-item .value {
+    font-family: 'Instrument Serif', serif;
+    font-size: 18px;
+    color: var(--ink);
+  }
+
+  /* --- CREDENTIALS --- */
+  .cred-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+    margin-top: 40px;
+  }
+  @media (max-width: 800px) { .cred-row { grid-template-columns: 1fr 1fr; } }
+  .cred {
+    background: var(--bg-alt);
+    border: 1px solid var(--rule);
+    padding: 28px 24px;
+    text-align: center;
+  }
+  .cred .num {
+    font-family: 'Instrument Serif', serif;
+    font-size: 32px;
+    color: var(--ink);
+    display: block;
+    margin-bottom: 6px;
+  }
+  .cred .desc {
+    font-size: 10px;
+    color: var(--ink-dim);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    line-height: 1.5;
+  }
+
+  /* --- CTA / CONTACT --- */
+  .cta-section {
+    text-align: center;
+  }
+  .cta-section h2 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 400;
+    line-height: 1.15;
+    margin-bottom: 16px;
+  }
+  .cta-section h2 em { font-style: italic; color: var(--accent); }
+  .cta-section p {
+    color: var(--ink-mid);
+    font-size: 14px;
+    max-width: 600px;
+    margin: 0 auto 32px;
+    line-height: 1.9;
+  }
+  .cta-links {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .cta-link {
+    display: inline-block;
+    padding: 14px 28px;
+    font-family: inherit;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: 1px solid var(--rule);
+    color: var(--ink);
+    transition: all 0.2s ease;
+  }
+  .cta-link:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--bg);
+  }
+  .cta-link.primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--bg);
+  }
+  .cta-link.primary:hover {
+    background: transparent;
+    color: var(--accent);
+  }
+
+  /* --- FOOTER --- */
+  footer {
+    border-top: 1px solid var(--rule);
+    padding: 40px clamp(24px, 6vw, 120px);
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+  .footer-left {
+    font-size: 11px;
+    color: var(--ink-dim);
+    line-height: 1.8;
+  }
+  .footer-left strong { color: var(--ink); font-weight: 500; }
+  .footer-right {
+    display: flex;
+    gap: 20px;
+  }
+  .footer-right a {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+  .footer-right a:hover { color: var(--ink); }
+
+  /* --- ANIMATIONS --- */
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  :where(a, button, input, textarea, select, summary):focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .reveal { opacity: 1; transform: none; transition: none; }
+  }
+
+  /* ============================================================
+     PREMIUM PASS · 60 / 30 / 10
+     60  near-black ground (--bg)
+     30  warm ink: type and raised card surfaces
+     10  vermilion (--accent): one italic word per headline,
+         the primary button, the glow. Nothing else.
+     ============================================================ */
+  :root {
+    --ink-dim: #8a8f9c;      /* was #6b7080, lifted to pass 4.5:1 on --bg */
+    --gold: #e4e2dd;         /* retired: second accent folded into ink */
+    --blue: #e4e2dd;
+    --card: rgba(20, 21, 27, 0.72);
+    --card-line: rgba(228, 226, 221, 0.08);
+    --card-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+    --radius: 18px;
+  }
+
+  /* Type: sans for reading, mono only for labels */
+  body { font-family: 'DM Sans', system-ui, sans-serif; font-size: 16px; }
+  .section-label, .nav-links a, .hero-meta-item .label, .hero-note,
+  .cta-link, .feature-num, .spec-item .label, .spec-label, .cred .desc,
+  .log-card .ch, .log-card .yr, .log-stats span, .sim-cta, .sim-footer span,
+  .sim-footer a, .log-foot span, .footer-right a, .vehicle-proof-cap,
+  .story-byline span, .hero-eyebrow, .gallery figcaption, .timeline-content .tag,
+  .content-header a, .video-label, .signup-form button, .signup-form input {
+    font-family: 'DM Mono', monospace;
+  }
+  .hero-sub, .problem-text, .protocol-header p, .vehicle-text p, .log-head p,
+  .cta-section p, .overview-text, .proof-text p, .timeline-content p,
+  .signup-section p { font-size: 16px; line-height: 1.75; }
+  #story .story-body p { font-size: 17px; line-height: 1.8; }
+  .feature p { font-size: 14px; line-height: 1.7; color: var(--ink-mid); }
+
+  /* Red is the 10%: labels and numbers step back to ink */
+  .section-label, .hero-eyebrow, .feature-num, .log-card .ch { color: var(--ink-dim); }
+  .timeline-year { color: var(--ink); }
+  .timeline-content .tag, .timeline-content .tag.done {
+    color: var(--ink-mid); border-color: var(--card-line); border-radius: 999px; padding: 4px 10px;
+  }
+
+  /* Nav mark */
+  .nav-logo { display: inline-flex; align-items: center; gap: 11px; }
+  .nav-mark { width: 34px; height: 28px; flex: none; display: block; }
+  .nav-mark path { fill: var(--ink); }
+
+  /* Buttons: pills. Only the primary carries red. */
+  .cta-link {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-height: 48px; padding: 0 26px; border-radius: 999px;
+    border: 1px solid rgba(228, 226, 221, 0.18);
+    background: rgba(228, 226, 221, 0.04);
+  }
+  .cta-link:hover { background: rgba(228, 226, 221, 0.10); border-color: rgba(228, 226, 221, 0.32); color: var(--ink); }
+  .cta-link.primary { background: var(--accent); border-color: var(--accent); color: var(--bg); font-weight: 500; }
+  .cta-link.primary:hover { background: #ec5a4a; border-color: #ec5a4a; color: var(--bg); }
+  .signup-form input { border-radius: 999px; padding: 14px 22px; }
+  .signup-form button { border-radius: 999px; }
+  .signup-form button:hover { background: #ec5a4a; color: var(--bg); }
+
+  /* Raised cards: rounded, soft shadow, real gaps */
+  .protocol-features, .cred-row, .log-strip, .specs-grid, .gallery, .video-grid { gap: 16px; }
+  .vehicle-specs { gap: 12px; }
+  .feature, .spec-item, .spec, .cred, .log-card, .proof-text, .video-card, .gallery figure {
+    background: var(--card);
+    border: 1px solid var(--card-line);
+    border-radius: var(--radius);
+    box-shadow: var(--card-shadow);
+    overflow: hidden;
+  }
+  .spec-item { border-radius: 14px; box-shadow: none; }
+  .feature:hover, .log-card:hover, .video-card:hover { border-color: rgba(228, 226, 221, 0.22); }
+  .log-card { background: #101117; }
+  .vehicle-img { border-radius: var(--radius); border: 1px solid var(--card-line); box-shadow: var(--card-shadow); }
+  .sim-embed { border-radius: var(--radius); border: 1px solid var(--card-line); box-shadow: var(--card-shadow); overflow: hidden; }
+
+  /* ---------- The light: vermilion glow + fine streaks ---------- */
+  .hero { isolation: isolate; max-width: none; }
+  .hero::before {
+    content: ''; position: absolute; z-index: 0; pointer-events: none; inset: auto;
+    left: 50%; bottom: -18%; width: 150vw; height: 95%;
+    transform: translateX(-50%);
+    background: radial-gradient(closest-side, rgba(224, 74, 58, 0.34) 0%, rgba(224, 74, 58, 0.10) 45%, transparent 100%);
+  }
+  .hero::after {
+    content: ''; position: absolute; z-index: 0; pointer-events: none;
+    left: 50%; bottom: 0; width: min(1100px, 120vw); height: 75%;
+    transform: translateX(-50%);
+    background: repeating-linear-gradient(90deg, transparent 0 22px, rgba(228, 226, 221, 0.06) 23px 24px, transparent 25px 26px);
+    -webkit-mask-image: radial-gradient(ellipse 50% 70% at 50% 100%, #000 0%, transparent 100%);
+    mask-image: radial-gradient(ellipse 50% 70% at 50% 100%, #000 0%, transparent 100%);
+  }
+  .hero > * { position: relative; z-index: 1; }
+
+  /* Hero spec strip floats as a glass bar over the light */
+  .hero-meta {
+    padding: 16px 24px; border-radius: var(--radius);
+    background: rgba(14, 15, 20, 0.55);
+    border: 1px solid var(--card-line);
+    -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+    box-shadow: var(--card-shadow);
+    width: fit-content; max-width: 100%;
+  }
+  .hero-meta-item .value.accent { color: var(--ink); }
+
+  /* A second, quieter light under the closing call to action */
+  html, body { overflow-x: clip; }
+  .cta-section, .signup-section { position: relative; isolation: isolate; overflow-x: clip; overflow-y: visible; }
+  .cta-section::before, .signup-section::before {
+    content: ''; position: absolute; z-index: -1; pointer-events: none;
+    left: 50%; bottom: -10%; width: 1100px; max-width: 140vw; height: 80%;
+    transform: translateX(-50%);
+    background: radial-gradient(closest-side, rgba(224, 74, 58, 0.16) 0%, transparent 100%);
+  }
+
+  @media (max-width: 760px) {
+    .nav-mark { width: 28px; height: 23px; }
+    .nav-logo { gap: 8px; }
+    .hero-meta { padding: 14px 18px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="#"><svg class="nav-mark" viewBox="-225 -228 450 375" aria-hidden="true"><path fill-rule="evenodd" d="M-122.19 138.42C-120.40 137.84 -118.27 136.79 -117.46 136.07C-116.64 135.36 -113.85 133.75 -111.24 132.50C-101.03 127.59 -90.35 119.12 -81.63 109.04C-75.26 101.67 -69.45 93.66 -56.41 74.26C-50.40 65.31 -44.70 56.88 -43.74 55.53C-37.11 46.12 -32.12 39.35 -31.83 39.35C-31.64 39.35 -30.04 40.31 -28.28 41.47C-16.36 49.39 -1.32 52.02 12.24 48.58C17.86 47.16 25.48 43.71 29.26 40.88C30.38 40.04 31.48 39.35 31.71 39.35C32.35 39.35 44.03 55.82 54.16 71.01C80.94 111.18 91.05 122.08 111.09 132.46C113.94 133.93 116.87 135.81 117.60 136.63C119.49 138.74 126.95 140.16 134.46 139.83C139.88 139.59 140.16 139.51 141.73 137.75C144.06 135.15 144.36 132.28 142.91 126.63C138.29 108.66 113.52 76.84 85.77 53.22C76.01 44.91 62.64 35.49 51.03 28.72C47.52 26.68 44.52 24.78 44.35 24.51C44.18 24.23 44.71 22.69 45.52 21.08C49.26 13.71 50.99 0.68 49.42 -8.28C49.02 -10.56 48.57 -13.23 48.41 -14.20L48.13 -15.98L55.43 -17.28C87.66 -23.04 129.12 -39.75 156.21 -57.88C171.71 -68.26 187.63 -82.96 195.10 -93.79C206.10 -109.75 212.82 -126.53 216.29 -146.75C218.05 -156.97 218.50 -175.06 217.25 -185.23C215.63 -198.33 212.00 -209.79 207.65 -215.49C203.89 -220.43 198.58 -220.55 192.93 -215.84C188.05 -211.76 177.53 -198.93 172.21 -190.55C167.30 -182.82 158.42 -167.73 152.35 -156.80C149.23 -151.18 141.30 -137.52 137.47 -131.16C135.18 -127.36 132.84 -123.46 132.27 -122.49C130.74 -119.87 124.10 -109.57 123.48 -108.84C123.18 -108.49 122.60 -107.58 122.19 -106.80C121.09 -104.74 112.06 -92.07 106.60 -84.91C88.16 -60.75 72.55 -46.54 48.30 -31.83L42.15 -28.10L37.42 -33.16C25.81 -45.57 13.64 -50.60 -2.93 -49.83C-16.63 -49.20 -27.18 -44.10 -37.44 -33.14L-42.18 -28.06L-45.06 -29.77C-59.68 -38.48 -68.01 -44.48 -78.96 -54.21C-100.04 -72.94 -122.61 -104.12 -149.56 -151.78C-172.13 -191.67 -178.62 -201.46 -190.45 -213.45C-197.61 -220.71 -203.70 -221.13 -208.18 -214.65C-218.53 -199.67 -221.06 -165.46 -214.01 -135.80C-210.94 -122.88 -204.96 -108.81 -197.94 -98.01C-193.22 -90.76 -190.22 -87.09 -182.94 -79.67C-161.93 -58.26 -128.64 -39.23 -89.52 -26.26C-76.05 -21.79 -53.84 -16.27 -49.34 -16.27C-48.00 -16.27 -47.99 -16.04 -49.11 -10.16C-51.17 0.62 -49.70 12.91 -45.31 21.51C-44.61 22.88 -44.18 24.23 -44.35 24.50C-44.52 24.78 -47.12 26.40 -50.13 28.12C-61.02 34.31 -76.25 45.11 -87.47 54.61C-101.70 66.65 -121.29 88.36 -130.85 102.66C-139.14 115.07 -143.03 123.83 -143.37 130.81C-143.59 135.26 -143.50 135.70 -142.05 137.42C-141.19 138.44 -139.90 139.40 -139.18 139.56C-136.41 140.18 -125.38 139.44 -122.19 138.42ZM-3.85 37.49C-5.96 37.28 -8.89 36.79 -10.36 36.40C-13.94 35.45 -21.04 31.91 -22.98 30.11C-24.68 28.53 -24.69 28.62 -22.19 23.27C-21.15 21.05 -21.86 18.74 -23.71 18.28C-24.54 18.07 -26.84 18.24 -28.82 18.66C-33.08 19.57 -33.15 19.51 -35.46 13.37C-38.54 5.20 -38.86 -3.11 -36.40 -11.08C-35.29 -14.66 -35.02 -15.03 -33.27 -15.41C-29.85 -16.14 -28.95 -17.81 -30.85 -19.91C-31.74 -20.90 -31.74 -21.09 -30.81 -22.51C-29.27 -24.86 -23.96 -30.05 -21.24 -31.86C-14.57 -36.29 -5.72 -38.56 2.63 -37.97C13.07 -37.23 23.19 -32.08 29.30 -24.40C31.64 -21.47 31.64 -21.46 30.63 -19.74C29.32 -17.53 30.09 -16.18 33.04 -15.48C34.99 -15.02 35.28 -14.68 36.12 -11.92C39.06 -2.19 38.02 9.96 33.61 17.52C32.62 19.21 32.38 19.31 30.18 18.94C28.88 18.72 26.98 18.40 25.95 18.24C21.61 17.53 20.52 20.23 23.04 25.44C24.39 28.22 24.41 28.47 23.48 29.50C21.85 31.30 15.02 35.02 11.42 36.07C6.86 37.39 0.80 37.96 -3.85 37.49Z"/></svg><span>Lorenz<em>Aero</em></span></a>
+  <div class="nav-links">
+    <a href="#vehicle">Vehicle</a>
+    <a href="#protocol">Protocol</a>
+    <a href="history.html">Build Log</a>
+    <a href="/flightclub" class="own">Flight Club</a>
+    <a href="apply.html">Apply</a>
+    <a href="#contact">Contact</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <div class="hero-copy">
+    <span class="section-label reveal">Lorenz Aeroboticarbon · 2027</span>
+    <h1 class="reveal">Personal flight,<br>built like a <em>sports car</em>.</h1>
+    <div class="hero-side reveal">
+      <p class="hero-sub">
+        A two-seat electric VTOL with four shrouded ducted fans and the body of a car you'd
+        actually want to own. The 1:5 scale flight prototype is built. Full scale is next.
+      </p>
+      <div class="hero-ctas">
+        <a class="cta-link primary" href="#vehicle">See the prototype</a>
+        <a class="cta-link" href="#contact">Talk to Lorenz</a>
+      </div>
+    </div>
+  </div>
+  <img class="hero-img" src="aeroboticarbon-hero.jpg" alt="The Lorenz Aeroboticarbon, an oxblood two-seat flying car with four ducted fans, in a dark studio" fetchpriority="high">
+  <div class="hero-foot reveal">
+    <div class="hero-meta">
+      <div class="hero-meta-item">
+        <span class="label">Design Patent</span>
+        <span class="value accent">US D1078585 S</span>
+      </div>
+      <div class="hero-meta-item">
+        <span class="label">Patent Pending</span>
+        <span class="value">64/041,519</span>
+      </div>
+      <div class="hero-meta-item">
+        <span class="label">Prototype</span>
+        <span class="value">1:5 Scale, Built</span>
+      </div>
+      <div class="hero-meta-item">
+        <span class="label">Since</span>
+        <span class="value">2018</span>
+      </div>
+      <span class="hero-note">Concept render</span>
+    </div>
+  </div>
+</section>
+
+<hr class="section-rule">
+
+<!-- VEHICLE -->
+<section id="vehicle">
+  <span class="section-label reveal">The Prototype</span>
+  <div class="vehicle-grid">
+    <div class="vehicle-text reveal">
+      <h2>Not a render. <em>Hardware.</em></h2>
+      <p>
+        The 1:5 scale Aeroboticarbon is a 16 lb coaxial octocopter with the full production
+        layout: four ducted fan pods at the corners, a carbon fiber frame, a printed body and
+        the swan-neck rear wing. It runs a Cube Orange flight controller with a Jetson Orin
+        Nano for autonomy, and it is entering tethered flight testing.
+      </p>
+      <p>
+        It is also the reference aircraft for LAPP, the airspace protocol below. Lorenz is
+        building the vehicle and the sky it flies in.
+      </p>
+      <div class="vehicle-specs">
+        <div class="spec-item">
+          <span class="label">Seats</span>
+          <span class="value">2</span>
+        </div>
+        <div class="spec-item">
+          <span class="label">Propulsion</span>
+          <span class="value">4 Ducted Fans, Electric</span>
+        </div>
+        <div class="spec-item">
+          <span class="label">Prototype</span>
+          <span class="value">1:5 Scale, 16 lb</span>
+        </div>
+        <div class="spec-item">
+          <span class="label">Airspace</span>
+          <span class="value">LAPP Native</span>
+        </div>
+      </div>
+      <a href="aeroboticar.html" class="cta-link" style="margin-top: 28px;">Explore the Aeroboticarbon →</a>
+    </div>
+    <div class="reveal">
+      <video class="vehicle-img vehicle-video" src="aeroboticarbon-1-15-flight.mp4" poster="aeroboticarbon-1-15-flight-poster.jpg"
+             autoplay muted loop playsinline preload="metadata"
+             aria-label="The red 1:15 scale Aeroboticarbon taking off from a dirt lot and climbing high above autumn trees"></video>
+      <p class="vehicle-proof-cap">The 1:15 scale flight model, first outdoor flight, New Jersey</p>
+    </div>
+  </div>
+</section>
+
+<hr class="section-rule">
+
+<!-- PROBLEM -->
+<section id="problem">
+  <span class="section-label reveal">The Network</span>
+  <div class="problem-grid">
+    <h2 class="reveal">Everyone is building the <em>aircraft</em>. Lorenz is also building the <em>sky</em>.</h2>
+    <div class="problem-text reveal">
+      <p>
+        Joby, Archer, Lilium, and dozens of other companies are racing to certify eVTOL
+        aircraft for urban air mobility. But every one of them assumes someone else will
+        solve the airspace coordination problem: the question of how hundreds of
+        vehicles share the same low-altitude sky safely, efficiently, and at scale.
+      </p>
+      <p>
+        Today, that altitude band (500–2,000 feet above ground) is essentially
+        unstructured. No protocol defines how aircraft select altitudes, resolve
+        route conflicts, or allocate scarce airspace during congestion. The FAA's
+        UTM framework provides architecture but not the protocol. EASA's U-space
+        defines service levels but not allocation logic.
+      </p>
+      <p>
+        Lorenz is filling that gap with LAPP, and flying it first on its own aircraft.
+      </p>
+    </div>
+  </div>
+</section>
+
+<hr class="section-rule">
+
+<!-- PROTOCOL -->
+<section id="protocol">
+  <div class="protocol-header reveal">
+    <span class="section-label">The Protocol</span>
+    <h2>LAPP: Lorenz <em>Airspace</em> Protocol</h2>
+    <p>
+      LAPP is an open coordination protocol, analogous to TCP/IP for internet traffic,
+      that defines how eVTOL vehicles share low-altitude airspace. Any aircraft implementing
+      the LAPP stack can operate in LAPP-managed airspace, regardless of manufacturer.
+    </p>
+  </div>
+  <div class="protocol-features reveal">
+    <div class="feature">
+      <span class="feature-num">01</span>
+      <h3>Altitude by Heading</h3>
+      <p>Eight altitude layers, each assigned to a compass octant. Aircraft select cruise altitude from their direction of travel. Head-on conflicts eliminated by convention, not computation.</p>
+    </div>
+    <div class="feature">
+      <span class="feature-num">02</span>
+      <h3>Market-Priced Slots</h3>
+      <p>Turn-point contention resolved by sealed-bid second-price (Vickrey) auctions. Scarce airspace goes to the aircraft that values it most. Revenue funds the infrastructure.</p>
+    </div>
+    <div class="feature">
+      <span class="feature-num">03</span>
+      <h3>Emergency Reserves</h3>
+      <p>Emergency and public-safety aircraft receive absolute priority at zero cost. Commercial auction revenues fund this capacity. The market is real, but safety isn't for sale.</p>
+    </div>
+    <div class="feature">
+      <span class="feature-num">04</span>
+      <h3>Open Standard</h3>
+      <p>LAPP is proposed as an open protocol. Lorenz operates the reference implementation and ledger infrastructure. Lorenz is the exchange, not the traders.</p>
+    </div>
+    <div class="feature">
+      <span class="feature-num">05</span>
+      <h3>Empirical Foundations</h3>
+      <p>Protocol parameters derived from agent-based simulation. Optimal lane tolerance identified at 5–7°. Auction vs. FCFS tradeoffs quantified. Results published in the whitepaper.</p>
+    </div>
+    <div class="feature">
+      <span class="feature-num">06</span>
+      <h3>Revenue Model</h3>
+      <p>40% protocol operator. 30% infrastructure fund. 20% regulatory compliance. 10% access subsidy. Airspace coordination that funds itself.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="section-rule">
+
+<!-- SIMULATOR -->
+<section class="sim-section" id="simulator">
+  <div class="sim-inner">
+    <div class="sim-header reveal">
+      <h2>Try the <em>Reference Simulator</em></h2>
+      <span class="sim-cta">Interactive · runs in your browser</span>
+    </div>
+    <!-- IFRAME: host the sim HTML on GitHub Pages or similar, replace src below -->
+    <iframe class="sim-embed reveal" src="lapp-reference-simulator.html" frameborder="0" allow="fullscreen" loading="lazy"></iframe>
+    <div class="sim-footer reveal">
+      <span>LAPP Reference Simulator v0.5 · Lorenz Aerospace</span>
+      <a href="LAPP-v0.2-Whitepaper-Lorenz-Aerospace.pdf" download>Download Whitepaper (PDF) →</a>
+    </div>
+  </div>
+</section>
+
+
+
+<!-- ORIGIN / COMPANY STORY -->
+<section id="story">
+  <span class="section-label reveal">The Origin</span>
+  <div class="story-wrap">
+    <h2 class="story-head reveal">Why <em>Lorenz</em></h2>
+    <div class="story-body reveal">
+      <p class="story-lede">I was driving for Uber in my red 2018 Honda Civic Type R, finishing my last two semesters at NJIT, when it hit me: I wanted to do my senior capstone on flying cars.</p>
+      <p class="story-pull">Not because it sounded like a cool sci-fi fantasy, but because the next step in the evolution of transportation is in the <em>sky</em>.</p>
+      <p>I knew the market would doubt a solo founder with no blockbuster exit behind him, no war chest to self-fund something this ambitious. So I decided to build it one small, deliberate move at a time.</p>
+      <p>I named the company after Edward Lorenz, the MIT meteorologist who discovered the butterfly effect: the idea that a tiny change in initial conditions cascades into something enormous. That's the whole bet. Every small move toward bringing flying cars to reality compounds, and eventually it comes true.</p>
+    </div>
+    <p class="story-byline reveal">Peter Roman<span>Founder, Lorenz Motors Corp</span></p>
+  </div>
+</section>
+
+<hr class="section-rule">
+
+<!-- BUILD LOG PREVIEW -->
+<section class="log-section" id="buildlog">
+  <div class="log-inner">
+    <span class="section-label reveal">The Build Log</span>
+    <div class="log-head reveal">
+      <h2>From a solar drone in 2019<br>to the <em>Aeroboticarbon</em>.</h2>
+      <div>
+        <p>Every frame, print, failure and fix, posted as it happened. The whole story, told in eight chapters.</p>
+        <div class="log-stats">
+          <div><b>189</b><span>Posts</span></div>
+          <div><b>8</b><span>Chapters</span></div>
+          <div><b>2019&ndash;2026</b><span>Span</span></div>
+        </div>
+      </div>
+    </div>
+    <ol class="log-strip reveal">
+      <li><a class="log-card" href="history.html#ch-1">
+        <div class="ph"><img src="history-media/17842655056450361.jpg" alt="The 2019 NJIT Highlander Drone Competition, which Lorenz won" loading="lazy"></div>
+        <div class="meta"><span class="ch">CHAPTER 01</span><h3>First Flight</h3><span class="yr">2019</span></div>
+      </a></li>
+      <li><a class="log-card" href="history.html#ch-2">
+        <div class="ph"><img src="history-media/17917974856349497.jpg" alt="The 38 lb solar midscale prototype on a workbench" loading="lazy"></div>
+        <div class="meta"><span class="ch">CHAPTER 02</span><h3>The Midscale</h3><span class="yr">2019 to 2020</span></div>
+      </a></li>
+      <li><a class="log-card" href="history.html#ch-3">
+        <div class="ph"><img src="history-media/17949119641780642.jpg" alt="The 3D printed dronecar model, finished on Pi Day 2022" loading="lazy"></div>
+        <div class="meta"><span class="ch">CHAPTER 03</span><h3>The Dronecar</h3><span class="yr">2020 to 2022</span></div>
+      </a></li>
+      <li><a class="log-card" href="history.html#ch-4">
+        <div class="ph"><img src="history-media/18058985624356077.jpg" alt="The Lorenz Aeroboticar model photographed outdoors" loading="lazy"></div>
+        <div class="meta"><span class="ch">CHAPTER 04</span><h3>Patents and a Proof of Concept</h3><span class="yr">2023 to 2025</span></div>
+      </a></li>
+      <li><a class="log-card" href="history.html#ch-5">
+        <div class="ph"><img src="history-media/18536233738039309.jpg" alt="An Aeroboticar concept render on a runway" loading="lazy"></div>
+        <div class="meta"><span class="ch">CHAPTER 05</span><h3>The Vision</h3><span class="yr">2025 to 2026</span></div>
+      </a></li>
+      <li><a class="log-card" href="history.html#ch-6">
+        <div class="ph"><img src="history-media/18354385567232700.jpg" alt="The 3D printed body of the 1:5 scale Aeroboticar" loading="lazy"></div>
+        <div class="meta"><span class="ch">CHAPTER 06</span><h3>Building the 1:5</h3><span class="yr">2026</span></div>
+      </a></li>
+      <li><a class="log-card" href="history.html#ch-7">
+        <div class="ph"><img src="history-media/18092440766063775.jpg" alt="The finished 1:5 scale prototype under a highway bridge" loading="lazy"></div>
+        <div class="meta"><span class="ch">CHAPTER 07</span><h3>Getting Ready to Fly</h3><span class="yr">2026</span></div>
+      </a></li>
+      <li><a class="log-card" href="history.html#ch-8">
+        <div class="ph"><img src="history-media/17924096139217780.jpg" alt="A studio render of the 2027 Aeroboticarbon" loading="lazy"></div>
+        <div class="meta"><span class="ch">CHAPTER 08</span><h3>The 2027 Aeroboticarbon</h3><span class="yr">2026</span></div>
+      </a></li>
+    </ol>
+    <div class="log-foot reveal">
+      <span>Straight from @lorenzaero on Instagram</span>
+      <a class="cta-link primary" href="history.html">Read the full Build Log &rarr;</a>
+    </div>
+  </div>
+</section>
+
+<hr class="section-rule">
+
+<!-- CREDENTIALS -->
+<section id="credentials">
+  <span class="section-label reveal">Track Record</span>
+  <div class="cred-row reveal">
+    <div class="cred">
+      <span class="num">2</span>
+      <span class="desc">U.S. Patents<br>(issued + pending)</span>
+    </div>
+    <div class="cred">
+      <span class="num">8</span>
+      <span class="desc">Years in<br>development</span>
+    </div>
+    <div class="cred">
+      <span class="num">1:5</span>
+      <span class="desc">Scale prototype<br>completed</span>
+    </div>
+    <div class="cred">
+      <span class="num">v0.5</span>
+      <span class="desc">Simulator<br>iterations</span>
+    </div>
+  </div>
+</section>
+
+<hr class="section-rule">
+
+<!-- CONTACT -->
+<section class="cta-section" id="contact">
+  <span class="section-label reveal">Collaborate</span>
+  <h2 class="reveal">Investors, engineers,<br>and <em>early believers</em></h2>
+  <p class="reveal">
+    Lorenz is raising a pre-seed round to take the Aeroboticarbon from 1:5 scale to full
+    scale, and is looking for aerospace engineers, airspace researchers, regulators and
+    operators who want to help build the vehicle and the network.
+  </p>
+  <div class="cta-links reveal">
+    <a class="cta-link primary" href="waitlist.html">Join the Waitlist</a>
+    <a class="cta-link" href="mailto:peter@lorenzaero.com">Contact Lorenz</a>
+    <a class="cta-link" href="LAPP-v0.2-Whitepaper-Lorenz-Aerospace.pdf" download>Read the Whitepaper</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">
+    <strong>Lorenz Motors Corp</strong><br>
+    Patent Pending · U.S. Application No. 64/041,519<br>
+    Design Patent US-D1078585-S<br>
+    Woodbridge, New Jersey
+  </div>
+  <div class="footer-right">
+    <a href="https://www.linkedin.com/in/peter--roman/">LinkedIn</a>
+    <a href="https://www.youtube.com/channel/UCSqoZYtYOm6KCniw96xjAoA">YouTube</a>
+    <a href="https://www.instagram.com/lorenzaero">Instagram</a>
+  </div>
+</footer>
+
+<script>
+// Reveal on scroll
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.12 });
+reveals.forEach(el => observer.observe(el));
+
+// Flight video: hold on the poster frame for visitors who prefer reduced motion
+const flightVideo = document.querySelector('.vehicle-video');
+if (flightVideo && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  flightVideo.removeAttribute('autoplay');
+  flightVideo.pause();
+  flightVideo.controls = true;
+}
+</script>
+
+
+</body>
+</html>

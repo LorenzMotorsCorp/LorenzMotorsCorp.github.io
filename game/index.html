@@ -185,7 +185,7 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 window.__booted = true;
 const $ = id => document.getElementById(id);
 const IS_TOUCH = matchMedia('(pointer:coarse)').matches || 'ontouchstart' in window;
-function layout(){document.body.classList.toggle('touch',IS_TOUCH);document.body.classList.toggle('compact',IS_TOUCH||innerWidth<820)}
+function layout(){document.body.classList.toggle('touch',IS_TOUCH);document.body.classList.toggle('compact',IS_TOUCH||innerWidth<1100)}
 layout();
 
 // ---------- helpers
